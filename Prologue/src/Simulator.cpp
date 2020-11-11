@@ -319,9 +319,16 @@ void Simulator::eraseNotLandingPoint(SolvedResult* result) {
 }
 
 void Simulator::createResultDirectory() {
-	const std::filesystem::path dir = "result/" + outputDirName_;
-	if (!std::filesystem::exists(dir)) {
-		if (!std::filesystem::create_directory(dir)) {
+	const std::filesystem::path result = "result";
+	if (!std::filesystem::exists(result)) {
+		if (!std::filesystem::create_directory(result)) {
+			CommandLine::PrintInfo(PrintInfoType::Error, "Failed to create result directory");
+		}
+	}
+
+	const std::filesystem::path output = "result/" + outputDirName_;
+	if (!std::filesystem::exists(output)) {
+		if (!std::filesystem::create_directory(output)) {
 			CommandLine::PrintInfo(PrintInfoType::Error, "Failed to create result directory");
 		}
 	}
