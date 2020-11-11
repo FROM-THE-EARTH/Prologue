@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\Type">
+      <UniqueIdentifier>{cc951599-2026-49fa-b65c-05cfaa23d94c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Type">
+      <UniqueIdentifier>{36624723-9cd4-49a0-9851-06473e6e6f49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Solver">
+      <UniqueIdentifier>{05b0911d-101f-410b-a68b-df7acf609a07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Solver">
+      <UniqueIdentifier>{e81f62c9-f0c0-4db4-9478-e752a5400464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\RocketSpec">
+      <UniqueIdentifier>{9259157c-7ee7-4785-bcb0-14724cdd0024}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\RocketSpec">
+      <UniqueIdentifier>{690c99d1-f927-4584-af67-e3c49dc30097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Json">
+      <UniqueIdentifier>{8db0817d-0320-4fa5-99ac-2eed6d0bf047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Json">
+      <UniqueIdentifier>{ff6b6593-c438-4fda-a4df-ea25082778a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Simulator">
+      <UniqueIdentifier>{31385202-d7db-4e9b-b83f-9a21ce473fba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Simulator">
+      <UniqueIdentifier>{06254a48-f239-42a0-adb9-4deaff213eda}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Prologue.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Quaternion.cpp">
+      <Filter>ソース ファイル\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vector3D.cpp">
+      <Filter>ソース ファイル\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Solver.cpp">
+      <Filter>ソース ファイル\Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine.cpp">
+      <Filter>ソース ファイル\RocketSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpecJsonReader.cpp">
+      <Filter>ソース ファイル\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AppSetting.cpp">
+      <Filter>ソース ファイル\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Simulator.cpp">
+      <Filter>ソース ファイル\Simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResultSaver.cpp">
+      <Filter>ソース ファイル\Simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gnuplot.cpp">
+      <Filter>ソース ファイル\Simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Air.cpp">
+      <Filter>ソース ファイル\Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommandLine.cpp">
+      <Filter>ソース ファイル\Simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapFeature.cpp">
+      <Filter>ソース ファイル\Simulator</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Quaternion.h">
+      <Filter>ヘッダー ファイル\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vector3D.h">
+      <Filter>ヘッダー ファイル\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Solver.h">
+      <Filter>ヘッダー ファイル\Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rocket.h">
+      <Filter>ヘッダー ファイル\Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SpecJson.h">
+      <Filter>ヘッダー ファイル\RocketSpec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine.h">
+      <Filter>ヘッダー ファイル\RocketSpec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AppSetting.h">
+      <Filter>ヘッダー ファイル\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SpecJsonReader.h">
+      <Filter>ヘッダー ファイル\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JsonUtils.h">
+      <Filter>ヘッダー ファイル\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Air.h">
+      <Filter>ヘッダー ファイル\Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CommandLine.h">
+      <Filter>ヘッダー ファイル\Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gnuplot.h">
+      <Filter>ヘッダー ファイル\Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ResultSaver.h">
+      <Filter>ヘッダー ファイル\Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Simulator.h">
+      <Filter>ヘッダー ファイル\Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Constant.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapFeature.h">
+      <Filter>ヘッダー ファイル\Simulator</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
