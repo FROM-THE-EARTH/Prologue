@@ -162,7 +162,9 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application"</Command>
+      <Command>xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application"
+xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application\Release"
+powershell -ExecutionPolicy Unrestricted "$(ProjectDir)Application\make-release-zip.ps1"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -202,7 +204,9 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application"</Command>
+      <Command>xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application"
+xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application\Release"
+powershell -ExecutionPolicy Unrestricted "$(ProjectDir)Application\make-release-zip.ps1"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

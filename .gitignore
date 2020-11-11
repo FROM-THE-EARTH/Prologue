@@ -360,3 +360,6 @@ Prologue/Application/input/wind/
 !Prologue/Application/input/thrust/Sample_J250.txt
 !Prologue/Application/input/thrust/Sample_G40-4W.txt
 !Prologue/Application/input/wind/wind_data_template.csv
+
+#Release
+Prologue/Application/Release/Prologue.exe
