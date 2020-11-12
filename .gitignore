@@ -14,9 +14,9 @@ Prologue/Application/Prologue.exe
 Prologue/Application/result/
 
 # input
-Prologue/Application/input/json/
-Prologue/Application/input/thrust/
-Prologue/Application/input/wind/
+Prologue/Application/input/json/*.json
+Prologue/Application/input/thrust/*.txt
+Prologue/Application/input/wind/*.csv
 !Prologue/Application/input/json/spec_single.json
 !Prologue/Application/input/json/spec_multi.json
 !Prologue/Application/input/thrust/Sample_J250.txt
