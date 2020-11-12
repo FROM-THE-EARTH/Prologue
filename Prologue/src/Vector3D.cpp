@@ -3,7 +3,7 @@
 #include "Quaternion.h"
 
 
-Vector3D Vector3D::applyQuaternion(Quaternion q) {
+Vector3D Vector3D::applyQuaternion(const Quaternion& q) {
 	if (length() == 0) {
 		return Vector3D(0, 0, 0);
 	}

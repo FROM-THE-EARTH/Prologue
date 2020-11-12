@@ -13,9 +13,9 @@ struct Vector3D {
 
 
 	constexpr Vector3D()
-		:x(0),
-		y(0),
-		z(0)
+		:x(0.0),
+		y(0.0),
+		z(0.0)
 	{}
 
 
@@ -37,7 +37,7 @@ struct Vector3D {
 	}
 
 
-	Vector3D applyQuaternion(Quaternion q);
+	Vector3D applyQuaternion(const Quaternion& q);
 
 
 	/*======================operator==========================*/
