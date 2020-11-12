@@ -4,7 +4,7 @@
   物理とか風とかシミュレーション内部ついては[ここ](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/docs/DYNAMICS.md)に書いてます。
 
 # 開発環境等
-  - **使用言語** : C++
+  - **使用言語** : C++17
   - **開発環境** : Visual Studio 2019 (導入推奨)
   - **ライブラリ** : boost 1.71.0 (リポジトリに同包済み)
   - **外部ソフトウェア** : Gnuplot 5.2.8
