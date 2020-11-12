@@ -39,7 +39,7 @@ struct ResultOfEachRocket {
 	double heightAtParaOpened = 0.0;
 	double airVelAtParaOpened = 0.0;
 	double terminalVelocity = 0.0;
-	double landingTime = 0.0;
+	double terminalTime = 0.0;
 
 	//pos
 	double lenFromLaunchPoint = 0.0;

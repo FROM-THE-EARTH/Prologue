@@ -353,8 +353,8 @@ void Solver::finalUpdate() {
 	//terminal velocity
 	result_.rocket[targetRocketIndex_].terminalVelocity = rocket_.velocity.length();
 
-	//landing time
-	result_.rocket[targetRocketIndex_].landingTime = rocket_.elapsedTime;
+	//terminal time
+	result_.rocket[targetRocketIndex_].terminalTime = rocket_.elapsedTime;
 
 	//attack angle
 	const double atkang = launchClear_ && rising ?
