@@ -51,7 +51,7 @@ struct Quaternion {
 	/*=======================method================================*/
 
 	//return the quaternion angular velocity applied
-	Quaternion angularVelocityApplied(Vector3D v);
+	Quaternion angularVelocityApplied(const Vector3D& v);
 
 
 	//return the conjugate quaternion

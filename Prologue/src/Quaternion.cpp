@@ -22,7 +22,7 @@ Quaternion::Quaternion(double angle, double direction) {
 }
 
 
-Quaternion Quaternion::angularVelocityApplied(Vector3D v) {
+Quaternion Quaternion::angularVelocityApplied(const Vector3D& v) {
 	return {
 		0.5 * (y * v.z - z * v.y + w * v.x),
 		0.5 * (-x * v.z + z * v.x + w * v.y),
