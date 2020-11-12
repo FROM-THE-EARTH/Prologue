@@ -4,6 +4,7 @@
   },
 
   "simulation": {
+    "dt": 0.001, //delta time, シミュレーションの1ステップで進む時間[s]
     "detect_peak_threshold": 15.0, //頂点検知によるパラシュート開傘時、最高高度から何m落下したら開傘するかどうか[m]
 
     "scatter": {
