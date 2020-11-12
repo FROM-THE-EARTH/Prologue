@@ -23,8 +23,6 @@ void Simulator::run() {
 
 	Gnuplot::Initialize(outputDirName_.c_str());
 
-	solved_ = true;
-
 	switch (simulationMode_)
 	{
 	case SimulationMode::Scatter:
@@ -119,6 +117,34 @@ bool Simulator::initialize() {
 		}
 	}
 
+	//output
+	outputDirName_ = jsonFilename_;
+	outputDirName_.erase(outputDirName_.size() - 5, 5);
+
+	const std::filesystem::path f = AppSetting::Setting().windModel.realdataFilename;
+	switch (AppSetting::Setting().windModel.type)
+	{
+	case WindModelType::Real:
+		outputDirName_ += "_" + f.stem().string();
+		break;
+	case WindModelType::Original:
+		outputDirName_ += "_original";
+		break;
+	case WindModelType::OnlyPowerLow:
+		outputDirName_ += "_powerlow";
+		break;
+	}
+
+	switch (simulationMode_)
+	{
+	case SimulationMode::Scatter:
+		outputDirName_ += "_scatter";
+		break;
+	case SimulationMode::Detail:
+		outputDirName_ += "_trajectory";
+		break;
+	}
+
 	return true;
 }
 
@@ -134,9 +160,6 @@ void Simulator::setJSONFile() {
 	}
 	const size_t jsonIndex = CommandLine::InputIndex<size_t>(existJSONs.size());
 	jsonFilename_ = existJSONs[jsonIndex - 1];
-
-	outputDirName_ = jsonFilename_;
-	outputDirName_.erase(outputDirName_.size() - 5, 5);
 }
 
 

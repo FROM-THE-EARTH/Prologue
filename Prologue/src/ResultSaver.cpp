@@ -26,8 +26,7 @@ namespace ResultSaver {
 		"max_attack_angle",
 		"max_normal_force",
 		"len_from_launch",
-		"latitude[deg N]",
-		"longitude[deg E]"
+		"latitude, longitude"
 	};
 	const int headerNum = sizeof(headers) / sizeof(*headers);
 	const int dataStartingRow = 6;
@@ -104,7 +103,10 @@ namespace ResultSaver {
 
 	void WriteLine(const SolvedResult& result, size_t rocketIndex) {
 
-		f <<
+		const std::string latitude_longitude = Internal::addComma(result.rocket[rocketIndex].latitude, 8) +"N, "
+			+ Internal::addComma(result.rocket[rocketIndex].longitude, 8)+"E";
+
+			f <<
 			comma <<
 			Internal::addComma(result.windSpeed) <<
 			Internal::addComma(result.windDirection) <<
@@ -119,8 +121,7 @@ namespace ResultSaver {
 			Internal::addComma(result.rocket[rocketIndex].maxAttackAngle) <<
 			Internal::addComma(result.rocket[rocketIndex].maxNormalForce) <<
 			Internal::addComma(result.rocket[rocketIndex].lenFromLaunchPoint) <<
-			Internal::addComma(result.rocket[rocketIndex].latitude, 8) <<
-			Internal::addComma(result.rocket[rocketIndex].longitude, 8);
+			latitude_longitude;
 		f << '\n';
 
 	}
