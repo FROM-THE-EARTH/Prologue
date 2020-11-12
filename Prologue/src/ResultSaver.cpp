@@ -26,25 +26,28 @@ namespace ResultSaver {
 		"max_attack_angle",
 		"max_normal_force",
 		"len_from_launch",
-		"latitude, longitude"
+		"latitude longitude"
 	};
 	const int headerNum = sizeof(headers) / sizeof(*headers);
 	const int dataStartingRow = 6;
 
 	namespace Internal {
 
-		std::string addComma(int str) {
-			return std::to_string(str) + comma;
-		}
-
-		std::string addComma(double str, int precision = 2) {
+		std::string DoubleToString(double d, int precision) {
 			std::stringstream stream;
-			stream << std::fixed << std::setprecision(precision) << str;
-			const std::string s = stream.str() + comma;
-			return s;
+			stream << std::fixed << std::setprecision(precision) << d;
+			return stream.str();
 		}
 
-		std::string addComma(const std::string str) {
+		std::string AddComma(int i) {
+			return std::to_string(i) + comma;
+		}
+
+		std::string AddComma(double d, int precision = 2) {
+			return DoubleToString(d, precision) + comma;
+		}
+
+		std::string AddComma(const std::string str) {
 			return str + comma;
 		}
 	}
@@ -103,24 +106,24 @@ namespace ResultSaver {
 
 	void WriteLine(const SolvedResult& result, size_t rocketIndex) {
 
-		const std::string latitude_longitude = Internal::addComma(result.rocket[rocketIndex].latitude, 8) +"N, "
-			+ Internal::addComma(result.rocket[rocketIndex].longitude, 8)+"E";
+		const std::string latitude_longitude = Internal::DoubleToString(result.rocket[rocketIndex].latitude, 8) +"N "
+			+ Internal::DoubleToString(result.rocket[rocketIndex].longitude, 8)+"E";
 
 			f <<
 			comma <<
-			Internal::addComma(result.windSpeed) <<
-			Internal::addComma(result.windDirection) <<
-			Internal::addComma(result.launchClearVelocity_) <<
-			Internal::addComma(result.rocket[rocketIndex].maxHeight) <<
-			Internal::addComma(result.rocket[rocketIndex].detectPeakTime) <<
-			Internal::addComma(result.rocket[rocketIndex].maxVelocity) <<
-			Internal::addComma(result.rocket[rocketIndex].timeAtParaOpened) <<
-			Internal::addComma(result.rocket[rocketIndex].heightAtParaOpened) <<
-			Internal::addComma(result.rocket[rocketIndex].airVelAtParaOpened) <<
-			Internal::addComma(result.rocket[rocketIndex].terminalVelocity) <<
-			Internal::addComma(result.rocket[rocketIndex].maxAttackAngle) <<
-			Internal::addComma(result.rocket[rocketIndex].maxNormalForce) <<
-			Internal::addComma(result.rocket[rocketIndex].lenFromLaunchPoint) <<
+			Internal::AddComma(result.windSpeed) <<
+			Internal::AddComma(result.windDirection) <<
+			Internal::AddComma(result.launchClearVelocity_) <<
+			Internal::AddComma(result.rocket[rocketIndex].maxHeight) <<
+			Internal::AddComma(result.rocket[rocketIndex].detectPeakTime) <<
+			Internal::AddComma(result.rocket[rocketIndex].maxVelocity) <<
+			Internal::AddComma(result.rocket[rocketIndex].timeAtParaOpened) <<
+			Internal::AddComma(result.rocket[rocketIndex].heightAtParaOpened) <<
+			Internal::AddComma(result.rocket[rocketIndex].airVelAtParaOpened) <<
+			Internal::AddComma(result.rocket[rocketIndex].terminalVelocity) <<
+			Internal::AddComma(result.rocket[rocketIndex].maxAttackAngle) <<
+			Internal::AddComma(result.rocket[rocketIndex].maxNormalForce) <<
+			Internal::AddComma(result.rocket[rocketIndex].lenFromLaunchPoint) <<
 			latitude_longitude;
 		f << '\n';
 

@@ -15,7 +15,7 @@
 
   "wind_model": {
     "power_constant": 6.0,
-    "type": "real",
+    "type": "original",
     "realdata_filename": "nse2020_x-7.csv"
   }
 }

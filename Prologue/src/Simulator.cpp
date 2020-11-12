@@ -23,6 +23,7 @@ void Simulator::run() {
 
 	Gnuplot::Initialize(outputDirName_.c_str());
 
+	const auto start = std::chrono::system_clock::now();
 	switch (simulationMode_)
 	{
 	case SimulationMode::Scatter:
@@ -39,7 +40,15 @@ void Simulator::run() {
 		return;
 	}
 
+	const auto end = std::chrono::system_clock::now();
+	const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+	const std::string s = "Finish processing: " + std::to_string(elapsed / 1000000.0) + "[s]";
+	CommandLine::PrintInfo(PrintInfoType::Information, s.c_str());
+
 	saveResult();
+
+	const std::string str = "Result is saved in \"" + outputDirName_ + "/\"";
+	CommandLine::PrintInfo(PrintInfoType::Information, str.c_str());
 
 	switch (simulationMode_)
 	{
@@ -203,7 +212,7 @@ void Simulator::scatterSimulation() {
 	windSpeed_ = AppSetting::Setting().simulation.windSpeedMin;
 	windDirection_ = 0.0;
 
-	const auto start = std::chrono::system_clock::now();
+	solved_ = true;
 
 	if (AppSetting::Setting().processing.multiThread) {
 		multiThreadSimulation();
@@ -211,12 +220,6 @@ void Simulator::scatterSimulation() {
 	else {
 		singleThreadSimulation();
 	}
-
-	const auto end = std::chrono::system_clock::now();
-
-	const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-	const std::string s = "Finish processing: " + std::to_string(elapsed/1000000.0) + "[s]";
-	CommandLine::PrintInfo(PrintInfoType::Information, s.c_str());
 }
 
 void Simulator::detailSimulation() {

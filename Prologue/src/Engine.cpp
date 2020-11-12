@@ -79,10 +79,10 @@ double Engine::thrustAt(double time) {
 
 	const size_t i = getLowerIndex(thrustDatas_, time);
 
-	const double time1 = thrustDatas_[i - 1].time;
-	const double time2 = thrustDatas_[i].time;
-	const double thrust1 = thrustDatas_[i - 1].thrust;
-	const double thrust2 = thrustDatas_[i].thrust;
+	const double time1 = thrustDatas_[i].time;
+	const double time2 = thrustDatas_[i + 1].time;
+	const double thrust1 = thrustDatas_[i].thrust;
+	const double thrust2 = thrustDatas_[i + 1].thrust;
 
 	const double grad = (thrust2 - thrust1) / (time2 - time1);
 
