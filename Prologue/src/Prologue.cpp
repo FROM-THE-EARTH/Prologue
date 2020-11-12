@@ -28,7 +28,7 @@ int main()
 
 	showSettingInfo();
 
-	Simulator simulator;
+	Simulator simulator(AppSetting::Setting().simulation.dt);
 	if (!simulator.run()) {
 		return 0;
 	}

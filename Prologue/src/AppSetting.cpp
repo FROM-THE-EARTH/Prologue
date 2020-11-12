@@ -40,6 +40,7 @@ bool AppSetting::Initialize() {
 		setting_.processing.multiThread = GetValueExc<bool>(pt, "processing.multi_thread");
 
 		//simulation
+		setting_.simulation.dt = GetValueExc<double>(pt, "simulation.dt");
 		setting_.simulation.detectPeakThreshold = GetValueExc<double>(pt, "simulation.detect_peak_threshold");
 		//scatter
 		setting_.simulation.windSpeedMin = GetValueExc<double>(pt, "simulation.scatter.wind_speed_min");

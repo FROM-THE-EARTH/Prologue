@@ -14,6 +14,7 @@ namespace Settings {
 	};
 
 	struct Simulation {
+		double dt = 0.001;
 		double detectPeakThreshold = 15.0;
 
 		//scatter

@@ -25,7 +25,7 @@ class Simulator {
 	double detachTime_;
 
 	//simulate
-	const double dt_ = 0.001;
+	const double dt_;
 	double windSpeed_ = 0.0;
 	double windDirection_ = 0.0;//direction is clockwise from the north
 	bool solved_ = false;
@@ -40,6 +40,10 @@ class Simulator {
 	std::vector<SolvedResult> scatterResult_;
 
 public:
+
+	Simulator(double dt)
+		:dt_(dt)
+	{}
 
 	bool run();
 
