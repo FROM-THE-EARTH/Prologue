@@ -1,7 +1,7 @@
 # For Developers
   開発者向けドキュメント
 
-  物理とか風とかシミュレーション内部ついては[ここ](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/docs/DYNAMICS.md)に書いてます。
+  物理とか風とかシミュレーション内部ついては[ここ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DYNAMICS.md)に書いてます。
 
 # 開発環境等
   - **使用言語** : C++17
@@ -18,12 +18,12 @@
 # プロジェクトのディレクトリ構成
 ```bash
  Prologue/
-         ├Prologue/#プロジェクトディレクトリ
-         |        ├Application/#ビルド時の作業ディレクトリ及びリリース用ファイル群
-         |        ├Intermediate/#ビルド時の中間ファイル郡
-         |        ├libraries/#外部ライブラリ用ディレクトリ
-         |        └src/#ソースファイル郡
-         └docs/#ドキュメント
+         ├Prologue/               #プロジェクトディレクトリ
+         |        ├Application/   #ビルド時の作業ディレクトリ及びリリース用ファイル群
+         |        ├Intermediate/  #ビルド時の中間ファイル郡
+         |        ├libraries/     #外部ライブラリ用ディレクトリ
+         |        └src/           #ソースファイル郡
+         └docs/                   #ドキュメント
 ```
 
 # ソフトウェア開発にあたって

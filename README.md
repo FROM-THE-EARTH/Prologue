@@ -19,7 +19,7 @@
 
   4. prologue.settings.jsonからアプリケーションの設定を行う
 
-  5. Prologue.exeを起動
+  5. Prologue.exeを起動(コマンドライン上で実行も可能)
 
   6. 指示に従ってシミュレーションを行う
 
@@ -33,7 +33,7 @@
   - 諸元JSONファイルの整理、できればExcelから直接読み込めるようなフォーマットの作成([C++用Excelライブラリ](https://github.com/troldal/OpenXLSX))
 
 # For Developers
-  必ず[これ](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/docs/DEVELOP.md)を読んでください。
+  必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOP.md)を読んでください。
 
 # 変更履歴
 
