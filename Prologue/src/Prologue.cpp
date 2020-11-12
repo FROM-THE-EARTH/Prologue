@@ -7,7 +7,7 @@
 #include <string>
 
 
-const auto VERSION = "Beta";
+const auto VERSION = "1.0.0";
 
 
 bool setTitle();
@@ -35,7 +35,7 @@ int main()
 bool setTitle() {
 	FILE* p = _popen(("title Prologue_v" + std::string(VERSION)).c_str(), "w");
 	if (p == nullptr) {
-		std::cout << "Could not set application title" << std::endl;
+		CommandLine::PrintInfo(PrintInfoType::Error, "Could not set application title");
 		return false;
 	}
 	else {
