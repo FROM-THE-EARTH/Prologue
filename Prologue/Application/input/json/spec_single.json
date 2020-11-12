@@ -6,8 +6,6 @@
 		"VERSION": "1"
 	},
 
-
-
 	"rocketinitial": {
 		"ref_len": 2.01,
 		"diam": 0.091,
@@ -26,11 +24,9 @@
 		"delay_time_1st": 0
 	},
 
-
 	"motor1": {
-		"motor_file": "Sample_J250.txt"
+		"motor_file": "Sample_K240.txt"
 	},
-
 
 	"environment": {
 		"place": "nosiro_sea",
