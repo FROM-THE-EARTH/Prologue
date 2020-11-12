@@ -2,6 +2,7 @@
 #include "Solver.h"
 #include "SpecJson.h"
 #include "Engine.h"
+#include "Gnuplot.h"
 
 #include <string>
 #include <vector>
@@ -40,7 +41,20 @@ class Simulator {
 
 public:
 
-	void run();
+	bool run();
+
+	void plotToGnuplot() {
+		switch (simulationMode_)
+		{
+		case SimulationMode::Scatter:
+			Gnuplot::Plot(scatterResult_);
+			break;
+
+		case SimulationMode::Detail:
+			Gnuplot::Plot(detailResult_);
+			break;
+		}
+	}
 
 private:
 

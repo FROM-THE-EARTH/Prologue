@@ -2,7 +2,6 @@
 
 #include "CommandLine.h"
 #include "SpecJsonReader.h"
-#include "Gnuplot.h"
 #include "ResultSaver.h"
 #include "AppSetting.h"
 
@@ -13,10 +12,10 @@
 #include <chrono>
 
 
-void Simulator::run() {
+bool Simulator::run() {
 	if (!initialize()) {
 		CommandLine::PrintInfo(PrintInfoType::Error, "Could not initialize Simulator");
-		return;
+		return false;
 	}
 
 	createResultDirectory();
@@ -24,6 +23,7 @@ void Simulator::run() {
 	Gnuplot::Initialize(outputDirName_.c_str());
 
 	const auto start = std::chrono::system_clock::now();
+
 	switch (simulationMode_)
 	{
 	case SimulationMode::Scatter:
@@ -37,7 +37,7 @@ void Simulator::run() {
 
 	if (!solved_) {
 		CommandLine::PrintInfo(PrintInfoType::Error, "Failed to simulate");
-		return;
+		return false;
 	}
 
 	const auto end = std::chrono::system_clock::now();
@@ -50,21 +50,15 @@ void Simulator::run() {
 	const std::string str = "Result is saved in \"" + outputDirName_ + "/\"";
 	CommandLine::PrintInfo(PrintInfoType::Information, str.c_str());
 
-	switch (simulationMode_)
-	{
-	case SimulationMode::Scatter:
+	if (simulationMode_ == SimulationMode::Scatter) {
 		for (auto& r : scatterResult_) {
 			eraseNotLandingPoint(&r);
 		}
-		Gnuplot::Plot(scatterResult_);
-		break;
-
-	case SimulationMode::Detail:
-		Gnuplot::Plot(detailResult_);
-		break;
 	}
 
-	Gnuplot::Show();
+	CommandLine::SetOutputDir(outputDirName_);
+
+	return true;
 }
 
 
@@ -129,18 +123,19 @@ bool Simulator::initialize() {
 	//output
 	outputDirName_ = jsonFilename_;
 	outputDirName_.erase(outputDirName_.size() - 5, 5);
+	outputDirName_ += "[";
 
 	const std::filesystem::path f = AppSetting::Setting().windModel.realdataFilename;
 	switch (AppSetting::Setting().windModel.type)
 	{
 	case WindModelType::Real:
-		outputDirName_ += "_" + f.stem().string();
+		outputDirName_ += "(" + f.stem().string() + ")";
 		break;
 	case WindModelType::Original:
-		outputDirName_ += "_original";
+		outputDirName_ += "original";
 		break;
 	case WindModelType::OnlyPowerLow:
-		outputDirName_ += "_powerlow";
+		outputDirName_ += "powerlow";
 		break;
 	}
 
@@ -150,9 +145,21 @@ bool Simulator::initialize() {
 		outputDirName_ += "_scatter";
 		break;
 	case SimulationMode::Detail:
+		outputDirName_ += "_detail";
+		break;
+	}
+
+	switch (trajectoryMode_)
+	{
+	case TrajectoryMode::Parachute:
+		outputDirName_ += "_para";
+		break;
+	case TrajectoryMode::Trajectory:
 		outputDirName_ += "_trajectory";
 		break;
 	}
+
+	outputDirName_ += "]";
 
 	return true;
 }

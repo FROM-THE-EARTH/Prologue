@@ -23,6 +23,7 @@ namespace ResultSaver {
 		"height_paraopen",
 		"airspeed_paraopen",
 		"vel_terminal",
+		"landing_time",
 		"max_attack_angle",
 		"max_normal_force",
 		"len_from_launch",
@@ -121,6 +122,7 @@ namespace ResultSaver {
 			Internal::AddComma(result.rocket[rocketIndex].heightAtParaOpened) <<
 			Internal::AddComma(result.rocket[rocketIndex].airVelAtParaOpened) <<
 			Internal::AddComma(result.rocket[rocketIndex].terminalVelocity) <<
+			Internal::AddComma(result.rocket[rocketIndex].landingTime) <<
 			Internal::AddComma(result.rocket[rocketIndex].maxAttackAngle) <<
 			Internal::AddComma(result.rocket[rocketIndex].maxNormalForce) <<
 			Internal::AddComma(result.rocket[rocketIndex].lenFromLaunchPoint) <<

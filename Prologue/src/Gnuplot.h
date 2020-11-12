@@ -14,4 +14,5 @@ namespace Gnuplot {
 
 	void Show();
 
+	void Save();
 }

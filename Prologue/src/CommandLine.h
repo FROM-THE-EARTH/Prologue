@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-
+#include <string>
 
 enum class PrintInfoType {
 	Information,
@@ -13,7 +13,7 @@ namespace CommandLine {
 
 	namespace Internal {
 
-		extern size_t counter;
+		extern size_t Counter;
 
 		void ShowChoices();
 
@@ -22,9 +22,9 @@ namespace CommandLine {
 		template<class... Args>
 		void ShowChoices(const char* s, Args... choices) {
 
-			std::cout << counter << ": " << s << std::endl;
+			std::cout << Counter << ": " << s << std::endl;
 
-			counter++;
+			Counter++;
 
 			ShowChoices(std::forward<Args>(choices)...);
 		}
@@ -66,7 +66,7 @@ namespace CommandLine {
 
 		std::cout << "<!===" << question << "===!>" << std::endl;
 
-		Internal::counter = 1;
+		Internal::Counter = 1;
 
 		Internal::ShowChoices(std::forward<Args>(choices)...);
 	}
@@ -92,4 +92,8 @@ namespace CommandLine {
 		Internal::PrintInfoFirstLine(type, std::forward<Args>(lines)...);
 		std::cout << std::endl;
 	}
+
+	void Run();
+
+	void SetOutputDir(const std::string dirname);
 }

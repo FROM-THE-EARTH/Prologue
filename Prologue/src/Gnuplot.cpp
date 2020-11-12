@@ -198,14 +198,6 @@ namespace Gnuplot {
 			}
 		}
 
-		void SavePlt() {
-			fprintf(p, "save \"result.plt\"\n");
-
-			fprintf(p, "replot\n");
-
-			fprintf(p, "set terminal windows\n");
-		}
-
 
 		void SaveAsPNG() {
 			fprintf(p, "set terminal pngcairo size 1920, 1440\n");
@@ -289,9 +281,46 @@ namespace Gnuplot {
 		dimension = PlotDimension::Dimension2D;
 	}
 
-
 	void Show() {
-		p = _popen("gnuplot -persist", "w");
+		if (std::filesystem::exists("result.plt")) {
+			p = _popen("gnuplot", "w");
+			fprintf(p, "load \"result.plt\"\n");
+		}
+		else {
+			p = _popen("gnuplot", "w");
+			if (p == nullptr) {
+				std::cout << "Could not open gnuplot" << std::endl;
+				return;
+			}
+
+			Internal::Initialize();
+
+			fprintf(p, "cd \"result/%s\"\n", dirname.c_str());
+
+			switch (dimension)
+			{
+			case PlotDimension::Dimension2D:
+				Internal::SetMap();
+				Internal::Show2D();
+				break;
+
+			case PlotDimension::Dimension3D:
+				Internal::Show3D();
+				break;
+			}
+		}
+
+		fflush(p);
+
+		system("pause");
+
+		fprintf(p, "exit\n");
+
+		_pclose(p);
+	}
+
+	void Save() {
+		p = _popen("gnuplot", "w");
 		if (p == nullptr) {
 			std::cout << "Could not open gnuplot" << std::endl;
 			return;
@@ -313,15 +342,22 @@ namespace Gnuplot {
 			break;
 		}
 
-		Internal::SavePlt();
+		fflush(p);
+
+		fprintf(p, "save \"result.plt\"\n");
+
+		fprintf(p, "replot\n");
+
+		fprintf(p, "set terminal windows\n");
+
+		fflush(p);
 
 		if (dimension == PlotDimension::Dimension2D) {
 			Internal::SaveAsPNG();
 		}
 
-		fflush(p);
-		system("pause");
 		fprintf(p, "exit\n");
+
 		_pclose(p);
 	}
 }

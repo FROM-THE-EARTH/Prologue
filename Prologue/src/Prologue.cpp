@@ -2,6 +2,7 @@
 
 #include "AppSetting.h"
 #include "CommandLine.h"
+#include "Gnuplot.h"
 
 #include <iostream>
 #include <string>
@@ -28,7 +29,15 @@ int main()
 	showSettingInfo();
 
 	Simulator simulator;
-	simulator.run();
+	if (!simulator.run()) {
+		return 0;
+	}
+
+	simulator.plotToGnuplot();
+
+	Gnuplot::Save();
+
+	CommandLine::Run();
 }
 
 
