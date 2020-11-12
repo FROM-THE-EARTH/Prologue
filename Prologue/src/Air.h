@@ -9,6 +9,14 @@ struct WindData {
 	double height = 0;
 	double speed = 0;
 	double direction = 0;
+
+	bool operator==(const WindData& w) {
+		return (
+			height == w.height
+			&& speed == w.speed
+			&& direction == w.direction
+			);
+	}
 };
 
 
@@ -32,9 +40,9 @@ class Air {
 
 public:
 
-	Air();
+	Air();//real
 
-	Air(double groundWindSpeed, double groundWindDirection);
+	Air(double groundWindSpeed, double groundWindDirection);//original or only_powerlow
 
 	void update(double height);
 

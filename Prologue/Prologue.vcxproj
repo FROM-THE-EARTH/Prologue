@@ -163,7 +163,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application"
-xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application\Release"
+xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application\Prologue"
 powershell -ExecutionPolicy Unrestricted "$(ProjectDir)Application\make-release-zip.ps1"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -205,7 +205,7 @@ powershell -ExecutionPolicy Unrestricted "$(ProjectDir)Application\make-release-
     </Link>
     <PostBuildEvent>
       <Command>xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application"
-xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application\Release"
+xcopy /I /D /Y "$(OutDir)$(TargetFileName)" "$(ProjectDir)Application\Prologue"
 powershell -ExecutionPolicy Unrestricted "$(ProjectDir)Application\make-release-zip.ps1"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

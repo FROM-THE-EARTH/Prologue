@@ -48,12 +48,16 @@ Air::Air()
 	size_t i = 1;
 	windData_.push_back(WindData());
 	char c;
+	std::string dummy;
 	while (!windfile.eof()) {
 		windData_.push_back(WindData());
-		windfile >> windData_[i].height >> c >> windData_[i].speed >> c >> windData_[i].direction;
+		windfile >> windData_[i].height >> c >> windData_[i].speed >> c >> windData_[i].direction >> dummy;
+		if (windData_[i] == WindData()) {
+			break;
+		}
 		i++;
 	}
-	if (windData_[windData_.size() - 1].speed == 0) {
+	if (windData_[windData_.size() - 1] == WindData()) {
 		windData_.pop_back();
 	}
 

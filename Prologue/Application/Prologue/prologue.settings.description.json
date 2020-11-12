@@ -1,0 +1,25 @@
+{
+  "processing": {
+    "multi_thread": false //マルチスレッドによる処理の高速化。Scatterモードでのみ有効。ノートPCの場合バッテリー消費が上がる恐れがあります。
+  },
+
+  "simulation": {
+    "detect_peak_threshold": 15.0, //頂点検知によるパラシュート開傘時、最高高度から何m落下したら開傘するかどうか[m]
+
+    "scatter": {
+      "wind_speed_min": 0.0, //シミュレーション対象の風速の最小値[m]
+      "wind_speed_max": 7.0, //シミュレーション対象の風速の最大値[m]
+      "wind_dir_interval": 30.0 //風向を何度ずつ変更してシミュレーションするか[deg]
+    }
+  },
+
+  "wind_model": {
+    "power_constant": 7.0, //べき法則の係数
+    "type": "real", //使用する風モデル　real, original, only_powerlow
+    "realdata_filename": "wind_data_template.csv" //風向風速データのファイル名。use_realdataがtrueの場合のみ有効。
+  }
+}
+
+/*
+  このファイルはprologue.settings.jsonの説明用ファイルです。不要な場合は削除しても問題有りません。
+*/
