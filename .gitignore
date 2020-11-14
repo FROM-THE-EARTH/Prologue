@@ -17,6 +17,7 @@ Prologue/Application/result/
 Prologue/Application/input/json/*.json
 Prologue/Application/input/thrust/*.txt
 Prologue/Application/input/wind/*.csv
+!Prologue/Application/input/json/description.json
 !Prologue/Application/input/json/spec_single.json
 !Prologue/Application/input/json/spec_multi.json
 !Prologue/Application/input/thrust/Sample_K240.txt
