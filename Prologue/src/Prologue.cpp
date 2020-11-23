@@ -18,12 +18,12 @@ void showSettingInfo();
 int main()
 {
 	if (!setTitle()) {
-		return 1;
+		return 0;
 	}
 
 	if (!AppSetting::Initialize()) {
 		std::cout << "Failed to initialize application" << std::endl;
-		return 1;
+		return 0;
 	}
 
 	showSettingInfo();
