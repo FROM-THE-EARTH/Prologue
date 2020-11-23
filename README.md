@@ -6,7 +6,7 @@
 # Download
   Latest Update: 2020/11/23
 
-  Version: 1.0.1
+  Version: 1.1.0
 
   [**Download**](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/Prologue/Application/Prologue.zip)
 
@@ -36,6 +36,9 @@
   必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOP.md)を読んでください。
 
 # 変更履歴
+
+## v1.1.0
+- 伊豆海マップを追加
 
 ## v1.0.1
 - 弾道シミュレーションモードで最高高度時刻が取得できない不具合を修正
