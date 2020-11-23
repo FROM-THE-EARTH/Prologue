@@ -15,7 +15,7 @@ enum class Map {
 };
 
 
-struct Feature {
+struct MapCoordinate {
 private:
 	double degPerLen_latitude;
 	double degPerLen_longitude;
@@ -25,7 +25,7 @@ public:
 	const double latitude;//launchpoint [deg N]
 	const double longitude;//launchpoint [deg E]
 
-	Feature(Map _map, double _latitude, double _longitude)
+	MapCoordinate(Map _map, double _latitude, double _longitude)
 		:map(_map),
 		latitude(_latitude),
 		longitude(_longitude)
@@ -45,37 +45,37 @@ public:
 
 
 namespace MapFeature {
-	const Feature NoshiroSea{
+	const MapCoordinate NoshiroSea{
 		Map::NOSIRO_SEA,
 		40.242865,
 		140.010450
 	};
 
-	const Feature NoshiroLand{
+	const MapCoordinate NoshiroLand{
 		Map::NOSIRO_LAND,
 		0,
 		0
 	};
 
-	const Feature IzuSea{
+	const MapCoordinate IzuSea{
 		Map::IZU_SEA,
 		0,
 		0
 	};
 
-	const Feature IzuLand{
+	const MapCoordinate IzuLand{
 		Map::IZU_LAND,
 		0,
 		0
 	};
 
-	const Feature Unknown{
+	const MapCoordinate Unknown{
 		Map::UNKNOWN,
 		0,
 		0
 	};
 
 
-	Feature GetMapFromName(const std::string& name);
+	MapCoordinate GetMapFromName(const std::string& name);
 
 }

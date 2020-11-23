@@ -2,7 +2,7 @@
 
 
 namespace MapFeature {
-	Feature GetMapFromName(const std::string& name) {
+	MapCoordinate GetMapFromName(const std::string& name) {
 		if (name == "nosiro_sea") {
 			return NoshiroSea;
 		}
