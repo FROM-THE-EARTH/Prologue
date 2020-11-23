@@ -4,9 +4,9 @@
   出力ファイルは審査書書きやすいようにしてます。
 
 # Download
-  Latest Update: 2020/11/13
+  Latest Update: 2020/11/23
 
-  Version: 1.0.0
+  Version: 1.0.1
 
   [**Download**](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/Prologue/Application/Prologue.zip)
 
@@ -36,6 +36,9 @@
   必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOP.md)を読んでください。
 
 # 変更履歴
+
+## v1.0.1
+- 弾道シミュレーションモードで最高高度時刻が取得できない不具合を修正
 
 ## v1.0.0
 - リリース
