@@ -178,6 +178,8 @@ namespace Gnuplot {
 					break;
 
 				case Map::IZU_SEA:
+					command += "izu_sea.png\" ";
+					command += "binary filetype=png dx=5.77 dy=5.77 origin=(-2150,-5550) with rgbimage notitle,";
 					break;
 
 				case Map::NOSIRO_LAND:
@@ -213,8 +215,10 @@ namespace Gnuplot {
 	}
 
 
-	void Initialize(const char* _dirname) {
+	void Initialize(const char* _dirname, Map m) {
+		map = m;
 		dirname = _dirname;
+
 		const std::filesystem::path dir = "result/" + dirname + "/data";
 		if (!std::filesystem::exists(dir)) {
 			std::filesystem::create_directory(dir);

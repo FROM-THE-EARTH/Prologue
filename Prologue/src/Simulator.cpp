@@ -4,6 +4,7 @@
 #include "SpecJsonReader.h"
 #include "ResultSaver.h"
 #include "AppSetting.h"
+#include "MapFeature.h"
 
 #include <iostream>
 #include <filesystem>
@@ -20,7 +21,7 @@ bool Simulator::run() {
 
 	createResultDirectory();
 
-	Gnuplot::Initialize(outputDirName_.c_str());
+	Gnuplot::Initialize(outputDirName_.c_str(), MapFeature::GetMapFromName(specJson_.env.place).map);
 
 	const auto start = std::chrono::system_clock::now();
 

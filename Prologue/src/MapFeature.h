@@ -3,6 +3,7 @@
 #include "Constant.h"
 
 #include <math.h>
+#include <string>
 
 
 enum class Map {
@@ -75,6 +76,6 @@ namespace MapFeature {
 	};
 
 
-	Feature GetMapFromName(const char* name);
+	Feature GetMapFromName(const std::string& name);
 
 }

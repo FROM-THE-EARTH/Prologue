@@ -3,10 +3,11 @@
 #include <string>
 
 struct SolvedResult;
+enum class Map;
 
 namespace Gnuplot {
 
-	void Initialize(const char* dirname);
+	void Initialize(const char* _dirname, Map m);
 
 	void Plot(const SolvedResult& result);
 
