@@ -100,7 +100,6 @@ void Solver::updateParachuteStatus() {
 	const bool detectpeakConditon = result_.rocket[targetRocketIndex_].maxHeight > rocket_.pos.z + AppSetting::Setting().simulation.detectPeakThreshold;
 
 	if (detectpeakConditon && !rocket_.detectPeak) {
-		result_.rocket[targetRocketIndex_].detectPeakTime = rocket_.elapsedTime;
 		rocket_.detectPeak = true;
 	}
 
@@ -343,6 +342,7 @@ void Solver::finalUpdate() {
 	//height
 	if (result_.rocket[targetRocketIndex_].maxHeight < rocket_.pos.z) {
 		result_.rocket[targetRocketIndex_].maxHeight = rocket_.pos.z;
+		result_.rocket[targetRocketIndex_].detectPeakTime = rocket_.elapsedTime;
 	}
 
 	//velocity
