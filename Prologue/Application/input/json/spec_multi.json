@@ -6,7 +6,7 @@
 		"VERSION": "1"
 	},
 
-	"rocketinitial": {
+	"rocket1": {
 		"ref_len": 2.01,
 		"diam": 0.091,
 		"mass_i": 8.243,
@@ -20,7 +20,22 @@
 		"Cna": 11.747,
 		"Cmq": -3.00
 	},
-	"rocketfinal2": {
+	"rocket2": {
+		"ref_len": 1.655,
+		"diam": 0.091,
+		"mass_i": 5.589,
+		"mass_f": 5.589,
+		"CGlen_i": 0.979,
+		"Iyz_i": 1.5,
+		"CPlen": 1.025,
+		"Cd": 0.465,
+		"Cna": 9.747,
+		"Cmq": -3.00,
+		"vel_1st": 12,
+		"op_type_1st": 0,
+		"delay_time_1st": 0
+	},
+	"rocket3": {
 		"ref_len": 0.7065,
 		"diam": 0.091,
 		"mass_i": 2.278,
@@ -34,21 +49,6 @@
 		"Cna": 3.379,
 		"Cmq": -3.00,
 		"vel_1st": 10,
-		"op_type_1st": 0,
-		"delay_time_1st": 0
-	},
-	"rocketfinal1": {
-		"ref_len": 1.655,
-		"diam": 0.091,
-		"mass_i": 5.589,
-		"mass_f": 5.589,
-		"CGlen_i": 0.979,
-		"Iyz_i": 1.5,
-		"CPlen": 1.025,
-		"Cd": 0.465,
-		"Cna": 9.747,
-		"Cmq": -3.00,
-		"vel_1st": 12,
 		"op_type_1st": 0,
 		"delay_time_1st": 0
 	},

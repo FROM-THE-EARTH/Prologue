@@ -11,7 +11,7 @@
 
 
 constexpr int multipleRocketNum = 3;
-constexpr const char* RocketParamList[multipleRocketNum] = { "rocketinitial", "rocketfinal1", "rocketfinal2" };
+constexpr const char* RocketParamList[multipleRocketNum] = { "rocket1", "rocket2", "rocket3" };
 
 
 double calcParachuteCd(double massFinal, double terminalVelocity) {

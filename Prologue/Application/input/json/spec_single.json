@@ -6,7 +6,7 @@
 		"VERSION": "1"
 	},
 
-	"rocketinitial": {
+	"rocket1": {
 		"ref_len": 2.01,
 		"diam": 0.091,
 		"mass_i": 8.243,
