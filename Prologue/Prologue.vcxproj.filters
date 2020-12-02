@@ -133,5 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Application\prologue.settings.json" />
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>

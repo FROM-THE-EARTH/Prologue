@@ -52,6 +52,7 @@
     <ClInclude Include="src\Vector3D.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="Application\prologue.settings.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
