@@ -29,6 +29,7 @@ struct Rocket {
 	bool detectPeak = false;
 	//calculated
 	Vector3D airSpeed_b;//air speed [m/s]
+	double attackAngle;
 
 
 	/*============================operator==========================*/
@@ -66,6 +67,7 @@ struct Rocket {
 			waitForOpenPara,
 			detectPeak,
 			airSpeed_b,
+			attackAngle
 		};
 	}
 };

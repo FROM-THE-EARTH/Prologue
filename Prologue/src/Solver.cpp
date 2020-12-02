@@ -199,12 +199,10 @@ void Solver::updateParameters() {
 		rocket_.airSpeed_b = Vector3D();
 	}
 
-	double alpha = 0, beta = 0;
-
-	if (rocket_.airSpeed_b.length() != 0) {
-		alpha = atan((rocket_.airSpeed_b).z / ((rocket_.airSpeed_b).x + 1e-16));
-		beta = atan((rocket_.airSpeed_b).y / ((rocket_.airSpeed_b).x + 1e-16));
-	}
+	const double alpha = atan(rocket_.airSpeed_b.z / (rocket_.airSpeed_b.x + 1e-16));
+	const double beta = atan(rocket_.airSpeed_b.y / (rocket_.airSpeed_b.x + 1e-16));
+	rocket_.attackAngle = atan(sqrt(rocket_.airSpeed_b.y * rocket_.airSpeed_b.y + rocket_.airSpeed_b.z * rocket_.airSpeed_b.z)
+		/ (rocket_.airSpeed_b.x + 1e-16));
 
 	rocket_.Cnp = specJson_.rocketParam[targetRocketIndex_].Cna * alpha;
 	rocket_.Cny = specJson_.rocketParam[targetRocketIndex_].Cna * beta;
@@ -246,7 +244,7 @@ void Solver::calcDynamicForce() {
 			* rocket_.airSpeed_b.length()
 			* rocket_.airSpeed_b.length()
 			* specJson_.rocketParam[targetRocketIndex_].bottomArea;
-		force_b_.x -= specJson_.rocketParam[targetRocketIndex_].Cd * preForceCalc;
+		force_b_.x -= specJson_.rocketParam[targetRocketIndex_].Cd * preForceCalc * cos(rocket_.attackAngle);
 		force_b_.y -= rocket_.Cny * preForceCalc;
 		force_b_.z -= rocket_.Cnp * preForceCalc;
 
@@ -357,11 +355,7 @@ void Solver::finalUpdate() {
 	result_.rocket[targetRocketIndex_].terminalTime = rocket_.elapsedTime;
 
 	//attack angle
-	const double atkang = launchClear_ && rising ?
-		atan(sqrt(rocket_.airSpeed_b.y * rocket_.airSpeed_b.y + rocket_.airSpeed_b.z * rocket_.airSpeed_b.z)
-			/ (rocket_.airSpeed_b.x + 1e-16))
-		* 180 / Constant::PI
-		: 0.0;
+	const double atkang = launchClear_ && rising ? rocket_.attackAngle * 180 / Constant::PI : 0.0;
 	if (result_.rocket[targetRocketIndex_].maxAttackAngle < atkang) {
 		result_.rocket[targetRocketIndex_].maxAttackAngle = atkang;
 	}
