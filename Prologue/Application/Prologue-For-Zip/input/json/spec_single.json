@@ -1,0 +1,37 @@
+{
+	"info": {
+		"TEAM": "Prologue",
+		"NAME": "sample_multi",
+		"DATE": "20201111",
+		"VERSION": "1"
+	},
+
+	"rocket1": {
+		"ref_len": 2.01,
+		"diam": 0.091,
+		"mass_i": 8.243,
+		"mass_f": 7.867,
+		"CGlen_i": 1.074,
+		"CGlen_f": 1.051,
+		"Iyz_i": 1.971,
+		"Iyz_f": 1.863,
+		"CPlen": 1.380,
+		"Cd": 1.332,
+		"Cna": 11.747,
+		"Cmq": -3.00,
+		"vel_1st": 10,
+		"op_type_1st": 0,
+		"delay_time_1st": 0
+	},
+
+	"motor1": {
+		"motor_file": "Sample_K240.txt"
+	},
+
+	"environment": {
+		"place": "nosiro_sea",
+		"rail_len": 5.0,
+		"rail_azi": -60.0,
+		"rail_elev": 70
+	}
+}
