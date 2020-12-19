@@ -4,9 +4,9 @@
   出力ファイルは審査書書きやすいようにしてます。
 
 # Download
-  Latest Update: 2020/11/23
+  Latest Update: 2020/12/19
 
-  Version: 1.1.0
+  Version: 1.1.1
 
   [**Download**](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/Prologue/Application/Prologue.zip)
 
