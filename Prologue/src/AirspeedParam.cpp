@@ -1,6 +1,39 @@
 #include "AirspeedParam.h"
 
+#include "Algorithm.h"
+
 #include <fstream>
+
+size_t search(const std::vector<VsAirspeed>& vs, double airSpeed, size_t begin, size_t end) {
+	if (begin == end
+		|| begin == end - 1) {
+		return begin;
+	}
+
+	size_t mid = begin + (end - begin) / 2;
+	if (vs[mid].airSpeed == airSpeed) {
+		return mid;
+	}
+	else if (vs[mid].airSpeed > airSpeed) {
+		return search(vs, airSpeed, begin, mid);
+	}
+	else {
+		return search(vs, airSpeed, mid, end - 1);
+	}
+}
+
+size_t getLowerIndex(const std::vector<VsAirspeed>& vs, double airSpeed) {
+	size_t index = vs.size() / 2;
+	if (vs[index].airSpeed == airSpeed) {
+		return index;
+	}
+	else if (vs[index].airSpeed > airSpeed) {
+		return search(vs, airSpeed, 0, index);
+	}
+	else {
+		return search(vs, airSpeed, index, vs.size() - 1);
+	}
+}
 
 void AirspeedParam::loadParam(const std::string filename) {
 	std::fstream fs("input/airspeed_param/" + filename);
@@ -29,7 +62,19 @@ void AirspeedParam::loadParam(const std::string filename) {
 	exist_ = true;
 }
 
-VsAirspeed AirspeedParam::getParam(double airspeed) {
+VsAirspeed AirspeedParam::getParam(double airSpeed) {
 
-	return { airspeed,0,0,0,0,0 };
+	const size_t i = getLowerIndex(vsAirspeed_, airSpeed);
+
+	const double airSpeed1 = vsAirspeed_[i].airSpeed;
+	const double airSpeed2 = vsAirspeed_[i + 1].airSpeed;
+
+	return {
+		airSpeed,
+		Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cp, vsAirspeed_[i + 1].Cp),
+		Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cp_a, vsAirspeed_[i + 1].Cp_a),
+		Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cd, vsAirspeed_[i + 1].Cd),
+		Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cd_a2, vsAirspeed_[i + 1].Cd_a2),
+		Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cna, vsAirspeed_[i + 1].Cna)
+	};
 }

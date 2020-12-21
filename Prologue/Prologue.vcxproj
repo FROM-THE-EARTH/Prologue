@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\Air.cpp" />
     <ClCompile Include="src\AirspeedParam.cpp" />
+    <ClCompile Include="src\Algorithm.cpp" />
     <ClCompile Include="src\AppSetting.cpp" />
     <ClCompile Include="src\CommandLine.cpp" />
     <ClCompile Include="src\Gnuplot.cpp" />
@@ -38,6 +39,7 @@
   <ItemGroup>
     <ClInclude Include="src\Air.h" />
     <ClInclude Include="src\AirspeedParam.h" />
+    <ClInclude Include="src\Algorithm.h" />
     <ClInclude Include="src\CommandLine.h" />
     <ClInclude Include="src\Constant.h" />
     <ClInclude Include="src\Gnuplot.h" />

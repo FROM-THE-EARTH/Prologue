@@ -24,5 +24,5 @@ public:
 		return exist_;
 	}
 
-	VsAirspeed getParam(double airspeed);
+	VsAirspeed getParam(double airSpeed);
 };

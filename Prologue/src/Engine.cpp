@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <algorithm>
 
 size_t search(const std::vector<ThrustData>& thrust, double time, size_t begin, size_t end) {
 	if (begin == end
