@@ -24,7 +24,7 @@
 		"op_time_1st": "open time",
 		"delay_time_1st": "パラシュートが開くのにかかる時間",
 		"motor_file": "エンジンの推力履歴ファイル名　分離後1段目などの場合は空白にする",
-		"airspee_param_file": "圧力中心（傾斜），抗力係数（傾斜），法線力係数 vs 機体速度　のcsvファイル名"
+		"airspeed_param_file": "圧力中心（傾斜），抗力係数（傾斜），法線力係数 vs 機体速度　のcsvファイル名"
 	},
 
 	"rocket2": {
