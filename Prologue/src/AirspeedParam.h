@@ -9,6 +9,17 @@ struct VsAirspeed {
 	double Cd;
 	double Cd_a2;
 	double Cna;
+
+	bool operator==(const VsAirspeed& v) {
+		return (
+			airSpeed == v.airSpeed
+			&& Cp == v.Cp
+			&& Cp_a == v.Cp_a
+			&& Cd == v.Cd
+			&& Cd_a2 == v.Cd_a2
+			&& Cna == v.Cna
+			);
+	}
 };
 
 class AirspeedParam{
@@ -18,7 +29,7 @@ class AirspeedParam{
 	bool exist_ = false;
 
 public:
-	void loadParam(const std::string filename);
+	void loadParam(const std::string& filename);
 
 	bool exist() const {
 		return exist_;

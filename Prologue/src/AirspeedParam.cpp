@@ -35,26 +35,29 @@ size_t getLowerIndex(const std::vector<VsAirspeed>& vs, double airSpeed) {
 	}
 }
 
-void AirspeedParam::loadParam(const std::string filename) {
+void AirspeedParam::loadParam(const std::string& filename) {
 	std::fstream fs("input/airspeed_param/" + filename);
 
 	if (!fs.is_open()) {
 		return;
 	}
 
-	size_t i = 1;
+	size_t i = 0;
 	char c;
 	std::string dummy;
-	fs >> dummy >> c >> dummy >> c >> dummy >> c >> dummy >> c >> dummy >> c >> dummy >> dummy;//read header
+	fs >> dummy;//read header
 	while (!fs.eof()) {
-		vsAirspeed_.push_back({});
+		vsAirspeed_.push_back(VsAirspeed());
 		fs >> vsAirspeed_[i].airSpeed >> c
 			>> vsAirspeed_[i].Cp >> c
 			>> vsAirspeed_[i].Cp_a >> c
 			>> vsAirspeed_[i].Cd >> c
 			>> vsAirspeed_[i].Cd_a2 >> c
-			>> vsAirspeed_[i].Cna >> dummy;
+			>> vsAirspeed_[i].Cna;
 		i++;
+	}
+	if (vsAirspeed_[vsAirspeed_.size() - 1] == VsAirspeed()) {
+		vsAirspeed_.pop_back();
 	}
 
 	fs.close();
