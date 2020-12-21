@@ -70,12 +70,10 @@ namespace SpecJsonReader {
 						spec->rocketParam[index].parachute[0].terminalVelocity
 					);
 			}
-		}
 
+			spec->rocketParam[index].engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
+			int a = 1;
 
-		void ReadMotorInfo(const boost::property_tree::ptree& pt, SpecJson* spec) {
-			spec->enginesFilename[0] = JsonUtils::GetValue<std::string>(pt, "motor1.motor_file");
-			spec->enginesFilename[1] = JsonUtils::GetValue<std::string>(pt, "motor2.motor_file");
 		}
 
 
@@ -116,8 +114,6 @@ namespace SpecJsonReader {
 		/*Read once*/
 		Internal::ReadExtraInfo(pt, &spec);
 
-		Internal::ReadMotorInfo(pt, &spec);
-
 		Internal::ReadEnvironment(pt, &spec);
 
 		/*Read once or more*/
@@ -144,7 +140,7 @@ namespace SpecJsonReader {
 		boost::property_tree::ptree pt;
 		boost::property_tree::read_json("input/json/" + filename, pt);
 
-		isMultiple = JsonUtils::GetValue<std::string>(pt, "motor2.motor_file") != "";
+		isMultiple = JsonUtils::Exist(pt, RocketParamList[1]);
 
 		multipleJudged = true;
 

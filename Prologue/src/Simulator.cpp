@@ -98,29 +98,6 @@ bool Simulator::initialize() {
 	//read json
 	specJson_ = SpecJsonReader::ReadJson(jsonFilename_);
 
-	//read thrust data
-	size_t engineNum = 0;
-	for (auto& f :specJson_.enginesFilename) {
-		if (f != "") {
-			engineNum++;
-		}
-		else {
-			break;
-		}
-	}
-	engine_ = std::vector<Engine>(engineNum);
-	for (size_t i = 0; i < engineNum; i++) {
-		if (engine_[i].loadThrustData(specJson_.enginesFilename[i])) {
-			const std::string s = "Engine: " + specJson_.enginesFilename[i];
-			CommandLine::PrintInfo(PrintInfoType::Information, s.c_str());
-		}
-		else {
-			const std::string s = "Engine is not found: " + specJson_.enginesFilename[i];
-			CommandLine::PrintInfo(PrintInfoType::Error, s.c_str());
-			return false;
-		}
-	}
-
 	//output
 	outputDirName_ = jsonFilename_;
 	outputDirName_.erase(outputDirName_.size() - 5, 5);
@@ -232,7 +209,7 @@ void Simulator::scatterSimulation() {
 
 void Simulator::detailSimulation() {
 	Solver solver(dt_, rocketType_, trajectoryMode_, detachType_,
-		detachTime_, specJson_, engine_);
+		detachTime_, specJson_);
 
 	solved_ = solver.run(windSpeed_, windDirection_);
 	if (!solved_) {
@@ -245,7 +222,7 @@ void Simulator::detailSimulation() {
 void Simulator::singleThreadSimulation() {
 	while (1) {
 		Solver solver(dt_, rocketType_, trajectoryMode_, detachType_,
-			detachTime_, specJson_, engine_);
+			detachTime_, specJson_);
 
 		solved_ &= solver.run(windSpeed_, windDirection_);
 		if (!solved_) {
@@ -320,7 +297,7 @@ void Simulator::multiThreadSimulation() {
 
 void Simulator::solverRunner(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
 	Solver solver(dt_, rocketType_, trajectoryMode_, detachType_,
-		detachTime_, specJson_, engine_);
+		detachTime_, specJson_);
 	
 	if (*error = !solver.run(windSpeed, windDir); *error) {
 		return;

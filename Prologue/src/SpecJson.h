@@ -2,6 +2,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "Engine.h"
 
 
 struct JsonInformation {
@@ -44,6 +45,8 @@ struct RocketParam {
 	double Cmq;
 
 	std::vector<Parachute> parachute;
+
+	Engine engine;
 };
 
 struct Environment {
@@ -58,7 +61,6 @@ struct SpecJson {
 	JsonInformation info;
 	std::vector <RocketParam> rocketParam;//could be multiple(multiple rocket)
 	Environment env;
-	std::vector<std::string> enginesFilename = std::vector<std::string>(2);
 };
 
 

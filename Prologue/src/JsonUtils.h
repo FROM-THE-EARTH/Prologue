@@ -21,4 +21,5 @@ namespace JsonUtils {
 			return false;
 	}
 
+	bool Exist(const boost::property_tree::ptree& pt, const std::string& key);
 }

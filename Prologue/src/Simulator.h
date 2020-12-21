@@ -1,7 +1,6 @@
 #pragma once
 #include "Solver.h"
 #include "SpecJson.h"
-#include "Engine.h"
 #include "Gnuplot.h"
 
 #include <string>
@@ -32,7 +31,6 @@ class Simulator {
 
 	//from json
 	SpecJson specJson_;
-	std::vector<Engine> engine_;
 
 	//result
 	std::string outputDirName_;

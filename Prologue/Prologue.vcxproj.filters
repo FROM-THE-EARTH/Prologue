@@ -80,6 +80,9 @@
     <ClCompile Include="src\MapFeature.cpp">
       <Filter>ソース ファイル\Simulator</Filter>
     </ClCompile>
+    <ClCompile Include="src\JsonUtils.cpp">
+      <Filter>ソース ファイル\Json</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Quaternion.h">

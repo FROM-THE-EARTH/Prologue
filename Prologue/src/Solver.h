@@ -1,7 +1,6 @@
 #pragma once
 #include "Rocket.h"
 #include "SpecJson.h"
-#include "Engine.h"
 #include "Air.h"
 
 
@@ -71,7 +70,6 @@ class Solver {
 
 	//spec
 	const SpecJson specJson_;
-	std::vector<Engine> engine_;
 
 	//rocket
 	Rocket rocket_, rocketDelta_;
@@ -86,21 +84,19 @@ class Solver {
 	bool launchClear_ = false;
 	double combustionTime_ = 0.0;
 	size_t targetRocketIndex_ = 0;
-	size_t usingEngineIndex_ = 0;
 
 	//result
 	SolvedResult result_;
 
 public:
 	Solver(double dt, RocketType rocketType, TrajectoryMode mode, DetachType detachType,
-		double detachTime, const SpecJson& spec, const std::vector<Engine>& engine)
+		double detachTime, const SpecJson& spec)
 		:dt_(dt),
 		rocketType_(rocketType),
 		trajectoryMode_(mode),
 		detachType_(detachType),
 		detachTime_(detachTime),
-		specJson_(spec),
-		engine_(engine)
+		specJson_(spec)
 	{
 	}
 

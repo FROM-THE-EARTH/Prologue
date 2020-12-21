@@ -23,6 +23,7 @@
     <ClCompile Include="src\AppSetting.cpp" />
     <ClCompile Include="src\CommandLine.cpp" />
     <ClCompile Include="src\Gnuplot.cpp" />
+    <ClCompile Include="src\JsonUtils.cpp" />
     <ClCompile Include="src\MapFeature.cpp" />
     <ClCompile Include="src\Prologue.cpp" />
     <ClCompile Include="src\Quaternion.cpp" />
