@@ -45,14 +45,15 @@ Air::Air()
 
 	std::fstream windfile("input/wind/" + AppSetting::Setting().windModel.realdataFilename);
 
+	char header[1024];
+	windfile.getline(header, 1024);
 	size_t i = 1;
-	windData_.push_back(WindData());
 	char c;
 	std::string dummy;
-	windfile >> dummy >> c >> dummy >> c >> dummy >> dummy;//read header
+	windData_.push_back(WindData());
 	while (!windfile.eof()) {
 		windData_.push_back(WindData());
-		windfile >> windData_[i].height >> c >> windData_[i].speed >> c >> windData_[i].direction >> dummy;
+		windfile >> windData_[i].height >> c >> windData_[i].speed >> c >> windData_[i].direction;
 		if (windData_[i] == WindData()) {
 			break;
 		}

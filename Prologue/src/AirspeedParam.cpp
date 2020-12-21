@@ -42,10 +42,11 @@ void AirspeedParam::loadParam(const std::string& filename) {
 		return;
 	}
 
+	char header[1024];
+	fs.getline(header, 1024);
 	size_t i = 0;
 	char c;
 	std::string dummy;
-	fs >> dummy;//read header
 	while (!fs.eof()) {
 		vsAirspeed_.push_back(VsAirspeed());
 		fs >> vsAirspeed_[i].airSpeed >> c
