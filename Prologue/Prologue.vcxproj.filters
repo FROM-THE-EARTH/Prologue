@@ -56,9 +56,6 @@
     <ClCompile Include="src\Engine.cpp">
       <Filter>ソース ファイル\RocketSpec</Filter>
     </ClCompile>
-    <ClCompile Include="src\SpecJsonReader.cpp">
-      <Filter>ソース ファイル\Json</Filter>
-    </ClCompile>
     <ClCompile Include="src\AppSetting.cpp">
       <Filter>ソース ファイル\Json</Filter>
     </ClCompile>
@@ -83,6 +80,9 @@
     <ClCompile Include="src\JsonUtils.cpp">
       <Filter>ソース ファイル\Json</Filter>
     </ClCompile>
+    <ClCompile Include="src\RocketSpecReader.cpp">
+      <Filter>ソース ファイル\Json</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Quaternion.h">
@@ -97,16 +97,10 @@
     <ClInclude Include="src\Rocket.h">
       <Filter>ヘッダー ファイル\Solver</Filter>
     </ClInclude>
-    <ClInclude Include="src\SpecJson.h">
-      <Filter>ヘッダー ファイル\RocketSpec</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine.h">
       <Filter>ヘッダー ファイル\RocketSpec</Filter>
     </ClInclude>
     <ClInclude Include="src\AppSetting.h">
-      <Filter>ヘッダー ファイル\Json</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SpecJsonReader.h">
       <Filter>ヘッダー ファイル\Json</Filter>
     </ClInclude>
     <ClInclude Include="src\JsonUtils.h">
@@ -132,6 +126,12 @@
     </ClInclude>
     <ClInclude Include="src\MapFeature.h">
       <Filter>ヘッダー ファイル\Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RocketSpec.h">
+      <Filter>ヘッダー ファイル\RocketSpec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RocketSpecReader.h">
+      <Filter>ヘッダー ファイル\Json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

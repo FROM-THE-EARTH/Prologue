@@ -1,6 +1,6 @@
 #pragma once
 #include "Solver.h"
-#include "SpecJson.h"
+#include "RocketSpec.h"
 #include "Gnuplot.h"
 
 #include <string>
@@ -30,7 +30,7 @@ class Simulator {
 	bool solved_ = false;
 
 	//from json
-	SpecJson specJson_;
+	RocketSpec rocketSpec_;
 
 	//result
 	std::string outputDirName_;

@@ -31,7 +31,7 @@
     <ClCompile Include="src\Simulator.cpp" />
     <ClCompile Include="src\Solver.cpp" />
     <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="src\SpecJsonReader.cpp" />
+    <ClCompile Include="src\RocketSpecReader.cpp" />
     <ClCompile Include="src\Vector3D.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -45,11 +45,11 @@
     <ClInclude Include="src\ResultSaver.h" />
     <ClInclude Include="src\Rocket.h" />
     <ClInclude Include="src\AppSetting.h" />
-    <ClInclude Include="src\SpecJson.h" />
+    <ClInclude Include="src\RocketSpec.h" />
     <ClInclude Include="src\Simulator.h" />
     <ClInclude Include="src\Solver.h" />
     <ClInclude Include="src\Engine.h" />
-    <ClInclude Include="src\SpecJsonReader.h" />
+    <ClInclude Include="src\RocketSpecReader.h" />
     <ClInclude Include="src\Vector3D.h" />
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@
 #include "Engine.h"
 
 
-struct JsonInformation {
+struct Information {
 	std::string teamName;
 	std::string rocketName;
 	std::string experimentDate;
@@ -57,8 +57,8 @@ struct Environment {
 };
 
 
-struct SpecJson {
-	JsonInformation info;
+struct RocketSpec {
+	Information info;
 	std::vector <RocketParam> rocketParam;//could be multiple(multiple rocket)
 	Environment env;
 };

@@ -71,14 +71,14 @@ void Solver::initializeParameters() {
 	}
 
 	//First running
-	rocketDelta_.mass = specJson_.rocketParam[0].massInitial;
-	rocketDelta_.reflLength = specJson_.rocketParam[0].CGLengthInitial;
-	rocketDelta_.iyz = specJson_.rocketParam[0].rollingMomentInertiaInitial;
+	rocketDelta_.mass = rocketSpec_.rocketParam[0].massInitial;
+	rocketDelta_.reflLength = rocketSpec_.rocketParam[0].CGLengthInitial;
+	rocketDelta_.iyz = rocketSpec_.rocketParam[0].rollingMomentInertiaInitial;
 	rocketDelta_.ix = 0.02;
 	rocketDelta_.pos = Vector3D(0, 0, 0);
 	rocketDelta_.velocity = Vector3D(0, 0, 0);
 	rocketDelta_.omega_b = Vector3D(0, 0, 0);
-	rocketDelta_.quat = Quaternion(specJson_.env.railElevation, -specJson_.env.railAzimuth + 90);
+	rocketDelta_.quat = Quaternion(rocketSpec_.env.railElevation, -rocketSpec_.env.railAzimuth + 90);
 
 	rocket_ = rocketDelta_;
 }
@@ -106,12 +106,12 @@ void Solver::updateParachuteStatus() {
 		return;
 	}
 
-	const bool detectpeak = specJson_.rocketParam[targetRocketIndex_].parachute[0].openingType == 0;
+	const bool detectpeak = rocketSpec_.rocketParam[targetRocketIndex_].parachute[0].openingType == 0;
 
-	const bool fixedtime = specJson_.rocketParam[targetRocketIndex_].parachute[0].openingType == 1;
-	const bool fixedtimeCondition = rocket_.elapsedTime > specJson_.rocketParam[targetRocketIndex_].parachute[0].openingTime;
+	const bool fixedtime = rocketSpec_.rocketParam[targetRocketIndex_].parachute[0].openingType == 1;
+	const bool fixedtimeCondition = rocket_.elapsedTime > rocketSpec_.rocketParam[targetRocketIndex_].parachute[0].openingTime;
 
-	const bool time_from_detect_peak = specJson_.rocketParam[targetRocketIndex_].parachute[0].openingType == 2;
+	const bool time_from_detect_peak = rocketSpec_.rocketParam[targetRocketIndex_].parachute[0].openingType == 2;
 
 	if (detectpeak && detectpeakConditon
 		|| fixedtime && fixedtimeCondition) {
@@ -122,7 +122,7 @@ void Solver::updateParachuteStatus() {
 	}
 
 	const bool time_from_detect_peakCondition = 
-		rocket_.elapsedTime - result_.rocket[targetRocketIndex_].detectPeakTime > specJson_.rocketParam[targetRocketIndex_].parachute[0].openingTime;
+		rocket_.elapsedTime - result_.rocket[targetRocketIndex_].detectPeakTime > rocketSpec_.rocketParam[targetRocketIndex_].parachute[0].openingTime;
 
 	if (time_from_detect_peak) {
 		if (!rocket_.waitForOpenPara && detectpeakConditon) {
@@ -144,7 +144,7 @@ void Solver::updateDetachedStatus() {
 	switch (detachType_)
 	{
 	case DetachType::BurningFinished:
-		detachCondition = specJson_.rocketParam[targetRocketIndex_].engine.isFinishBurning(combustionTime_);
+		detachCondition = rocketSpec_.rocketParam[targetRocketIndex_].engine.isFinishBurning(combustionTime_);
 		break;
 	case DetachType::Time:
 		detachCondition = rocket_.elapsedTime >= detachTime_;
@@ -161,14 +161,14 @@ void Solver::updateDetachedStatus() {
 		//thrust poewr
 		double sumThrust = 0;
 		for (double t = 0; t <= 0.2; t += dt_) {
-			sumThrust += specJson_.rocketParam[targetRocketIndex_].engine.thrustAt(t) * (0.2 - t) / 0.2;
+			sumThrust += rocketSpec_.rocketParam[targetRocketIndex_].engine.thrustAt(t) * (0.2 - t) / 0.2;
 		}
 
 		//next rocket status
 		Rocket detach;
-		detach.mass = specJson_.rocketParam[targetRocketIndex_ + 2].massInitial;
-		detach.reflLength = specJson_.rocketParam[targetRocketIndex_ + 2].CGLengthInitial;
-		detach.iyz = specJson_.rocketParam[targetRocketIndex_ + 2].rollingMomentInertiaInitial;
+		detach.mass = rocketSpec_.rocketParam[targetRocketIndex_ + 2].massInitial;
+		detach.reflLength = rocketSpec_.rocketParam[targetRocketIndex_ + 2].CGLengthInitial;
+		detach.iyz = rocketSpec_.rocketParam[targetRocketIndex_ + 2].rollingMomentInertiaInitial;
 		detach.ix = 0.02;
 		detach.pos = rocket_.pos;
 		detach.omega_b = Vector3D();
@@ -177,9 +177,9 @@ void Solver::updateDetachedStatus() {
 		rocketAtDetached_.push_back(detach);
 
 		//update this rocket
-		rocket_.mass = specJson_.rocketParam[targetRocketIndex_ + 1].massInitial;
-		rocket_.reflLength = specJson_.rocketParam[targetRocketIndex_ + 1].CGLengthInitial;
-		rocket_.iyz = specJson_.rocketParam[targetRocketIndex_ + 1].rollingMomentInertiaInitial;
+		rocket_.mass = rocketSpec_.rocketParam[targetRocketIndex_ + 1].massInitial;
+		rocket_.reflLength = rocketSpec_.rocketParam[targetRocketIndex_ + 1].CGLengthInitial;
+		rocket_.iyz = rocketSpec_.rocketParam[targetRocketIndex_ + 1].rollingMomentInertiaInitial;
 		rocket_.velocity -= Vector3D((sumThrust / rocket_.mass) * dt_, 0, 0).applyQuaternion(rocket_.quat);
 
 		//next part
@@ -201,21 +201,21 @@ void Solver::updateParameters() {
 	rocket_.attackAngle = atan(sqrt(rocket_.airSpeed_b.y * rocket_.airSpeed_b.y + rocket_.airSpeed_b.z * rocket_.airSpeed_b.z)
 		/ (rocket_.airSpeed_b.x + 1e-16));
 
-	rocket_.Cnp = specJson_.rocketParam[targetRocketIndex_].Cna * alpha;
-	rocket_.Cny = specJson_.rocketParam[targetRocketIndex_].Cna * beta;
+	rocket_.Cnp = rocketSpec_.rocketParam[targetRocketIndex_].Cna * alpha;
+	rocket_.Cny = rocketSpec_.rocketParam[targetRocketIndex_].Cna * beta;
 
-	rocket_.Cmqp = specJson_.rocketParam[targetRocketIndex_].Cmq;
-	rocket_.Cmqy = specJson_.rocketParam[targetRocketIndex_].Cmq;
+	rocket_.Cmqp = rocketSpec_.rocketParam[targetRocketIndex_].Cmq;
+	rocket_.Cmqy = rocketSpec_.rocketParam[targetRocketIndex_].Cmq;
 
-	if (combustionTime_ <= specJson_.rocketParam[targetRocketIndex_].engine.combustionTime()) {
+	if (combustionTime_ <= rocketSpec_.rocketParam[targetRocketIndex_].engine.combustionTime()) {
 		rocketDelta_.mass =
-			(specJson_.rocketParam[targetRocketIndex_].massFinal - specJson_.rocketParam[targetRocketIndex_].massInitial)
-			/ specJson_.rocketParam[targetRocketIndex_].engine.combustionTime();
+			(rocketSpec_.rocketParam[targetRocketIndex_].massFinal - rocketSpec_.rocketParam[targetRocketIndex_].massInitial)
+			/ rocketSpec_.rocketParam[targetRocketIndex_].engine.combustionTime();
 		rocketDelta_.reflLength =
-			(specJson_.rocketParam[targetRocketIndex_].CGLengthFinal - specJson_.rocketParam[targetRocketIndex_].CGLengthInitial)
-			/ specJson_.rocketParam[targetRocketIndex_].engine.combustionTime();
-		rocketDelta_.iyz = (specJson_.rocketParam[targetRocketIndex_].rollingMomentInertiaFinal - specJson_.rocketParam[targetRocketIndex_].rollingMomentInertiaInitial)
-			/ specJson_.rocketParam[targetRocketIndex_].engine.combustionTime();
+			(rocketSpec_.rocketParam[targetRocketIndex_].CGLengthFinal - rocketSpec_.rocketParam[targetRocketIndex_].CGLengthInitial)
+			/ rocketSpec_.rocketParam[targetRocketIndex_].engine.combustionTime();
+		rocketDelta_.iyz = (rocketSpec_.rocketParam[targetRocketIndex_].rollingMomentInertiaFinal - rocketSpec_.rocketParam[targetRocketIndex_].rollingMomentInertiaInitial)
+			/ rocketSpec_.rocketParam[targetRocketIndex_].engine.combustionTime();
 		rocketDelta_.ix = (0.02 - 0.01) / 3;
 	}
 	else {
@@ -231,7 +231,7 @@ void Solver::calcDynamicForce() {
 	moment_b_ = Vector3D(0, 0, 0);
 
 	//Thrust
-	force_b_.x += specJson_.rocketParam[targetRocketIndex_].engine.thrustAt(combustionTime_);
+	force_b_.x += rocketSpec_.rocketParam[targetRocketIndex_].engine.thrustAt(combustionTime_);
 
 	if (!rocket_.parachuteOpened) {
 		//Aero
@@ -240,8 +240,8 @@ void Solver::calcDynamicForce() {
 			* air_->density()
 			* rocket_.airSpeed_b.length()
 			* rocket_.airSpeed_b.length()
-			* specJson_.rocketParam[targetRocketIndex_].bottomArea;
-		force_b_.x -= specJson_.rocketParam[targetRocketIndex_].Cd * preForceCalc * cos(rocket_.attackAngle);
+			* rocketSpec_.rocketParam[targetRocketIndex_].bottomArea;
+		force_b_.x -= rocketSpec_.rocketParam[targetRocketIndex_].Cd * preForceCalc * cos(rocket_.attackAngle);
 		force_b_.y -= rocket_.Cny * preForceCalc;
 		force_b_.z -= rocket_.Cnp * preForceCalc;
 
@@ -250,15 +250,15 @@ void Solver::calcDynamicForce() {
 			0.25 
 			* air_->density()
 			* rocket_.airSpeed_b.length() 
-			* specJson_.rocketParam[targetRocketIndex_].length 
-			* specJson_.rocketParam[targetRocketIndex_].length
-			* specJson_.rocketParam[targetRocketIndex_].bottomArea;
+			* rocketSpec_.rocketParam[targetRocketIndex_].length 
+			* rocketSpec_.rocketParam[targetRocketIndex_].length
+			* rocketSpec_.rocketParam[targetRocketIndex_].bottomArea;
 		moment_b_.x = 0;
 		moment_b_.y = preMomentCalc * rocket_.Cmqp * rocket_.omega_b.y;
 		moment_b_.z = preMomentCalc * rocket_.Cmqy * rocket_.omega_b.z;
 
-		moment_b_.y += force_b_.z * (specJson_.rocketParam[targetRocketIndex_].CPLength - rocket_.reflLength);
-		moment_b_.z -= force_b_.y * (specJson_.rocketParam[targetRocketIndex_].CPLength - rocket_.reflLength);
+		moment_b_.y += force_b_.z * (rocketSpec_.rocketParam[targetRocketIndex_].CPLength - rocket_.reflLength);
+		moment_b_.z -= force_b_.y * (rocketSpec_.rocketParam[targetRocketIndex_].CPLength - rocket_.reflLength);
 
 		//Gravity
 		force_b_ += Vector3D(0, 0, -air_->gravity()).applyQuaternion(rocket_.quat.conjugate()) * rocket_.mass;
@@ -266,7 +266,7 @@ void Solver::calcDynamicForce() {
 
 
 	//update delta
-	if (rocket_.pos.length() <= specJson_.env.railLength && rocket_.velocity.z >= 0.0) {//launch
+	if (rocket_.pos.length() <= rocketSpec_.env.railLength && rocket_.velocity.z >= 0.0) {//launch
 		if (force_b_.x < 0) {
 			rocketDelta_.pos = Vector3D();
 			rocketDelta_.velocity = Vector3D();
@@ -288,7 +288,7 @@ void Solver::calcDynamicForce() {
 	else if (rocket_.parachuteOpened) {//parachute opened
 		const Vector3D paraSpeed = rocket_.velocity;
 		const double drag = 0.5 * air_->density() * paraSpeed.z * paraSpeed.z
-			* 1.0 * specJson_.rocketParam[targetRocketIndex_].parachute[rocket_.parachuteIndex].Cd;
+			* 1.0 * rocketSpec_.rocketParam[targetRocketIndex_].parachute[rocket_.parachuteIndex].Cd;
 
 		rocketDelta_.velocity.z = drag / rocket_.mass - air_->gravity();
 		rocketDelta_.velocity.x = 0;

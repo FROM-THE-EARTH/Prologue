@@ -1,7 +1,7 @@
 #include "Simulator.h"
 
 #include "CommandLine.h"
-#include "SpecJsonReader.h"
+#include "RocketSpecReader.h"
 #include "ResultSaver.h"
 #include "AppSetting.h"
 #include "MapFeature.h"
@@ -21,7 +21,7 @@ bool Simulator::run() {
 
 	createResultDirectory();
 
-	Gnuplot::Initialize(outputDirName_.c_str(), MapFeature::GetMapFromName(specJson_.env.place).map);
+	Gnuplot::Initialize(outputDirName_.c_str(), MapFeature::GetMapFromName(rocketSpec_.env.place).map);
 
 	const auto start = std::chrono::system_clock::now();
 
@@ -81,7 +81,7 @@ bool Simulator::initialize() {
 		setWindCondition();
 	}
 
-	if (SpecJsonReader::IsMultipleRocket(jsonFilename_)) {
+	if (RocketSpecReader::IsMultipleRocket(jsonFilename_)) {
 		CommandLine::PrintInfo(PrintInfoType::Information, "This is Multiple Rocket");
 		rocketType_ = RocketType::Multi;
 		setDetachType();
@@ -96,7 +96,7 @@ bool Simulator::initialize() {
 	std::cout << "----------------------------------------------------------" << std::endl;
 
 	//read json
-	specJson_ = SpecJsonReader::ReadJson(jsonFilename_);
+	rocketSpec_ = RocketSpecReader::ReadJson(jsonFilename_);
 
 	//output
 	outputDirName_ = jsonFilename_;
@@ -209,7 +209,7 @@ void Simulator::scatterSimulation() {
 
 void Simulator::detailSimulation() {
 	Solver solver(dt_, rocketType_, trajectoryMode_, detachType_,
-		detachTime_, specJson_);
+		detachTime_, rocketSpec_);
 
 	solved_ = solver.run(windSpeed_, windDirection_);
 	if (!solved_) {
@@ -222,7 +222,7 @@ void Simulator::detailSimulation() {
 void Simulator::singleThreadSimulation() {
 	while (1) {
 		Solver solver(dt_, rocketType_, trajectoryMode_, detachType_,
-			detachTime_, specJson_);
+			detachTime_, rocketSpec_);
 
 		solved_ &= solver.run(windSpeed_, windDirection_);
 		if (!solved_) {
@@ -297,7 +297,7 @@ void Simulator::multiThreadSimulation() {
 
 void Simulator::solverRunner(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
 	Solver solver(dt_, rocketType_, trajectoryMode_, detachType_,
-		detachTime_, specJson_);
+		detachTime_, rocketSpec_);
 	
 	if (*error = !solver.run(windSpeed, windDir); *error) {
 		return;

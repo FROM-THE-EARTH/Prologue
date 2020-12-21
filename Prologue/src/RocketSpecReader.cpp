@@ -1,4 +1,4 @@
-#include "SpecJsonReader.h"
+#include "RocketSpecReader.h"
 
 #include "JsonUtils.h"
 #include "Constant.h"
@@ -19,7 +19,7 @@ double calcParachuteCd(double massFinal, double terminalVelocity) {
 }
 
 
-namespace SpecJsonReader {
+namespace RocketSpecReader {
 
 	bool existInfCd = false;
 	bool multipleJudged = false;
@@ -27,7 +27,7 @@ namespace SpecJsonReader {
 
 	namespace Internal {
 
-		void ReadRocketParam(const boost::property_tree::ptree& pt, SpecJson* spec, size_t index) {
+		void ReadRocketParam(const boost::property_tree::ptree& pt, RocketSpec* spec, size_t index) {
 			const std::string key = RocketParamList[index];
 
 			spec->rocketParam.push_back({});
@@ -77,7 +77,7 @@ namespace SpecJsonReader {
 		}
 
 
-		void ReadExtraInfo(const boost::property_tree::ptree& pt, SpecJson* spec) {
+		void ReadExtraInfo(const boost::property_tree::ptree& pt, RocketSpec* spec) {
 			spec->info.teamName = JsonUtils::GetValue<std::string>(pt, "info.TEAM");
 			spec->info.rocketName = JsonUtils::GetValue<std::string>(pt, "info.NAME");
 			spec->info.experimentDate = JsonUtils::GetValue<std::string>(pt, "info.DATE");
@@ -85,14 +85,14 @@ namespace SpecJsonReader {
 		}
 
 
-		void ReadEnvironment(const boost::property_tree::ptree& pt, SpecJson* spec) {
+		void ReadEnvironment(const boost::property_tree::ptree& pt, RocketSpec* spec) {
 			spec->env.place = JsonUtils::GetValue<std::string>(pt, "environment.place");
 			spec->env.railLength = JsonUtils::GetValue<double>(pt, "environment.rail_len");
 			spec->env.railAzimuth = JsonUtils::GetValue<double>(pt, "environment.rail_azi");
 			spec->env.railElevation = JsonUtils::GetValue<double>(pt, "environment.rail_elev");
 		}
 
-		void SetInfParachuteCd(SpecJson* spec) {
+		void SetInfParachuteCd(RocketSpec* spec) {
 			for (size_t i = 0; i < spec->rocketParam.size(); i++) {
 				if (spec->rocketParam[i].parachute[0].Cd == 0) {
 					for (int j = (int)spec->rocketParam.size() - 1; j >= 0; j--) {
@@ -104,8 +104,8 @@ namespace SpecJsonReader {
 	}
 
 
-	SpecJson ReadJson(const std::string& filename) {
-		SpecJson spec;
+	RocketSpec ReadJson(const std::string& filename) {
+		RocketSpec spec;
 		boost::property_tree::ptree pt;
 		boost::property_tree::read_json("input/json/" + filename, pt);
 

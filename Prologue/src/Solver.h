@@ -1,6 +1,6 @@
 #pragma once
 #include "Rocket.h"
-#include "SpecJson.h"
+#include "RocketSpec.h"
 #include "Air.h"
 
 
@@ -69,7 +69,7 @@ class Solver {
 	const double detachTime_;
 
 	//spec
-	const SpecJson specJson_;
+	const RocketSpec rocketSpec_;
 
 	//rocket
 	Rocket rocket_, rocketDelta_;
@@ -90,13 +90,13 @@ class Solver {
 
 public:
 	Solver(double dt, RocketType rocketType, TrajectoryMode mode, DetachType detachType,
-		double detachTime, const SpecJson& spec)
+		double detachTime, const RocketSpec& spec)
 		:dt_(dt),
 		rocketType_(rocketType),
 		trajectoryMode_(mode),
 		detachType_(detachType),
 		detachTime_(detachTime),
-		specJson_(spec)
+		rocketSpec_(spec)
 	{
 	}
 
