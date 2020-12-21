@@ -73,6 +73,28 @@ VsAirspeed AirspeedParam::getParam(double airSpeed) {
 	const double airSpeed1 = vsAirspeed_[i].airSpeed;
 	const double airSpeed2 = vsAirspeed_[i + 1].airSpeed;
 
+	if (airSpeed < airSpeed1) {
+		return{
+			airSpeed,
+			vsAirspeed_[i].Cp,
+			vsAirspeed_[i].Cp_a,
+			vsAirspeed_[i].Cd,
+			vsAirspeed_[i].Cd_a2,
+			vsAirspeed_[i].Cna
+		};
+	}
+
+	if (airSpeed > airSpeed2) {
+		return{
+			airSpeed,
+			vsAirspeed_[i + 1].Cp,
+			vsAirspeed_[i + 1].Cp_a,
+			vsAirspeed_[i + 1].Cd,
+			vsAirspeed_[i + 1].Cd_a2,
+			vsAirspeed_[i + 1].Cna
+		};
+	}
+
 	return {
 		airSpeed,
 		Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cp, vsAirspeed_[i + 1].Cp),
