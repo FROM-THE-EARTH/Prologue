@@ -39,7 +39,6 @@ bool Engine::loadThrustData(const std::string& filename) {
 	std::fstream fs("input/thrust/" + filename);
 
 	if (!fs.is_open()) {
-		isNull_ = true;
 		return false;
 	}
 
@@ -70,11 +69,12 @@ bool Engine::loadThrustData(const std::string& filename) {
 		thrustDatas_.insert(thrustDatas_.begin(), ThrustData{ 0.0,0.0 });
 	}
 
+	exist_ = true;
 	return true;
 }
 
 double Engine::thrustAt(double time) const{
-	if (isNull_ || time <= 0.0 || time > thrustDatas_[thrustDatas_.size() - 1].time) {
+	if (!exist_ || time <= 0.0 || time > thrustDatas_[thrustDatas_.size() - 1].time) {
 		return 0;
 	}
 

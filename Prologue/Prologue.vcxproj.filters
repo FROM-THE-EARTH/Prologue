@@ -83,6 +83,9 @@
     <ClCompile Include="src\RocketSpecReader.cpp">
       <Filter>ソース ファイル\Json</Filter>
     </ClCompile>
+    <ClCompile Include="src\AirspeedParam.cpp">
+      <Filter>ソース ファイル\RocketSpec</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Quaternion.h">
@@ -132,6 +135,9 @@
     </ClInclude>
     <ClInclude Include="src\RocketSpecReader.h">
       <Filter>ヘッダー ファイル\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AirspeedParam.h">
+      <Filter>ヘッダー ファイル\RocketSpec</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

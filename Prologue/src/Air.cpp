@@ -49,7 +49,7 @@ Air::Air()
 	windData_.push_back(WindData());
 	char c;
 	std::string dummy;
-	windfile >> dummy >> c >> dummy >> c >> dummy >> dummy;
+	windfile >> dummy >> c >> dummy >> c >> dummy >> dummy;//read header
 	while (!windfile.eof()) {
 		windData_.push_back(WindData());
 		windfile >> windData_[i].height >> c >> windData_[i].speed >> c >> windData_[i].direction >> dummy;

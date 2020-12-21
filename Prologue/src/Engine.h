@@ -11,7 +11,7 @@ class Engine {
 
 	std::vector<ThrustData> thrustDatas_;
 
-	bool isNull_ = false;
+	bool exist_ = false;
 
 public:
 
@@ -20,10 +20,10 @@ public:
 	double thrustAt(double time) const;
 
 	double combustionTime()const {
-		return isNull_ ? 0.0 : thrustDatas_[thrustDatas_.size() - 1].time;
+		return exist_ ? thrustDatas_[thrustDatas_.size() - 1].time : 0.0;
 	}
 
 	bool isFinishBurning(double time) const {
-		return isNull_ ? true : time > combustionTime();
+		return exist_ ? time > combustionTime() : true;
 	}
 };
