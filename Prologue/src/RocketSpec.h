@@ -38,12 +38,6 @@ struct RocketParam {
 	double rollingMomentInertiaInitial;//kg*m^2
 	double rollingMomentInertiaFinal;//kg*m^2
 
-	double CPLength;//m
-
-	double Cd;
-
-	double Cna;
-
 	double Cmq;
 
 	std::vector<Parachute> parachute;

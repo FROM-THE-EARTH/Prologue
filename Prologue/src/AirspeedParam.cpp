@@ -66,7 +66,17 @@ void AirspeedParam::loadParam(const std::string& filename) {
 	exist_ = true;
 }
 
-VsAirspeed AirspeedParam::getParam(double airSpeed) {
+void AirspeedParam::update(double airSpeed) {
+	if (vsAirspeed_.size() == 1) {
+		param_ = {
+			airSpeed,
+			vsAirspeed_[0].Cp,
+			vsAirspeed_[0].Cp_a,
+			vsAirspeed_[0].Cd,
+			vsAirspeed_[0].Cd_a2,vsAirspeed_[0].Cna
+		};
+		return;
+	}
 
 	const size_t i = getLowerIndex(vsAirspeed_, airSpeed);
 
@@ -74,7 +84,7 @@ VsAirspeed AirspeedParam::getParam(double airSpeed) {
 	const double airSpeed2 = vsAirspeed_[i + 1].airSpeed;
 
 	if (airSpeed < airSpeed1) {
-		return{
+		param_ = {
 			airSpeed,
 			vsAirspeed_[i].Cp,
 			vsAirspeed_[i].Cp_a,
@@ -82,10 +92,11 @@ VsAirspeed AirspeedParam::getParam(double airSpeed) {
 			vsAirspeed_[i].Cd_a2,
 			vsAirspeed_[i].Cna
 		};
+		return;
 	}
 
 	if (airSpeed > airSpeed2) {
-		return{
+		param_ = {
 			airSpeed,
 			vsAirspeed_[i + 1].Cp,
 			vsAirspeed_[i + 1].Cp_a,
@@ -93,9 +104,10 @@ VsAirspeed AirspeedParam::getParam(double airSpeed) {
 			vsAirspeed_[i + 1].Cd_a2,
 			vsAirspeed_[i + 1].Cna
 		};
+		return;
 	}
 
-	return {
+	param_ = {
 		airSpeed,
 		Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cp, vsAirspeed_[i + 1].Cp),
 		Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cp_a, vsAirspeed_[i + 1].Cp_a),

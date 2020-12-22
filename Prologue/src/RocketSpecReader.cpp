@@ -45,9 +45,6 @@ namespace RocketSpecReader {
 			spec->rocketParam[index].rollingMomentInertiaInitial = JsonUtils::GetValue<double>(pt, key + ".Iyz_i");
 			spec->rocketParam[index].rollingMomentInertiaFinal = JsonUtils::GetValue<double>(pt, key + ".Iyz_f");
 
-			spec->rocketParam[index].CPLength = JsonUtils::GetValue<double>(pt, key + ".CPlen");
-			spec->rocketParam[index].Cd = JsonUtils::GetValue<double>(pt, key + ".Cd");
-			spec->rocketParam[index].Cna = JsonUtils::GetValue<double>(pt, key + ".Cna");
 			spec->rocketParam[index].Cmq = JsonUtils::GetValue<double>(pt, key + ".Cmq");
 
 			spec->rocketParam[index].parachute.push_back(Parachute());
@@ -73,6 +70,15 @@ namespace RocketSpecReader {
 
 			spec->rocketParam[index].engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
 			spec->rocketParam[index].airspeedParam.loadParam(JsonUtils::GetValue<std::string>(pt, key + ".airspeed_param_file"));
+			if (!spec->rocketParam[index].airspeedParam.exist()) {
+				spec->rocketParam[index].airspeedParam.setParam(
+					JsonUtils::GetValue<double>(pt, key + ".CPlen"),
+					JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
+					JsonUtils::GetValue<double>(pt, key + ".Cd"),
+					JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
+					JsonUtils::GetValue<double>(pt, key + ".Cna")
+				);
+			}
 		}
 
 

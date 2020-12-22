@@ -196,13 +196,15 @@ void Solver::updateParameters() {
 		rocket_.airSpeed_b = Vector3D();
 	}
 
+	rocketSpec_.rocketParam[targetRocketIndex_].airspeedParam.update(rocket_.airSpeed_b.length());
+
 	const double alpha = atan(rocket_.airSpeed_b.z / (rocket_.airSpeed_b.x + 1e-16));
 	const double beta = atan(rocket_.airSpeed_b.y / (rocket_.airSpeed_b.x + 1e-16));
 	rocket_.attackAngle = atan(sqrt(rocket_.airSpeed_b.y * rocket_.airSpeed_b.y + rocket_.airSpeed_b.z * rocket_.airSpeed_b.z)
 		/ (rocket_.airSpeed_b.x + 1e-16));
 
-	rocket_.Cnp = rocketSpec_.rocketParam[targetRocketIndex_].Cna * alpha;
-	rocket_.Cny = rocketSpec_.rocketParam[targetRocketIndex_].Cna * beta;
+	rocket_.Cnp = rocketSpec_.rocketParam[targetRocketIndex_].airspeedParam.getParam().Cna * alpha;
+	rocket_.Cny = rocketSpec_.rocketParam[targetRocketIndex_].airspeedParam.getParam().Cna * beta;
 
 	rocket_.Cmqp = rocketSpec_.rocketParam[targetRocketIndex_].Cmq;
 	rocket_.Cmqy = rocketSpec_.rocketParam[targetRocketIndex_].Cmq;
@@ -241,7 +243,9 @@ void Solver::calcDynamicForce() {
 			* rocket_.airSpeed_b.length()
 			* rocket_.airSpeed_b.length()
 			* rocketSpec_.rocketParam[targetRocketIndex_].bottomArea;
-		force_b_.x -= rocketSpec_.rocketParam[targetRocketIndex_].Cd * preForceCalc * cos(rocket_.attackAngle);
+		const double cd = rocketSpec_.rocketParam[targetRocketIndex_].airspeedParam.getParam().Cd
+			+ rocketSpec_.rocketParam[targetRocketIndex_].airspeedParam.getParam().Cd_a2 * rocket_.attackAngle * rocket_.attackAngle;
+		force_b_.x -= cd * preForceCalc * cos(rocket_.attackAngle);
 		force_b_.y -= rocket_.Cny * preForceCalc;
 		force_b_.z -= rocket_.Cnp * preForceCalc;
 
@@ -257,8 +261,10 @@ void Solver::calcDynamicForce() {
 		moment_b_.y = preMomentCalc * rocket_.Cmqp * rocket_.omega_b.y;
 		moment_b_.z = preMomentCalc * rocket_.Cmqy * rocket_.omega_b.z;
 
-		moment_b_.y += force_b_.z * (rocketSpec_.rocketParam[targetRocketIndex_].CPLength - rocket_.reflLength);
-		moment_b_.z -= force_b_.y * (rocketSpec_.rocketParam[targetRocketIndex_].CPLength - rocket_.reflLength);
+		const double cp = rocketSpec_.rocketParam[targetRocketIndex_].airspeedParam.getParam().Cp
+			+ rocketSpec_.rocketParam[targetRocketIndex_].airspeedParam.getParam().Cp_a * rocket_.attackAngle;
+		moment_b_.y += force_b_.z * (cp - rocket_.reflLength);
+		moment_b_.z -= force_b_.y * (cp - rocket_.reflLength);
 
 		//Gravity
 		force_b_ += Vector3D(0, 0, -air_->gravity()).applyQuaternion(rocket_.quat.conjugate()) * rocket_.mass;

@@ -26,6 +26,8 @@ class AirspeedParam{
 
 	std::vector<VsAirspeed> vsAirspeed_;
 
+	VsAirspeed param_;
+
 	bool exist_ = false;
 
 public:
@@ -35,5 +37,21 @@ public:
 		return exist_;
 	}
 
-	VsAirspeed getParam(double airSpeed);
+	void update(double airSpeed);
+
+	VsAirspeed getParam()const {
+		return param_;
+	}
+
+	void setParam(double Cp, double Cp_a, double Cd, double Cd_a2, double Cna){
+		const VsAirspeed v = {
+			0.0,
+			Cp,
+			Cp_a,
+			Cd,
+			Cd_a2,
+			Cna
+		};
+		vsAirspeed_.push_back(v);
+	}
 };
