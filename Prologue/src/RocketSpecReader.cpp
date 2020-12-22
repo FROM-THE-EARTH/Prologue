@@ -28,25 +28,36 @@ namespace RocketSpecReader {
 
 	namespace Internal {
 
+		template<typename T>
+		T GetValueWithError(const boost::property_tree::ptree& pt, const std::string& key) {
+			if (JsonUtils::HasValue<double>(pt, key)) {
+				return JsonUtils::GetValue<T>(pt, key);
+			}
+			else {
+				CommandLine::PrintInfo(PrintInfoType::Error, ("key \"" +key + "\" in json file is not valid.").c_str());
+				exit(1);
+			}
+		}
+
 		void ReadRocketParam(const boost::property_tree::ptree& pt, RocketSpec* spec, size_t index) {
 			const std::string key = RocketParamList[index];
 
 			spec->rocketParam.push_back({});
 
-			spec->rocketParam[index].length = JsonUtils::GetValue<double>(pt, key + ".ref_len");
-			spec->rocketParam[index].diameter = JsonUtils::GetValue<double>(pt, key + ".diam");
+			spec->rocketParam[index].length = GetValueWithError<double>(pt, key + ".ref_len");
+			spec->rocketParam[index].diameter = GetValueWithError<double>(pt, key + ".diam");
 			spec->rocketParam[index].bottomArea = spec->rocketParam[index].diameter * spec->rocketParam[index].diameter * 0.25 * Constant::PI;
 
-			spec->rocketParam[index].CGLengthInitial = JsonUtils::GetValue<double>(pt, key + ".CGlen_i");
-			spec->rocketParam[index].CGLengthFinal = JsonUtils::GetValue<double>(pt, key + ".CGlen_f");
+			spec->rocketParam[index].CGLengthInitial = GetValueWithError<double>(pt, key + ".CGlen_i");
+			spec->rocketParam[index].CGLengthFinal = GetValueWithError<double>(pt, key + ".CGlen_f");
 
-			spec->rocketParam[index].massInitial = JsonUtils::GetValue<double>(pt, key + ".mass_i");
-			spec->rocketParam[index].massFinal = JsonUtils::GetValue<double>(pt, key + ".mass_f");
+			spec->rocketParam[index].massInitial = GetValueWithError<double>(pt, key + ".mass_i");
+			spec->rocketParam[index].massFinal = GetValueWithError<double>(pt, key + ".mass_f");
 
-			spec->rocketParam[index].rollingMomentInertiaInitial = JsonUtils::GetValue<double>(pt, key + ".Iyz_i");
-			spec->rocketParam[index].rollingMomentInertiaFinal = JsonUtils::GetValue<double>(pt, key + ".Iyz_f");
+			spec->rocketParam[index].rollingMomentInertiaInitial = GetValueWithError<double>(pt, key + ".Iyz_i");
+			spec->rocketParam[index].rollingMomentInertiaFinal = GetValueWithError<double>(pt, key + ".Iyz_f");
 
-			spec->rocketParam[index].Cmq = JsonUtils::GetValue<double>(pt, key + ".Cmq");
+			spec->rocketParam[index].Cmq = GetValueWithError<double>(pt, key + ".Cmq");
 
 			spec->rocketParam[index].parachute.push_back(Parachute());
 			spec->rocketParam[index].parachute[0].terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
@@ -76,11 +87,11 @@ namespace RocketSpecReader {
 					("Rocket: " + key).c_str(),
 					"Airspeed param is set from JSON");
 				spec->rocketParam[index].airspeedParam.setParam(
-					JsonUtils::GetValue<double>(pt, key + ".CPlen"),
+					GetValueWithError<double>(pt, key + ".CPlen"),
 					JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
-					JsonUtils::GetValue<double>(pt, key + ".Cd"),
+					GetValueWithError<double>(pt, key + ".Cd"),
 					JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
-					JsonUtils::GetValue<double>(pt, key + ".Cna")
+					GetValueWithError<double>(pt, key + ".Cna")
 				);
 			}
 			else {
@@ -101,9 +112,9 @@ namespace RocketSpecReader {
 
 		void ReadEnvironment(const boost::property_tree::ptree& pt, RocketSpec* spec) {
 			spec->env.place = JsonUtils::GetValue<std::string>(pt, "environment.place");
-			spec->env.railLength = JsonUtils::GetValue<double>(pt, "environment.rail_len");
-			spec->env.railAzimuth = JsonUtils::GetValue<double>(pt, "environment.rail_azi");
-			spec->env.railElevation = JsonUtils::GetValue<double>(pt, "environment.rail_elev");
+			spec->env.railLength = GetValueWithError<double>(pt, "environment.rail_len");
+			spec->env.railAzimuth = GetValueWithError<double>(pt, "environment.rail_azi");
+			spec->env.railElevation = GetValueWithError<double>(pt, "environment.rail_elev");
 		}
 
 		void SetInfParachuteCd(RocketSpec* spec) {
