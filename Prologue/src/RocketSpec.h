@@ -1,8 +1,10 @@
 #pragma once
-#pragma once
+
+#include "Engine.h"
+#include "AirspeedParam.h"
+
 #include <string>
 #include <vector>
-#include "Engine.h"
 
 
 struct Information {
@@ -47,6 +49,7 @@ struct RocketParam {
 	std::vector<Parachute> parachute;
 
 	Engine engine;
+	AirspeedParam airspeedParam;
 };
 
 struct Environment {

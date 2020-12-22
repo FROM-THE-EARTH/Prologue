@@ -72,8 +72,7 @@ namespace RocketSpecReader {
 			}
 
 			spec->rocketParam[index].engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
-			int a = 1;
-
+			spec->rocketParam[index].airspeedParam.loadParam(JsonUtils::GetValue<std::string>(pt, key + ".airspeed_param_file"));
 		}
 
 

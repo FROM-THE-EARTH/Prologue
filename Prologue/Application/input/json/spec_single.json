@@ -22,7 +22,8 @@
 		"vel_1st": 10,
 		"op_type_1st": 0,
 		"delay_time_1st": 0,
-		"motor_file": "Sample_K240.txt"
+		"motor_file": "Sample_K240.txt",
+		"airspeed_param_file": "sample.csv"
 	},
 
 	"environment": {
