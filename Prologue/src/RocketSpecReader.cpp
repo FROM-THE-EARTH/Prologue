@@ -2,6 +2,7 @@
 
 #include "JsonUtils.h"
 #include "Constant.h"
+#include "CommandLine.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -55,10 +56,10 @@ namespace RocketSpecReader {
 
 			if (spec->rocketParam[index].parachute[0].terminalVelocity == 0.0) {
 				existInfCd = true;
-				std::cout << "W: In rocket json file, key: " + key << std::endl;
-				std::cout << "   Terminal velocity is undefined." << std::endl;
-				std::cout << "   Parachute Cd value is automatically calculated." << std::endl;
-				std::cout << std::endl;
+				CommandLine::PrintInfo(PrintInfoType::Warning,
+					(std::string("Rocket: ") + key).c_str(),
+					"Terminal velocity is undefined.",
+					"Parachute Cd value is automatically calculated.");
 			}
 			else {
 				spec->rocketParam[index].parachute[0].Cd =
@@ -71,6 +72,9 @@ namespace RocketSpecReader {
 			spec->rocketParam[index].engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
 			spec->rocketParam[index].airspeedParam.loadParam(JsonUtils::GetValue<std::string>(pt, key + ".airspeed_param_file"));
 			if (!spec->rocketParam[index].airspeedParam.exist()) {
+				CommandLine::PrintInfo(PrintInfoType::Information,
+					("Rocket: " + key).c_str(),
+					"Airspeed param is set from JSON");
 				spec->rocketParam[index].airspeedParam.setParam(
 					JsonUtils::GetValue<double>(pt, key + ".CPlen"),
 					JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
@@ -78,6 +82,11 @@ namespace RocketSpecReader {
 					JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
 					JsonUtils::GetValue<double>(pt, key + ".Cna")
 				);
+			}
+			else {
+				CommandLine::PrintInfo(PrintInfoType::Information,
+					("Rocket: " + key).c_str(),
+					"Airspeed param is set from CSV");
 			}
 		}
 
