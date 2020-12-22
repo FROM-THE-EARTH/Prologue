@@ -1,9 +1,39 @@
 # input形式
 　シミュレーションを行う際に設定する以下の項目について、ファイルの形式を示します。
+  - シミュレータの設定
   - 機体諸元
   - エンジン
   - 風向風速
   - 機体速度 vs Cp, Cp_a, Cd, Cd_a2, Cna
+
+## シミュレータの設定
+シミュレータの設定を行います。<br>
+**保存ファイル名**: prologue.settings.json<br>
+**拡張子**: json<br>
+**形式**:
+```
+{
+  "processing": {
+    "multi_thread": false //マルチスレッドによる処理の高速化。Scatterモードでのみ有効。
+  },
+
+  "simulation": {
+    "detect_peak_threshold": 15.0, //頂点検知によるパラシュート開傘時、最高高度から何m落下したら開傘するかどうか[m]
+
+    "scatter": {
+      "wind_speed_min": 0.0, //Scatterモード時、シミュレーション対象の風速の最小値[m]
+      "wind_speed_max": 7.0, //Scatterモード時、シミュレーション対象の風速の最大値[m]
+      "wind_dir_interval": 30.0 //Scatterモード時、風向を何度ずつ変更してシミュレーションするか[deg]
+    }
+  },
+
+  "wind_model": {
+    "power_constant": 7.0, //べき法則の係数
+    "type": "real", //使用する風モデル　real, original, only_powerlow
+    "realdata_filename": "wind_data_template.csv" //風向風速データのファイル名。typeがrealの場合のみ有効。
+  }
+}
+```
 
 ## 機体諸元
 機体諸元を記述します。<br>

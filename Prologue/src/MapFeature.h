@@ -59,8 +59,8 @@ namespace MapFeature {
 
 	const MapCoordinate IzuSea{
 		Map::IZU_SEA,
-		0,
-		0
+		34.680197,
+		139.439090
 	};
 
 	const MapCoordinate IzuLand{
