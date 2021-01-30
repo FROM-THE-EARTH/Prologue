@@ -17,12 +17,14 @@ Prologue/Application/result/
 Prologue/Application/input/json/*.json
 Prologue/Application/input/thrust/*.txt
 Prologue/Application/input/wind/*.csv
+Prologue/Application/input/airspeed_param/*.csv
 !Prologue/Application/input/json/description.json
 !Prologue/Application/input/json/spec_single.json
 !Prologue/Application/input/json/spec_multi.json
 !Prologue/Application/input/thrust/Sample_K240.txt
 !Prologue/Application/input/thrust/Sample_G40-4W.txt
 !Prologue/Application/input/wind/wind_data_template.csv
+!Prologue/Application/input/airspeed_param/sample.csv
 
 # Release
 Prologue/Application/Release/Prologue.exe
