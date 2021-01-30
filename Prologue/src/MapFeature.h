@@ -65,8 +65,8 @@ namespace MapFeature {
 
 	const MapCoordinate IzuLand{
 		Map::IZU_LAND,
-		0,
-		0
+		34.735972,
+		139.420944
 	};
 
 	const MapCoordinate Unknown{

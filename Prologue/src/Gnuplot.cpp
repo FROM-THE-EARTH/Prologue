@@ -175,6 +175,8 @@ namespace Gnuplot {
 				switch (map)
 				{
 				case Map::IZU_LAND:
+					command += "izu_land.png\" ";
+					command += "binary filetype=png dx=1.00 dy=1.00 origin=(-730, -840) with rgbimage notitle,";
 					break;
 
 				case Map::IZU_SEA:
