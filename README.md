@@ -4,9 +4,9 @@
   出力ファイルは審査書書きやすいようにしてます。
 
 # Download
-  Latest Update: 2020/12/22
+  Latest Update: 2020/01/31
 
-  Version: 1.2.0
+  Version: 1.2.1
 
   [**Download**](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/Prologue/Application/Prologue.zip)
 
@@ -36,14 +36,17 @@
 
 # 変更履歴
 
+## v1.2.1
+ - 伊豆陸マップを追加
+
+<details>
+<summary>過去の変更履歴</summary>
+
 ## v1.2.0
 - 圧力中心傾斜、抗力係数傾斜を計算に含むように変更
 - 機体速度に対する圧力中心（傾斜），抗力係数（傾斜），法線力係数　を入力するを追加(input/airspeed_param/**.csvとして保存する。指定しない場合は諸元JSONの定数を用いる。傾斜は指定されていない場合0となる。)
 - 機体諸元jsonファイルに有効でない値がある場合にエラーを出力するように変更
 - 伊豆海の緯度経度情報を設定
-
-<details>
-<summary>過去の変更履歴</summary>
 
 ## v1.1.1
 - 抗力係数の向きを修正
