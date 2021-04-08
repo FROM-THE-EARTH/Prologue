@@ -9,7 +9,7 @@ Algorithm名前空間。プログラム全体で使用するかもしれない�
 **Constant(h)**<br>
 Constant名前空間。円周率、絶対零度、気体定数などの各種定数を定義する。
 
-### Simulatorカテゴリ
+## Simulatorカテゴリ
 ソフトウェアのインターフェース的な部分。
 **Simulator(h, cpp)**<br>
 Simulatorクラス。コマンドライン上で設定を行い、諸元を読み込み、Solverクラス(後述)に渡す。
