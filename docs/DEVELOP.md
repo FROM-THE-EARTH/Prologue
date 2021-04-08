@@ -1,7 +1,9 @@
 # For Developers
   開発者向けドキュメント
 
-  物理とか風とかシミュレーション内部ついては[ここ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DYNAMICS.md)に書いてます。
+  プログラムのソースについては[ここ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/SOURCE.md)
+
+  物理とか風とか解析部分ついては[ここ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DYNAMICS.md)
 
 # 開発環境等
   - **使用言語** : C++17
@@ -11,9 +13,9 @@
   - **OS** : Windows10
 
 # 開発時の注意事項
- - **元から入ってるファイルは削除しないでください。**
+ - **元から入ってるファイル/フォルダは削除しないでください。**
  - **プロジェクトの設定はいじらないでください。**
- - **リリース用zipファイルは、PowerShellコマンドによってReleaseビルド時に自動で生成されます。生成後にcommit, pushすれば当然そのファイルがGitHub上でリリースされます。**
+ - **リリース用zipファイルは、PowerShellコマンドによってReleaseビルド時に自動で生成されます。生成後にcommit, pushすればそのzipファイルがGitHub上でリリースされます。**
 
 # プロジェクトのディレクトリ構成
 ```bash
@@ -51,11 +53,11 @@
 - 1つのオブジェクトに対していくつかの変数が存在するときはstructやclassを使うことを検討する(例：pos, velocity, timeを分割するのではなく、struct Rocket内で定義する)
 
 ### コーディングの統一(保守性関連)
-- 基本的にはキャメルケースを利用する
-- class内staticメソッドや名前空間内の関数にはパスカルケースを利用する
-- json内のkey名などと関連があるような変数に関してはスネークケースを用いても良い
-- 変数の意味を確実に伝えなければならない場合、例外的に添字を付けるなどをしてもよい(force_b, moment_bなど)
-- class内private変数には変数名の末尾に_(アンダーバー)を付ける(std::string filename_のように)
+- 基本的にはローワーキャメルケースを利用する(lowerCamelCase)
+- class内staticメソッドや名前空間内の関数にはパスカルケースを利用する(PascalCase)
+- json内のkey名などと関連があるような変数に関してはスネークケースを用いても良い(snake_case)
+- 変数の意味を確実に伝えなければならない場合、例外的に添字を付けるなどをしてもよい(force_b, moment_bなど、この場合は_bによって変数が機体座標系であることを表す)
+- class内privateメンバーには変数名の末尾に_(アンダーバー)を付ける(std::string filename_のように)
 
 ### 処理関連
 常にこのアルゴリズムは妥当なのか、もっと速度を伸ばせないか考えましょう。<br>
