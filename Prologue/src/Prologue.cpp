@@ -8,15 +8,14 @@
 #include <string>
 
 
-const auto VERSION = "1.2.0";
+const auto VERSION = "1.2.1";
 
 
 bool setTitle();
 void showSettingInfo();
 
 
-int main()
-{
+int main() {
 	if (!setTitle()) {
 		return 0;
 	}
