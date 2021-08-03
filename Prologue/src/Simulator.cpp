@@ -255,7 +255,7 @@ void Simulator::multiThreadSimulation() {
 
 		simulated = 1;
 
-		threads[0] = std::thread(&Simulator::solverRunner, this, windSpeed_, windDirection_, &results[0], &finished[0], &error[0]);
+		threads[0] = std::thread(&Simulator::solve, this, windSpeed_, windDirection_, &results[0], &finished[0], &error[0]);
 		threads[0].detach();
 		for (size_t i = 1; i < threadCount; i++) {
 			finish = !updateWindCondition();
@@ -263,7 +263,7 @@ void Simulator::multiThreadSimulation() {
 				break;
 			}
 
-			threads[i] = std::thread(&Simulator::solverRunner, this, windSpeed_, windDirection_, &results[i], &finished[i], &error[i]);
+			threads[i] = std::thread(&Simulator::solve, this, windSpeed_, windDirection_, &results[i], &finished[i], &error[i]);
 			threads[i].detach();
 			simulated++;
 		}
@@ -295,7 +295,7 @@ void Simulator::multiThreadSimulation() {
 	}
 }
 
-void Simulator::solverRunner(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
+void Simulator::solve(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
 	Solver solver(dt_, rocketType_, trajectoryMode_, detachType_,
 		detachTime_, rocketSpec_);
 	
@@ -346,31 +346,18 @@ void Simulator::createResultDirectory() {
 }
 
 void Simulator::saveResult() {
-	const size_t rocketNum = simulationMode_ == SimulationMode::Scatter ?
-		scatterResult_[0].rocket.size() : detailResult_.rocket.size();
+	const std::string dir = "result/" + outputDirName_ + "/";
 
-	for (size_t i = 0; i < rocketNum; i++) {
-		const std::string s = "result/" + outputDirName_ + "/result_rocket" + std::to_string(i + 1) + ".csv";
+	switch (simulationMode_)
+	{
+	case SimulationMode::Scatter:
+		ResultSaver::SaveScatter(dir, scatterResult_);
+		break;
 
-		switch (simulationMode_)
-		{
-		case SimulationMode::Scatter:
-			ResultSaver::OpenFile(s.c_str(), scatterResult_.size());
-
-			for (auto& result : scatterResult_) {
-				ResultSaver::WriteLine(result, i);
-			}
-			break;
-
-		case SimulationMode::Detail:
-			ResultSaver::OpenFile(s.c_str(), 1);
-
-			ResultSaver::WriteLine(detailResult_, i);
-
-			break;
-		}
-
-		ResultSaver::Close();
+	case SimulationMode::Detail:
+		ResultSaver::SaveDetail(dir, detailResult_);
+		ResultSaver::SaveDetailAll(dir, detailResult_);
+		break;
 	}
 }
 

@@ -75,7 +75,7 @@ private:
 	void singleThreadSimulation();
 	void multiThreadSimulation();
 
-	void solverRunner(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error);
+	void solve(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error);
 
 	SolvedResult formatResultForScatter(const SolvedResult& result);
 
