@@ -21,15 +21,17 @@ struct Rocket {
 	//param
 	double Cnp, Cny;
 	double Cmqp, Cmqy;
+
 	//status
-	double elapsedTime = 0.0;
+	double elapsedTime = 0.0;		// [s]
 	size_t parachuteIndex = 0;
 	bool parachuteOpened = false;
 	bool waitForOpenPara = false;
 	bool detectPeak = false;
+
 	//calculated
-	Vector3D airSpeed_b;//air speed [m/s]
-	double attackAngle;
+	Vector3D airSpeed_b;			// [m/s]
+	double attackAngle;				// [rad]
 
 
 	/*============================operator==========================*/
@@ -45,7 +47,6 @@ struct Rocket {
 
 		return *this;
 	}
-
 
 	Rocket operator*(double s) {
 		return{
