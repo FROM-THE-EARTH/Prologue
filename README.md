@@ -11,7 +11,7 @@
   [**Download**](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/Prologue/Application/Prologue.zip)
 
 # 利用方法
-  1. [Gnuplot](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)を導入
+  1. [Gnuplot](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)を導入(gnuplotのデフォルト出力形式の選択でwxtを選択する)
 
   2. Prologue.zipを展開
 
@@ -24,6 +24,8 @@
   6. result/フォルダ下に結果が格納される
   
   ***ファイル名に全角を使用すると不具合が生じる可能性があります**
+  
+  **linuxでは実行不可、macの場合はwineやbootcampを利用する**
 
 # For Developers
   必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOP.md)を読んでください。
