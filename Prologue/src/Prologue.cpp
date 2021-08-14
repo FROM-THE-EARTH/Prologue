@@ -8,7 +8,7 @@
 #include <string>
 
 
-const auto VERSION = "1.3.0";
+const auto VERSION = "1.3.1";
 
 
 bool setTitle();
