@@ -22,7 +22,7 @@ size_t search(const std::vector<ThrustData>& thrust, double time, size_t begin, 
 }
 
 size_t getLowerIndex(const std::vector<ThrustData>& thrust, double time) {
-	size_t index = thrust.size() / 2;
+	/*size_t index = thrust.size() / 2;
 	if (thrust[index].time == time) {
 		return index;
 	}
@@ -31,7 +31,14 @@ size_t getLowerIndex(const std::vector<ThrustData>& thrust, double time) {
 	}
 	else {
 		return search(thrust, time, index, thrust.size() - 1);
+	}*/
+	for (size_t i = 1; i < thrust.size() - 1; i++) {
+		if (thrust[i].time > time) {
+			return i - 1;
+		}
 	}
+
+	return thrust.size() - 2;
 }
 
 bool Engine::loadThrustData(const std::string& filename) {
