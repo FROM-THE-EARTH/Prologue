@@ -4,9 +4,9 @@
   出力ファイルは審査書書きやすいようにしてます。
 
 # Download
-  Latest Update: 2020/01/31
+  Latest Update: 2021/08/14
 
-  Version: 1.2.1
+  Version: 1.3.1
 
   [**Download**](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/Prologue/Application/Prologue.zip)
 
@@ -35,6 +35,8 @@
   あとコード結構汚いと思うのでこれをきれいにしてもらえるとgood.
 
 # 変更履歴
+## v1.3.1
+ - エンジン推力の線形補間アルゴリズムを修正
 
 ## v1.3.0
  - 詳細解析モードにおいて、各ステップでの主要な値を出力するように変更
