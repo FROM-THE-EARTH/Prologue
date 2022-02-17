@@ -36,7 +36,7 @@ set(SOURCE_FILES
 	"src/math/Quaternion.cpp"
 	"src/math/Vector3D.cpp"
 
-	"src/rocket/AirSpeedParam.cpp"
+	"src/rocket/AirspeedParam.cpp"
 	"src/rocket/Engine.cpp"
 
 	"src/solver/Simulator.cpp"
