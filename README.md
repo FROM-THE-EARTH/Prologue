@@ -14,7 +14,7 @@ Latest Update: 2021/08/14
 
 Version: 1.3.1
 
-[**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases)
+[**Download**](https://github.com/FROM-THE-EARTH/Prologue_test/releases/latest)
 
 # 利用方法
 
