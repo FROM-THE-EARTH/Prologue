@@ -4,7 +4,7 @@
 
 出力ファイルは審査書書きやすいようにしてます。
 
-:warning Gnuplot での表示は Windows 版でのみ動作確認をしています。
+:warning: Gnuplot での表示は Windows 版でのみ動作確認をしています。
 
 # Download
 
@@ -16,7 +16,8 @@ Version: 1.3.1
 
 # 利用方法
 
-1. [Gnuplot](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)を導入(gnuplot のデフォルト出力形式の選択で wxt を選択する)
+1. [Gnuplot](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)を導入<br>
+   gnuplot のデフォルト出力形式の選択で wxt を選択する
 
 2. Prologue.zip を展開
 
@@ -32,7 +33,7 @@ Version: 1.3.1
 
 # For Developers
 
-必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOP.md)を読んでください。
+必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOPMENT.md)を読んでください。
 
 やることがなかったら Issues にあるものを消化するといいと思います。
 
