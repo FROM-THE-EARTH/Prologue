@@ -46,3 +46,9 @@ Visual Studio Code での開発を想定して環境構築しているため、�
    タグを付けたコミットに不具合があり、バージョンを変更せずにリリース作業をやり直す場合、不具合を修正したコミットに`vX.X.X.X`とタグを付けリモートにプッシュする（例 `v1.2.3.1`, `v1.2.3.2`）
 5. [Actions] タグに反応して`release.yml`のワークフローが実行される
 6. [Releases](https://github.com/FROM-THE-EARTH/Prologue/releases) に`vX.X.X`を名前として Windows, macOS, Linux 向けの実行ファイル・設定ファイル・入力ファイルを同包した zip ファイルが登録される
+
+## CI
+
+main ブランチをプッシュする、または main ブランチに PR を送ると`ci.yml`のワークフローが自動的に Windows, macOS, Linux でのビルドを実行します。
+
+何かしらエラーが発生するとワークフローが失敗するため開発時に活用してください。
