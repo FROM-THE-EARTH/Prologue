@@ -6,6 +6,8 @@
 
 :warning: Gnuplot での表示は Windows 版でのみ動作確認をしています。
 
+:warning: macOS 版は Apple Silicon には対応していません。
+
 # Download
 
 Latest Update: 2021/08/14
