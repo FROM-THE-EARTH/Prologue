@@ -18,10 +18,10 @@ Version: 1.4.0
 
 1. Gnuplot を導入
 
-   - Windows: [ここ](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)からインストール<br>
+   - **Windows**: [ここ](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)からインストール<br>
      gnuplot のデフォルト出力形式の選択で wxt を選択する
-   - macOS: [Homebrew](https://brew.sh/index_ja)をインストール後、ターミナルで `brew install gnuplot`
-   - Linux: ターミナルで `sudo apt install gnuplot`
+   - **macOS**: [Homebrew](https://brew.sh/index_ja)をインストール後、ターミナルで `brew install gnuplot`
+   - **Linux**: ターミナルで `sudo apt install gnuplot`
 
 2. Prologue.zip を展開
 
