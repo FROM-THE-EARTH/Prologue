@@ -7,7 +7,7 @@
 #include "CommandLine.hpp"
 #include "utils/JsonUtils.hpp"
 
-Setting AppSetting::setting_;
+Setting AppSetting::m_Setting;
 
 template <typename T>
 T GetValueExc(const boost::property_tree::ptree& pt, const std::string& key) {
@@ -31,29 +31,29 @@ bool AppSetting::Initialize() {
 
     try {
         // processing
-        setting_.processing.multiThread = GetValueExc<bool>(pt, "processing.multi_thread");
+        m_Setting.processing.multiThread = GetValueExc<bool>(pt, "processing.multi_thread");
 
         // simulation
-        setting_.simulation.dt                  = GetValueExc<double>(pt, "simulation.dt");
-        setting_.simulation.detectPeakThreshold = GetValueExc<double>(pt, "simulation.detect_peak_threshold");
+        m_Setting.simulation.dt                  = GetValueExc<double>(pt, "simulation.dt");
+        m_Setting.simulation.detectPeakThreshold = GetValueExc<double>(pt, "simulation.detect_peak_threshold");
         // scatter
-        setting_.simulation.windSpeedMin    = GetValueExc<double>(pt, "simulation.scatter.wind_speed_min");
-        setting_.simulation.windSpeedMax    = GetValueExc<double>(pt, "simulation.scatter.wind_speed_max");
-        setting_.simulation.windDirInterval = GetValueExc<double>(pt, "simulation.scatter.wind_dir_interval");
+        m_Setting.simulation.windSpeedMin    = GetValueExc<double>(pt, "simulation.scatter.wind_speed_min");
+        m_Setting.simulation.windSpeedMax    = GetValueExc<double>(pt, "simulation.scatter.wind_speed_max");
+        m_Setting.simulation.windDirInterval = GetValueExc<double>(pt, "simulation.scatter.wind_dir_interval");
 
         // wind model
-        setting_.windModel.powerConstant = GetValueExc<double>(pt, "wind_model.power_constant");
-        const std::string windmodeltype  = GetValueExc<std::string>(pt, "wind_model.type");
+        m_Setting.windModel.powerConstant = GetValueExc<double>(pt, "wind_model.power_constant");
+        const std::string windmodeltype   = GetValueExc<std::string>(pt, "wind_model.type");
         if (windmodeltype == "real") {
-            setting_.windModel.type = WindModelType::Real;
+            m_Setting.windModel.type = WindModelType::Real;
         } else if (windmodeltype == "original") {
-            setting_.windModel.type = WindModelType::Original;
+            m_Setting.windModel.type = WindModelType::Original;
         } else if (windmodeltype == "only_powerlow") {
-            setting_.windModel.type = WindModelType::OnlyPowerLow;
+            m_Setting.windModel.type = WindModelType::OnlyPowerLow;
         } else {
             throw 0;
         }
-        setting_.windModel.realdataFilename = GetValueExc<std::string>(pt, "wind_model.realdata_filename");
+        m_Setting.windModel.realdataFilename = GetValueExc<std::string>(pt, "wind_model.realdata_filename");
     } catch (...) {
         return false;
     }

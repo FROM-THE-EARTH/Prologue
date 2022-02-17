@@ -22,15 +22,15 @@ class Air {
 
     double directionInterval_ = 0.0;
 
-    double height_             = 0.0;
-    double geopotentialHeight_ = 0.0;
-    double gravity_            = 0.0;
-    double temperature_        = 0.0;
-    double pressure_           = 0.0;
-    double airDensity_         = 0.0;
-    Vector3D wind_;
+    double m_height             = 0.0;
+    double m_geopotentialHeight = 0.0;
+    double gravity_             = 0.0;
+    double m_temperature        = 0.0;
+    double m_pressure           = 0.0;
+    double m_airDensity         = 0.0;
+    Vector3D m_wind;
 
-    bool initialized_ = false;
+    bool m_initialized = false;
 
 public:
     Air();  // real
@@ -40,11 +40,11 @@ public:
     void update(double height);
 
     Vector3D wind() const {
-        return wind_;
+        return m_wind;
     }
 
     double density() const {
-        return airDensity_;
+        return m_airDensity;
     }
 
     double gravity() const {
@@ -52,7 +52,7 @@ public:
     }
 
     bool initialized() const {
-        return initialized_;
+        return m_initialized;
     }
 
 private:

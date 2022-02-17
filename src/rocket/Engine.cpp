@@ -48,7 +48,7 @@ bool Engine::loadThrustData(const std::string& filename) {
     char dummy[1024];
 
     while (1) {
-        char c = fs.get();
+        char c = static_cast<char>(fs.get());
         if (c < '0' || c > '9') {
             fs.getline(dummy, 1024);
         } else {
@@ -60,32 +60,32 @@ bool Engine::loadThrustData(const std::string& filename) {
     while (!fs.eof()) {
         ThrustData thrustdata;
         fs >> thrustdata.time >> thrustdata.thrust;
-        thrustDatas_.push_back(thrustdata);
+        m_thrustData.push_back(thrustdata);
     }
 
-    if (thrustDatas_[thrustDatas_.size() - 1].time == 0.0) {
-        thrustDatas_.pop_back();
+    if (m_thrustData[m_thrustData.size() - 1].time == 0.0) {
+        m_thrustData.pop_back();
     }
 
-    if (thrustDatas_[0].time != 0.0) {
-        thrustDatas_.insert(thrustDatas_.begin(), ThrustData{0.0, 0.0});
+    if (m_thrustData[0].time != 0.0) {
+        m_thrustData.insert(m_thrustData.begin(), ThrustData{0.0, 0.0});
     }
 
-    exist_ = true;
+    m_exist = true;
     return true;
 }
 
 double Engine::thrustAt(double time) const {
-    if (!exist_ || time <= 0.0 || time > thrustDatas_[thrustDatas_.size() - 1].time) {
+    if (!m_exist || time <= 0.0 || time > m_thrustData[m_thrustData.size() - 1].time) {
         return 0;
     }
 
-    const size_t i = getLowerIndex(thrustDatas_, time);
+    const size_t i = getLowerIndex(m_thrustData, time);
 
-    const double time1   = thrustDatas_[i].time;
-    const double time2   = thrustDatas_[i + 1].time;
-    const double thrust1 = thrustDatas_[i].thrust;
-    const double thrust2 = thrustDatas_[i + 1].thrust;
+    const double time1   = m_thrustData[i].time;
+    const double time2   = m_thrustData[i + 1].time;
+    const double thrust1 = m_thrustData[i].thrust;
+    const double thrust2 = m_thrustData[i + 1].thrust;
 
     const double grad = (thrust2 - thrust1) / (time2 - time1);
 

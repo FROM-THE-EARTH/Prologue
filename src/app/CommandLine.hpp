@@ -7,9 +7,7 @@
 enum class PrintInfoType { Information, Warning, Error };
 
 namespace CommandLine {
-
     namespace Internal {
-
         extern size_t Counter;
 
         void ShowChoices();

@@ -9,9 +9,9 @@ struct ThrustData {
 };
 
 class Engine {
-    std::vector<ThrustData> thrustDatas_;
+    std::vector<ThrustData> m_thrustData;
 
-    bool exist_ = false;
+    bool m_exist = false;
 
 public:
     bool loadThrustData(const std::string& filename);
@@ -19,10 +19,10 @@ public:
     double thrustAt(double time) const;
 
     double combustionTime() const {
-        return exist_ ? thrustDatas_[thrustDatas_.size() - 1].time : 0.0;
+        return m_exist ? m_thrustData[m_thrustData.size() - 1].time : 0.0;
     }
 
     bool isFinishBurning(double time) const {
-        return exist_ ? time > combustionTime() : true;
+        return m_exist ? time > combustionTime() : true;
     }
 };

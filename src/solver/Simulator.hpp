@@ -10,40 +10,40 @@ enum class SimulationMode : int { Scatter = 1, Detail };
 
 class Simulator {
     // settings
-    std::string jsonFilename_;
-    SimulationMode simulationMode_;
+    std::string m_jsonFilename;
+    SimulationMode m_simulationMode;
     RocketType rocketType_;
-    TrajectoryMode trajectoryMode_;
-    DetachType detachType_;
-    double detachTime_;
+    TrajectoryMode m_trajectoryMode;
+    DetachType m_detachType;
+    double m_detachTime;
 
     // simulate
-    const double dt_;
-    double windSpeed_     = 0.0;
-    double windDirection_ = 0.0;  // direction is clockwise from the north
-    bool solved_          = false;
+    const double m_dt;
+    double m_windSpeed     = 0.0;
+    double m_windDirection = 0.0;  // direction is clockwise from the north
+    bool m_solved          = false;
 
     // from json
-    RocketSpec rocketSpec_;
+    RocketSpec m_rocketSpec;
 
     // result
-    std::string outputDirName_;
-    SolvedResult detailResult_;
-    std::vector<SolvedResult> scatterResult_;
+    std::string m_outputDirName;
+    SolvedResult m_detailResult;
+    std::vector<SolvedResult> m_scatterResult;
 
 public:
-    Simulator(double dt) : dt_(dt) {}
+    Simulator(double dt) : m_dt(dt) {}
 
     bool run();
 
     void plotToGnuplot() {
-        switch (simulationMode_) {
+        switch (m_simulationMode) {
         case SimulationMode::Scatter:
-            Gnuplot::Plot(scatterResult_);
+            Gnuplot::Plot(m_scatterResult);
             break;
 
         case SimulationMode::Detail:
-            Gnuplot::Plot(detailResult_);
+            Gnuplot::Plot(m_detailResult);
             break;
         }
     }

@@ -7,10 +7,10 @@
 
 enum class Map { NOSIRO_SEA, NOSIRO_LAND, IZU_SEA, IZU_LAND, UNKNOWN };
 
-struct MapCoordinate {
+class MapCoordinate {
 private:
-    double degPerLen_latitude;
-    double degPerLen_longitude;
+    double m_degPerLen_latitude;
+    double m_degPerLen_longitude;
 
 public:
     const Map map;
@@ -19,16 +19,16 @@ public:
 
     MapCoordinate(Map _map, double _latitude, double _longitude) :
         map(_map), latitude(_latitude), longitude(_longitude) {
-        degPerLen_latitude  = 31.0 / 0.00027778;
-        degPerLen_longitude = 6378150.0 * std::cos(latitude / 180.0 * Constant::PI) * 2.0 * Constant::PI / 360.0;
+        m_degPerLen_latitude  = 31.0 / 0.00027778;
+        m_degPerLen_longitude = 6378150.0 * std::cos(latitude / 180.0 * Constant::PI) * 2.0 * Constant::PI / 360.0;
     }
 
     double latitudeAt(double length) const {  // length: from here
-        return latitude + length / degPerLen_latitude;
+        return latitude + length / m_degPerLen_latitude;
     }
 
     double longitudeAt(double length) const {  // length: from here
-        return longitude + length / degPerLen_longitude;
+        return longitude + length / m_degPerLen_longitude;
     }
 };
 

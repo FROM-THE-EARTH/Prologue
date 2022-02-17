@@ -33,12 +33,12 @@ struct Setting {
 };
 
 class AppSetting {
-    static Setting setting_;
+    static Setting m_Setting;
 
 public:
     static bool Initialize();
 
     const static Setting& GetSetting() {
-        return setting_;
+        return m_Setting;
     }
 };

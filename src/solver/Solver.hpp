@@ -49,31 +49,31 @@ struct SolvedResult {
 
 class Solver {
     // config
-    const double dt_;
+    const double m_dt;
     const RocketType rocketType_;
-    const TrajectoryMode trajectoryMode_;
-    const DetachType detachType_;
-    const double detachTime_;
+    const TrajectoryMode m_trajectoryMode;
+    const DetachType m_detachType;
+    const double m_detachTime;
 
     // spec
-    RocketSpec rocketSpec_;
+    RocketSpec m_rocketSpec;
 
     // rocket
-    Rocket rocket_, rocketDelta_;
-    std::vector<Rocket> rocketAtDetached_;
+    Rocket m_rocket, rocketDelta_;
+    std::vector<Rocket> m_rocketAtDetached;
 
     // dynamics
-    Air* air_ = nullptr;
-    Vector3D force_b_;
-    Vector3D moment_b_;
+    Air* m_air = nullptr;
+    Vector3D m_force_b;
+    Vector3D m_moment_b;
 
     // stastus
-    bool launchClear_         = false;
-    double combustionTime_    = 0.0;
-    size_t targetRocketIndex_ = 0;
+    bool m_launchClear         = false;
+    double m_combustionTime    = 0.0;
+    size_t m_targetRocketIndex = 0;
 
     // result
-    SolvedResult result_;
+    SolvedResult m_result;
 
 public:
     Solver(double dt,
@@ -82,21 +82,21 @@ public:
            DetachType detachType,
            double detachTime,
            const RocketSpec& spec) :
-        dt_(dt),
+        m_dt(dt),
         rocketType_(rocketType),
-        trajectoryMode_(mode),
-        detachType_(detachType),
-        detachTime_(detachTime),
-        rocketSpec_(spec) {}
+        m_trajectoryMode(mode),
+        m_detachType(detachType),
+        m_detachTime(detachTime),
+        m_rocketSpec(spec) {}
 
     ~Solver() {
-        delete air_;
+        delete m_air;
     }
 
     bool run(double windSpeed, double windDirection);
 
     SolvedResult getResult() const {
-        return result_;
+        return m_result;
     }
 
 private:

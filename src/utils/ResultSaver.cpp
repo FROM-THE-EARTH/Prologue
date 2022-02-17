@@ -170,8 +170,8 @@ namespace ResultSaver {
 
             Internal::OpenFile(path, result.size());
 
-            for (auto& result : result) {
-                Internal::WriteLine(result, i);
+            for (auto& res : result) {
+                Internal::WriteLine(res, i);
             }
 
             Internal::Close();

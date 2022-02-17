@@ -43,60 +43,60 @@ void AirspeedParam::loadParam(const std::string& filename) {
     char c;
     std::string dummy;
     while (!fs.eof()) {
-        vsAirspeed_.push_back(VsAirspeed());
-        fs >> vsAirspeed_[i].airSpeed >> c >> vsAirspeed_[i].Cp >> c >> vsAirspeed_[i].Cp_a >> c >> vsAirspeed_[i].Cd
-            >> c >> vsAirspeed_[i].Cd_a2 >> c >> vsAirspeed_[i].Cna;
+        m_vsAirspeed.push_back(VsAirspeed());
+        fs >> m_vsAirspeed[i].airSpeed >> c >> m_vsAirspeed[i].Cp >> c >> m_vsAirspeed[i].Cp_a >> c
+            >> m_vsAirspeed[i].Cd >> c >> m_vsAirspeed[i].Cd_a2 >> c >> m_vsAirspeed[i].Cna;
         i++;
     }
-    if (vsAirspeed_[vsAirspeed_.size() - 1] == VsAirspeed()) {
-        vsAirspeed_.pop_back();
+    if (m_vsAirspeed[m_vsAirspeed.size() - 1] == VsAirspeed()) {
+        m_vsAirspeed.pop_back();
     }
 
     fs.close();
 
-    exist_ = true;
+    m_exist = true;
 }
 
 void AirspeedParam::update(double airSpeed) {
-    if (vsAirspeed_.size() == 1) {
-        param_ = {airSpeed,
-                  vsAirspeed_[0].Cp,
-                  vsAirspeed_[0].Cp_a,
-                  vsAirspeed_[0].Cd,
-                  vsAirspeed_[0].Cd_a2,
-                  vsAirspeed_[0].Cna};
+    if (m_vsAirspeed.size() == 1) {
+        m_param = {airSpeed,
+                   m_vsAirspeed[0].Cp,
+                   m_vsAirspeed[0].Cp_a,
+                   m_vsAirspeed[0].Cd,
+                   m_vsAirspeed[0].Cd_a2,
+                   m_vsAirspeed[0].Cna};
         return;
     }
 
-    const size_t i = getLowerIndex(vsAirspeed_, airSpeed);
+    const size_t i = getLowerIndex(m_vsAirspeed, airSpeed);
 
-    const double airSpeed1 = vsAirspeed_[i].airSpeed;
-    const double airSpeed2 = vsAirspeed_[i + 1].airSpeed;
+    const double airSpeed1 = m_vsAirspeed[i].airSpeed;
+    const double airSpeed2 = m_vsAirspeed[i + 1].airSpeed;
 
     if (airSpeed < airSpeed1) {
-        param_ = {airSpeed,
-                  vsAirspeed_[i].Cp,
-                  vsAirspeed_[i].Cp_a,
-                  vsAirspeed_[i].Cd,
-                  vsAirspeed_[i].Cd_a2,
-                  vsAirspeed_[i].Cna};
+        m_param = {airSpeed,
+                   m_vsAirspeed[i].Cp,
+                   m_vsAirspeed[i].Cp_a,
+                   m_vsAirspeed[i].Cd,
+                   m_vsAirspeed[i].Cd_a2,
+                   m_vsAirspeed[i].Cna};
         return;
     }
 
     if (airSpeed > airSpeed2) {
-        param_ = {airSpeed,
-                  vsAirspeed_[i + 1].Cp,
-                  vsAirspeed_[i + 1].Cp_a,
-                  vsAirspeed_[i + 1].Cd,
-                  vsAirspeed_[i + 1].Cd_a2,
-                  vsAirspeed_[i + 1].Cna};
+        m_param = {airSpeed,
+                   m_vsAirspeed[i + 1].Cp,
+                   m_vsAirspeed[i + 1].Cp_a,
+                   m_vsAirspeed[i + 1].Cd,
+                   m_vsAirspeed[i + 1].Cd_a2,
+                   m_vsAirspeed[i + 1].Cna};
         return;
     }
 
-    param_ = {airSpeed,
-              Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cp, vsAirspeed_[i + 1].Cp),
-              Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cp_a, vsAirspeed_[i + 1].Cp_a),
-              Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cd, vsAirspeed_[i + 1].Cd),
-              Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cd_a2, vsAirspeed_[i + 1].Cd_a2),
-              Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, vsAirspeed_[i].Cna, vsAirspeed_[i + 1].Cna)};
+    m_param = {airSpeed,
+               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cp, m_vsAirspeed[i + 1].Cp),
+               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cp_a, m_vsAirspeed[i + 1].Cp_a),
+               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cd, m_vsAirspeed[i + 1].Cd),
+               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cd_a2, m_vsAirspeed[i + 1].Cd_a2),
+               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cna, m_vsAirspeed[i + 1].Cna)};
 }

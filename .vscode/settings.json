@@ -3,7 +3,6 @@
   "C_Cpp.clang_format_style": "file",
   "files.associations": {
     ".clang-format": "yaml",
-    "optional": "cpp"
   },
   "[cpp]": {
     "editor.defaultFormatter": "ms-vscode.cpptools"

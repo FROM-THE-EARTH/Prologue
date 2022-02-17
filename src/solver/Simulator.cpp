@@ -20,11 +20,11 @@ bool Simulator::run() {
 
     createResultDirectory();
 
-    Gnuplot::Initialize(outputDirName_.c_str(), MapFeature::GetMapFromName(rocketSpec_.env.place).map);
+    Gnuplot::Initialize(m_outputDirName.c_str(), MapFeature::GetMapFromName(m_rocketSpec.env.place).map);
 
     const auto start = std::chrono::system_clock::now();
 
-    switch (simulationMode_) {
+    switch (m_simulationMode) {
     case SimulationMode::Scatter:
         scatterSimulation();
         break;
@@ -34,7 +34,7 @@ bool Simulator::run() {
         break;
     }
 
-    if (!solved_) {
+    if (!m_solved) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Failed to simulate");
         return false;
     }
@@ -46,16 +46,16 @@ bool Simulator::run() {
 
     saveResult();
 
-    const std::string str = "Result is saved in \"" + outputDirName_ + "/\"";
+    const std::string str = "Result is saved in \"" + m_outputDirName + "/\"";
     CommandLine::PrintInfo(PrintInfoType::Information, str.c_str());
 
-    if (simulationMode_ == SimulationMode::Scatter) {
-        for (auto& r : scatterResult_) {
+    if (m_simulationMode == SimulationMode::Scatter) {
+        for (auto& r : m_scatterResult) {
             eraseNotLandingPoint(&r);
         }
     }
 
-    CommandLine::SetOutputDir(outputDirName_);
+    CommandLine::SetOutputDir(m_outputDirName);
 
     return true;
 }
@@ -65,22 +65,22 @@ bool Simulator::initialize() {
     setJSONFile();
 
     if (AppSetting::GetSetting().windModel.type == WindModelType::Real) {
-        simulationMode_ = SimulationMode::Detail;
+        m_simulationMode = SimulationMode::Detail;
     } else {
         setSimulationMode();
     }
 
     setTrajectoryMode();
 
-    if (AppSetting::GetSetting().windModel.type != WindModelType::Real && simulationMode_ == SimulationMode::Detail) {
+    if (AppSetting::GetSetting().windModel.type != WindModelType::Real && m_simulationMode == SimulationMode::Detail) {
         setWindCondition();
     }
 
-    if (RocketSpecReader::IsMultipleRocket(jsonFilename_)) {
+    if (RocketSpecReader::IsMultipleRocket(m_jsonFilename)) {
         CommandLine::PrintInfo(PrintInfoType::Information, "This is Multiple Rocket");
         rocketType_ = RocketType::Multi;
         setDetachType();
-        if (detachType_ == DetachType::Time) {
+        if (m_detachType == DetachType::Time) {
             setDetachTime();
         }
     } else {
@@ -90,45 +90,45 @@ bool Simulator::initialize() {
     std::cout << "----------------------------------------------------------" << std::endl;
 
     // read json
-    rocketSpec_ = RocketSpecReader::ReadJson(jsonFilename_);
+    m_rocketSpec = RocketSpecReader::ReadJson(m_jsonFilename);
 
     // output
-    outputDirName_ = jsonFilename_;
-    outputDirName_.erase(outputDirName_.size() - 5, 5);
-    outputDirName_ += "[";
+    m_outputDirName = m_jsonFilename;
+    m_outputDirName.erase(m_outputDirName.size() - 5, 5);
+    m_outputDirName += "[";
 
     const std::filesystem::path f = AppSetting::GetSetting().windModel.realdataFilename;
     switch (AppSetting::GetSetting().windModel.type) {
     case WindModelType::Real:
-        outputDirName_ += "(" + f.stem().string() + ")";
+        m_outputDirName += "(" + f.stem().string() + ")";
         break;
     case WindModelType::Original:
-        outputDirName_ += "original";
+        m_outputDirName += "original";
         break;
     case WindModelType::OnlyPowerLow:
-        outputDirName_ += "powerlow";
+        m_outputDirName += "powerlow";
         break;
     }
 
-    switch (simulationMode_) {
+    switch (m_simulationMode) {
     case SimulationMode::Scatter:
-        outputDirName_ += "_scatter";
+        m_outputDirName += "_scatter";
         break;
     case SimulationMode::Detail:
-        outputDirName_ += "_detail";
+        m_outputDirName += "_detail";
         break;
     }
 
-    switch (trajectoryMode_) {
+    switch (m_trajectoryMode) {
     case TrajectoryMode::Parachute:
-        outputDirName_ += "_para";
+        m_outputDirName += "_para";
         break;
     case TrajectoryMode::Trajectory:
-        outputDirName_ += "_trajectory";
+        m_outputDirName += "_trajectory";
         break;
     }
 
-    outputDirName_ += "]";
+    m_outputDirName += "]";
 
     return true;
 }
@@ -143,46 +143,46 @@ void Simulator::setJSONFile() {
         std::cout << i + 1 << ": " << existJSONs[i] << std::endl;
     }
     const size_t jsonIndex = CommandLine::InputIndex<size_t>(existJSONs.size());
-    jsonFilename_          = existJSONs[jsonIndex - 1];
+    m_jsonFilename         = existJSONs[jsonIndex - 1];
 }
 
 void Simulator::setSimulationMode() {
     CommandLine::Question("Set Simulation Mode", "Scatter Mode", "Detail Mode");
-    simulationMode_ = CommandLine::InputIndex<SimulationMode>(2);
+    m_simulationMode = CommandLine::InputIndex<SimulationMode>(2);
 }
 
 void Simulator::setTrajectoryMode() {
     CommandLine::Question("Set Falling Type", "Trajectory", "Parachute");
-    trajectoryMode_ = CommandLine::InputIndex<TrajectoryMode>(2);
+    m_trajectoryMode = CommandLine::InputIndex<TrajectoryMode>(2);
 }
 
 void Simulator::setWindCondition() {
     std::cout << "Input Wind Velocity[m/s]" << std::endl;
-    std::cin >> windSpeed_;
+    std::cin >> m_windSpeed;
     std::cout << std::endl;
 
     std::cout << "Input Wind Direction[deg] (North: 0, East: 90)" << std::endl;
-    std::cin >> windDirection_;
+    std::cin >> m_windDirection;
     std::cout << std::endl;
 }
 
 void Simulator::setDetachType() {
     CommandLine::Question(
         "Set Detach Type", "When burning finished", "Specify time", "Concurrently with parachute", "Do not detach");
-    detachType_ = CommandLine::InputIndex<DetachType>(4);
+    m_detachType = CommandLine::InputIndex<DetachType>(4);
 }
 
 void Simulator::setDetachTime() {
     CommandLine::Question("Set Detach Time");
-    std::cin >> detachTime_;
+    std::cin >> m_detachTime;
     std::cout << std::endl;
 }
 
 void Simulator::scatterSimulation() {
-    windSpeed_     = AppSetting::GetSetting().simulation.windSpeedMin;
-    windDirection_ = 0.0;
+    m_windSpeed     = AppSetting::GetSetting().simulation.windSpeedMin;
+    m_windDirection = 0.0;
 
-    solved_ = true;
+    m_solved = true;
 
     if (AppSetting::GetSetting().processing.multiThread) {
         multiThreadSimulation();
@@ -192,29 +192,29 @@ void Simulator::scatterSimulation() {
 }
 
 void Simulator::detailSimulation() {
-    Solver solver(dt_, rocketType_, trajectoryMode_, detachType_, detachTime_, rocketSpec_);
+    Solver solver(m_dt, rocketType_, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
-    solved_ = solver.run(windSpeed_, windDirection_);
-    if (!solved_) {
+    m_solved = solver.run(m_windSpeed, m_windDirection);
+    if (!m_solved) {
         return;
     }
 
-    detailResult_ = solver.getResult();
+    m_detailResult = solver.getResult();
 }
 
 void Simulator::singleThreadSimulation() {
     while (1) {
-        Solver solver(dt_, rocketType_, trajectoryMode_, detachType_, detachTime_, rocketSpec_);
+        Solver solver(m_dt, rocketType_, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
-        solved_ &= solver.run(windSpeed_, windDirection_);
-        if (!solved_) {
+        m_solved &= solver.run(m_windSpeed, m_windDirection);
+        if (!m_solved) {
             break;
         }
 
         auto result = solver.getResult();
 
         result = formatResultForScatter(result);
-        scatterResult_.push_back(result);
+        m_scatterResult.push_back(result);
 
         if (!updateWindCondition()) {
             break;
@@ -238,7 +238,7 @@ void Simulator::multiThreadSimulation() {
         simulated = 1;
 
         threads[0] =
-            std::thread(&Simulator::solve, this, windSpeed_, windDirection_, &results[0], &finished[0], &error[0]);
+            std::thread(&Simulator::solve, this, m_windSpeed, m_windDirection, &results[0], &finished[0], &error[0]);
         threads[0].detach();
         for (size_t i = 1; i < threadCount; i++) {
             finish = !updateWindCondition();
@@ -246,8 +246,8 @@ void Simulator::multiThreadSimulation() {
                 break;
             }
 
-            threads[i] =
-                std::thread(&Simulator::solve, this, windSpeed_, windDirection_, &results[i], &finished[i], &error[i]);
+            threads[i] = std::thread(
+                &Simulator::solve, this, m_windSpeed, m_windDirection, &results[i], &finished[i], &error[i]);
             threads[i].detach();
             simulated++;
         }
@@ -267,12 +267,12 @@ void Simulator::multiThreadSimulation() {
 
         // error occured
         if (e) {
-            solved_ = false;
+            m_solved = false;
             break;
         }
 
         for (size_t i = 0; i < simulated; i++) {
-            scatterResult_.push_back(results[i]);
+            m_scatterResult.push_back(results[i]);
         }
 
         finish = !updateWindCondition();
@@ -280,7 +280,7 @@ void Simulator::multiThreadSimulation() {
 }
 
 void Simulator::solve(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
-    Solver solver(dt_, rocketType_, trajectoryMode_, detachType_, detachTime_, rocketSpec_);
+    Solver solver(m_dt, rocketType_, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
     if (*error = !solver.run(windSpeed, windDir); *error) {
         return;
@@ -320,7 +320,7 @@ void Simulator::createResultDirectory() {
         }
     }
 
-    const std::filesystem::path output = "result/" + outputDirName_;
+    const std::filesystem::path output = "result/" + m_outputDirName;
     if (!std::filesystem::exists(output)) {
         if (!std::filesystem::create_directory(output)) {
             CommandLine::PrintInfo(PrintInfoType::Error, "Failed to create result directory");
@@ -329,26 +329,26 @@ void Simulator::createResultDirectory() {
 }
 
 void Simulator::saveResult() {
-    const std::string dir = "result/" + outputDirName_ + "/";
+    const std::string dir = "result/" + m_outputDirName + "/";
 
-    switch (simulationMode_) {
+    switch (m_simulationMode) {
     case SimulationMode::Scatter:
-        ResultSaver::SaveScatter(dir, scatterResult_);
+        ResultSaver::SaveScatter(dir, m_scatterResult);
         break;
 
     case SimulationMode::Detail:
-        ResultSaver::SaveDetail(dir, detailResult_);
-        ResultSaver::SaveDetailAll(dir, detailResult_);
+        ResultSaver::SaveDetail(dir, m_detailResult);
+        ResultSaver::SaveDetailAll(dir, m_detailResult);
         break;
     }
 }
 
 bool Simulator::updateWindCondition() {
-    windDirection_ += AppSetting::GetSetting().simulation.windDirInterval;
-    if (windDirection_ >= 360.0) {
-        windDirection_ = 0.0;
-        windSpeed_ += 1.0;
-        if (windSpeed_ > AppSetting::GetSetting().simulation.windSpeedMax) {
+    m_windDirection += AppSetting::GetSetting().simulation.windDirInterval;
+    if (m_windDirection >= 360.0) {
+        m_windDirection = 0.0;
+        m_windSpeed += 1.0;
+        if (m_windSpeed > AppSetting::GetSetting().simulation.windSpeedMax) {
             return false;
         }
     }

@@ -18,27 +18,27 @@ struct VsAirspeed {
 };
 
 class AirspeedParam {
-    std::vector<VsAirspeed> vsAirspeed_;
+    std::vector<VsAirspeed> m_vsAirspeed;
 
-    VsAirspeed param_;
+    VsAirspeed m_param;
 
-    bool exist_ = false;
+    bool m_exist = false;
 
 public:
     void loadParam(const std::string& filename);
 
     bool exist() const {
-        return exist_;
+        return m_exist;
     }
 
     void update(double airSpeed);
 
     VsAirspeed getParam() const {
-        return param_;
+        return m_param;
     }
 
     void setParam(double Cp, double Cp_a, double Cd, double Cd_a2, double Cna) {
         const VsAirspeed v = {0.0, Cp, Cp_a, Cd, Cd_a2, Cna};
-        vsAirspeed_.push_back(v);
+        m_vsAirspeed.push_back(v);
     }
 };
