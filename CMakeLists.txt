@@ -14,8 +14,9 @@ endif()
 
 project(Prologue)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../application)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ../application)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_Release ../application)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ../application)
 
 include_directories(
 	SYSTEM "deps/include/"
