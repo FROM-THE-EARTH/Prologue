@@ -10,7 +10,7 @@
 
 Latest Update: 2022/02/17
 
-Version: 1.3.2
+Version: 1.4.0
 
 [**Download**](https://github.com/FROM-THE-EARTH/Prologue_test/releases/latest)
 
@@ -42,11 +42,9 @@ Version: 1.3.2
 
 やることがなかったら Issues にあるものを消化するといいと思います。
 
-あとコード結構汚いと思うのでこれをきれいにしてもらえると good.
-
 # 変更履歴
 
-## v1.3.2
+## v1.4.0
 
 - macOS, Linux に対応<br>
   macOS 版は Apple Silicon には対応していません。

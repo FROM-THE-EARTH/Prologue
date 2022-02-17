@@ -14,7 +14,7 @@
 #define PCLOSE pclose
 #endif
 
-const auto VERSION = "1.3.1";
+const auto VERSION = "1.4.0";
 
 bool setTitle();
 void showSettingInfo();
