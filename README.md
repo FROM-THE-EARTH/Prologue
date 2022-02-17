@@ -4,13 +4,15 @@
 
 出力ファイルは審査書書きやすいようにしてます。
 
+:warning Gnuplot での表示は Windows 版でのみ動作確認をしています。
+
 # Download
 
 Latest Update: 2021/08/14
 
 Version: 1.3.1
 
-[**Download**](https://raw.githubusercontent.com/FROM-THE-EARTH/Prologue/master/Prologue/Application/Prologue.zip)
+[**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases)
 
 # 利用方法
 
