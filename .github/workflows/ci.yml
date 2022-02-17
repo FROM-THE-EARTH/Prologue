@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake ..
+          cmake -DCMAKE_BUILD_TYPE=Debug ..
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.1
@@ -38,7 +38,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake ..
+          cmake -DCMAKE_BUILD_TYPE=Debug ..
 
       - name: Build
         run: |
@@ -55,7 +55,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake ..
+          cmake -DCMAKE_BUILD_TYPE=Debug ..
 
       - name: Build
         run: |
