@@ -1,0 +1,4 @@
+air_speed[m/s],Cp_from_nose[m],Cp_a[m/rad],Cd,Cd_a2[/rad^2],Cna
+0,1,1,1,1,1
+100,2,2,2,2,2
+200,3,3,3,3,3

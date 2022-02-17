@@ -1,0 +1,4 @@
+application/Prologue*
+application/result/
+build/
+!application/prologue.settings.json

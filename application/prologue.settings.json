@@ -1,0 +1,22 @@
+{
+  "processing": {
+    "multi_thread": true
+  },
+
+  "simulation": {
+    "dt": 0.001,
+    "detect_peak_threshold": 15.0,
+
+    "scatter": {
+      "wind_speed_min": 0.0,
+      "wind_speed_max": 7.0,
+      "wind_dir_interval": 22.5
+    }
+  },
+
+  "wind_model": {
+    "power_constant": 6.0,
+    "type": "original",
+    "realdata_filename": "nse2020_x.csv"
+  }
+}
