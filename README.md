@@ -59,12 +59,12 @@ Version: 1.3.2
 
 - 詳細解析モードにおいて、各ステップでの主要な値を出力するように変更
 
+<details>
+<summary>過去の変更履歴</summary>
+
 ## v1.2.1
 
 - 伊豆陸マップを追加
-
-<details>
-<summary>過去の変更履歴</summary>
 
 ## v1.2.0
 
