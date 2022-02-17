@@ -11,9 +11,18 @@
 #if defined(_WIN32) || defined(WIN32)
 #define POPEN _popen
 #define PCLOSE _pclose
+#define GNUPLOT_TERMINAL "windows"
+#define PAUSE_COMMAND "pause"
+#elif __APPLE__
+#define POPEN popen
+#define PCLOSE pclose
+#define GNUPLOT_TERMINAL "qt"
+#define PAUSE_COMMAND "read -n1 -r -p \"Press any key to continue...\" key"
 #else
 #define POPEN popen
 #define PCLOSE pclose
+#define GNUPLOT_TERMINAL "x11"
+#define PAUSE_COMMAND "read -n1 -r -p \"Press any key to continue...\" key"
 #endif
 
 enum class PlotDimension { Dimension2D, Dimension3D };
@@ -211,7 +220,7 @@ namespace Gnuplot {
 
             fprintf(p, "load \"result.plt\"\n");
 
-            fprintf(p, "set terminal windows\n");
+            fprintf(p, "set terminal " GNUPLOT_TERMINAL "\n");
 
             fprintf(p, "set output\n");
         }
@@ -316,7 +325,7 @@ namespace Gnuplot {
 
         fflush(p);
 
-        system("pause");
+        system(PAUSE_COMMAND);
 
         fprintf(p, "exit\n");
 
@@ -351,7 +360,7 @@ namespace Gnuplot {
 
         fprintf(p, "replot\n");
 
-        fprintf(p, "set terminal windows\n");
+        fprintf(p, "set terminal " GNUPLOT_TERMINAL "\n");
 
         fflush(p);
 
