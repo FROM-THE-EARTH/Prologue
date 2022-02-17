@@ -4,28 +4,31 @@
 
 出力ファイルは審査書書きやすいようにしてます。
 
-:warning: Gnuplot での表示は Windows 版でのみ動作確認をしています。
-
 :warning: macOS 版は Apple Silicon には対応していません。
 
 # Download
 
-Latest Update: 2021/08/14
+Latest Update: 2022/02/17
 
-Version: 1.3.1
+Version: 1.3.2
 
 [**Download**](https://github.com/FROM-THE-EARTH/Prologue_test/releases/latest)
 
 # 利用方法
 
-1. [Gnuplot](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)を導入<br>
-   gnuplot のデフォルト出力形式の選択で wxt を選択する
+1. Gnuplot を導入
+
+   - Windows: [ここ](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)からインストール<br>
+     gnuplot のデフォルト出力形式の選択で wxt を選択する
+   - macOS: [Homebrew](https://brew.sh/index_ja)をインストール後、ターミナルで `brew install gnuplot`
+   - Linux: ターミナルで `sudo apt install gnuplot`
 
 2. Prologue.zip を展開
 
 3. [各パラメータの入力形式](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/INPUT.md)に沿ってファイルを作成する
 
-4. Prologue.exe を起動(コマンドライン上で実行も可能)
+4. Prologue.exe を起動<br>
+   macOS, Linux の場合はターミナル上でのみ実行可能
 
 5. 指示に従ってシミュレーションを行う
 
@@ -42,6 +45,11 @@ Version: 1.3.1
 あとコード結構汚いと思うのでこれをきれいにしてもらえると good.
 
 # 変更履歴
+
+## v1.3.2
+
+- macOS, Linux に対応<br>
+  macOS 版は Apple Silicon には対応していません。
 
 ## v1.3.1
 
