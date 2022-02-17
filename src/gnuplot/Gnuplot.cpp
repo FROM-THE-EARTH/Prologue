@@ -22,7 +22,7 @@
 #define POPEN popen
 #define PCLOSE pclose
 #define GNUPLOT_TERMINAL "x11"
-#define PAUSE_COMMAND "read -n1 -r -p \"Press any key to continue...\" key"
+#define PAUSE_COMMAND "read -rsp $'Press any key to continue...\n'"
 #endif
 
 enum class PlotDimension { Dimension2D, Dimension3D };
