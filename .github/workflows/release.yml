@@ -28,7 +28,7 @@ jobs:
       - name: Packaging
         run: |
           mkdir .\Prologue\
-          mv .\application\Prologue .\Prologue\
+          mv .\application\Prologue.exe .\Prologue\
           mv .\application\prologue.settings.json .\Prologue\
           mv .\application\input\ .\Prologue\
           Compress-Archive -Path .\Prologue\ -DestinationPath .\Prologue.zip
@@ -55,6 +55,8 @@ jobs:
         run: |
           cd build
           make
+          cd ./application/
+          ls
 
       - name: Packaging
         run: |
@@ -86,6 +88,8 @@ jobs:
         run: |
           cd build
           make
+          cd ./application/
+          ls
 
       - name: Packaging
         run: |
