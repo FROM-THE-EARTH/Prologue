@@ -6,23 +6,12 @@
 #include "gnuplot/Gnuplot.hpp"
 #include "solver/Simulator.hpp"
 
-#if defined(_WIN32) || defined(WIN32)
-#define POPEN _popen
-#define PCLOSE _pclose
-#else
-#define POPEN popen
-#define PCLOSE pclose
-#endif
-
 const auto VERSION = "1.4.0";
 
-bool setTitle();
 void showSettingInfo();
 
 int main() {
-    if (!setTitle()) {
-        return 0;
-    }
+    std::cout << "Prologue v" << VERSION << std::endl << std::endl;
 
     if (!AppSetting::Initialize()) {
         std::cout << "Failed to initialize application" << std::endl;
@@ -41,17 +30,6 @@ int main() {
     Gnuplot::Save();
 
     CommandLine::Run();
-}
-
-bool setTitle() {
-    FILE* p = POPEN(("title Prologue_v" + std::string(VERSION)).c_str(), "w");
-    if (p == nullptr) {
-        CommandLine::PrintInfo(PrintInfoType::Error, "Could not set application title");
-        return false;
-    } else {
-        PCLOSE(p);
-        return true;
-    }
 }
 
 void showSettingInfo() {
