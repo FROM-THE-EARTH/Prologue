@@ -94,9 +94,9 @@ void AirspeedParam::update(double airSpeed) {
     }
 
     m_param = {airSpeed,
-               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cp, m_vsAirspeed[i + 1].Cp),
-               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cp_a, m_vsAirspeed[i + 1].Cp_a),
-               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cd, m_vsAirspeed[i + 1].Cd),
-               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cd_a2, m_vsAirspeed[i + 1].Cd_a2),
-               Algorithm::ToLinear(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cna, m_vsAirspeed[i + 1].Cna)};
+               Algorithm::Lerp(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cp, m_vsAirspeed[i + 1].Cp),
+               Algorithm::Lerp(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cp_a, m_vsAirspeed[i + 1].Cp_a),
+               Algorithm::Lerp(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cd, m_vsAirspeed[i + 1].Cd),
+               Algorithm::Lerp(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cd_a2, m_vsAirspeed[i + 1].Cd_a2),
+               Algorithm::Lerp(airSpeed, airSpeed1, airSpeed2, m_vsAirspeed[i].Cna, m_vsAirspeed[i + 1].Cna)};
 }
