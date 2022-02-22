@@ -15,14 +15,14 @@ int main() {
 
     if (!AppSetting::Initialize()) {
         std::cout << "Failed to initialize application" << std::endl;
-        return 0;
+        return 1;
     }
 
     showSettingInfo();
 
     Simulator simulator(AppSetting::GetSetting().simulation.dt);
     if (!simulator.run()) {
-        return 0;
+        return 1;
     }
 
     simulator.plotToGnuplot();
@@ -30,6 +30,8 @@ int main() {
     Gnuplot::Save();
 
     CommandLine::Run();
+
+    return 0;
 }
 
 void showSettingInfo() {
