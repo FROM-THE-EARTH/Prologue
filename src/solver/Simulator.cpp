@@ -78,13 +78,13 @@ bool Simulator::initialize() {
 
     if (RocketSpecReader::IsMultipleRocket(m_jsonFilename)) {
         CommandLine::PrintInfo(PrintInfoType::Information, "This is Multiple Rocket");
-        rocketType_ = RocketType::Multi;
+        m_rocketType = RocketType::Multi;
         setDetachType();
         if (m_detachType == DetachType::Time) {
             setDetachTime();
         }
     } else {
-        rocketType_ = RocketType::Single;
+        m_rocketType = RocketType::Single;
     }
 
     std::cout << "----------------------------------------------------------" << std::endl;
@@ -192,7 +192,7 @@ void Simulator::scatterSimulation() {
 }
 
 void Simulator::detailSimulation() {
-    Solver solver(m_dt, rocketType_, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+    Solver solver(m_dt, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
     m_solved = solver.run(m_windSpeed, m_windDirection);
     if (!m_solved) {
@@ -204,7 +204,7 @@ void Simulator::detailSimulation() {
 
 void Simulator::singleThreadSimulation() {
     while (1) {
-        Solver solver(m_dt, rocketType_, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+        Solver solver(m_dt, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
         m_solved &= solver.run(m_windSpeed, m_windDirection);
         if (!m_solved) {
@@ -280,7 +280,7 @@ void Simulator::multiThreadSimulation() {
 }
 
 void Simulator::solve(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
-    Solver solver(m_dt, rocketType_, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+    Solver solver(m_dt, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
     if (*error = !solver.run(windSpeed, windDir); *error) {
         return;

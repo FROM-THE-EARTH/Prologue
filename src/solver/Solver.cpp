@@ -34,7 +34,7 @@ bool Solver::run(double windSpeed, double windDirection) {
                 updateParachuteStatus();
             }
 
-            if (rocketType_ == RocketType::Multi) {
+            if (m_rocketType == RocketType::Multi) {
                 updateDetachedStatus();
             }
 
@@ -302,8 +302,8 @@ void Solver::calcDynamicForce() {
         rocketDelta_.velocity = Vector3D();
     } else {  // flight
         if (!m_launchClear) {
-            m_result.launchClearVelocity_ = m_rocket.velocity.length();
-            m_launchClear                 = true;
+            m_result.launchClearVelocity = m_rocket.velocity.length();
+            m_launchClear                = true;
         }
 
         rocketDelta_.pos      = m_rocket.velocity;

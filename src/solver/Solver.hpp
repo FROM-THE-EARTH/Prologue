@@ -42,15 +42,15 @@ struct SolvedResult {
     std::vector<ResultOfEachRocket> rocket = std::vector<ResultOfEachRocket>(1);
 
     // special values
-    double windSpeed            = 0.0;
-    double windDirection        = 0.0;
-    double launchClearVelocity_ = 0.0;
+    double windSpeed           = 0.0;
+    double windDirection       = 0.0;
+    double launchClearVelocity = 0.0;
 };
 
 class Solver {
     // config
     const double m_dt;
-    const RocketType rocketType_;
+    const RocketType m_rocketType;
     const TrajectoryMode m_trajectoryMode;
     const DetachType m_detachType;
     const double m_detachTime;
@@ -83,7 +83,7 @@ public:
            double detachTime,
            const RocketSpec& spec) :
         m_dt(dt),
-        rocketType_(rocketType),
+        m_rocketType(rocketType),
         m_trajectoryMode(mode),
         m_detachType(detachType),
         m_detachTime(detachTime),

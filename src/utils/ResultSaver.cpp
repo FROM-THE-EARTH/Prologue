@@ -124,7 +124,7 @@ namespace ResultSaver {
                 + Internal::DoubleToString(result.rocket[rocketIndex].longitude, 8) + "E";
 
             f << comma << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
-              << Internal::WithComma(result.launchClearVelocity_)
+              << Internal::WithComma(result.launchClearVelocity)
               << Internal::WithComma(result.rocket[rocketIndex].maxHeight)
               << Internal::WithComma(result.rocket[rocketIndex].detectPeakTime)
               << Internal::WithComma(result.rocket[rocketIndex].maxVelocity)

@@ -12,7 +12,7 @@ class Simulator {
     // settings
     std::string m_jsonFilename;
     SimulationMode m_simulationMode;
-    RocketType rocketType_;
+    RocketType m_rocketType;
     TrajectoryMode m_trajectoryMode;
     DetachType m_detachType;
     double m_detachTime;
