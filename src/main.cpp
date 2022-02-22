@@ -8,7 +8,7 @@
 
 const auto VERSION = "1.4.0";
 
-void showSettingInfo();
+void ShowSettingInfo();
 
 int main() {
     std::cout << "Prologue v" << VERSION << std::endl << std::endl;
@@ -18,7 +18,7 @@ int main() {
         return 1;
     }
 
-    showSettingInfo();
+    ShowSettingInfo();
 
     Simulator simulator(AppSetting::GetSetting().simulation.dt);
     if (!simulator.run()) {
@@ -34,7 +34,7 @@ int main() {
     return 0;
 }
 
-void showSettingInfo() {
+void ShowSettingInfo() {
     // Wind model
     const std::string s = "Wind data file: " + AppSetting::GetSetting().windModel.realdataFilename;
     switch (AppSetting::GetSetting().windModel.type) {
