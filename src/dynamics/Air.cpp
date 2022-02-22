@@ -20,17 +20,17 @@ constexpr double geostrophicWind   = 15;    //[m/s]
 constexpr double surfaceLayerLimit = 300;   //[m] Surface layer -300[m]
 constexpr double ekmanLayerLimit   = 1000;  //[m] Ekman layer 300-1000[m]
 
-Air::Air(double _groundWindSpeed, double _groundWindDirection) :
-    groundWindSpeed_(_groundWindSpeed), groundWindDirection_(_groundWindDirection) {
-    directionInterval_ = 270 - groundWindDirection_;
-    if (directionInterval_ <= -45.0) {
-        directionInterval_ = 270 - groundWindDirection_ + 360;
+Air::Air(double groundWindSpeed, double groundWindDirection) :
+    m_groundWindSpeed(groundWindSpeed), m_groundWindDirection(groundWindDirection) {
+    m_directionInterval = 270 - m_groundWindDirection;
+    if (m_directionInterval <= -45.0) {
+        m_directionInterval = 270 - m_groundWindDirection + 360;
     }
 
     m_initialized = true;
 }
 
-Air::Air() : groundWindSpeed_(0.0), groundWindDirection_(0.0) {
+Air::Air() : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
     if (!windData_.empty()) {
         m_initialized = true;
         return;
@@ -66,11 +66,11 @@ Air::Air() : groundWindSpeed_(0.0), groundWindDirection_(0.0) {
     m_initialized = true;
 }
 
-void Air::update(double _height) {
-    m_height = _height;
+void Air::update(double height) {
+    m_height = height;
 
     m_geopotentialHeight = getGeopotentialHeight();
-    gravity_             = getGravity();
+    m_gravity            = getGravity();
     m_temperature        = getTemperature();
     m_pressure           = getPressure();
     m_airDensity         = getAirDensity();
@@ -164,24 +164,24 @@ Vector3D Air::getWindFromData() {
 
 Vector3D Air::getWindOriginalModel() {
     if (m_height <= 0) {
-        const double rad          = groundWindDirection_ * Constant::PI / 180;
-        const Vector3D groundWind = -Vector3D(sin(rad), cos(rad), 0) * groundWindSpeed_;
+        const double rad          = m_groundWindDirection * Constant::PI / 180;
+        const Vector3D groundWind = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
         return groundWind;
     }
 
     if (m_height < surfaceLayerLimit) {  // Surface layer
-        const double deltaDirection = m_height / ekmanLayerLimit * directionInterval_;
-        const double rad            = (groundWindDirection_ + deltaDirection) * Constant::PI / 180;
-        const Vector3D wind         = -Vector3D(sin(rad), cos(rad), 0) * groundWindSpeed_;
+        const double deltaDirection = m_height / ekmanLayerLimit * m_directionInterval;
+        const double rad            = (m_groundWindDirection + deltaDirection) * Constant::PI / 180;
+        const Vector3D wind         = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
         return wind * pow(m_height * 0.5, 1.0 / AppSetting::GetSetting().windModel.powerConstant);
     } else if (m_height < ekmanLayerLimit) {  // Ekman layer
-        const double deltaDirection = m_height / ekmanLayerLimit * directionInterval_;
-        const double rad            = (groundWindDirection_ + deltaDirection) * Constant::PI / 180;
+        const double deltaDirection = m_height / ekmanLayerLimit * m_directionInterval;
+        const double rad            = (m_groundWindDirection + deltaDirection) * Constant::PI / 180;
 
         const double borderWindSpeed =
-            groundWindSpeed_ * pow(m_height * 0.5, 1.0 / AppSetting::GetSetting().windModel.powerConstant);
+            m_groundWindSpeed * pow(m_height * 0.5, 1.0 / AppSetting::GetSetting().windModel.powerConstant);
 
         const double k = (m_height - surfaceLayerLimit) / (surfaceLayerLimit * sqrt(2));
         const double u = geostrophicWind * (1 - exp(-k) * cos(k));
@@ -198,11 +198,11 @@ Vector3D Air::getWindOriginalModel() {
 
 Vector3D Air::getWindOnlyPowerLow() {
     if (m_height <= 0) {
-        const double rad = groundWindDirection_ * Constant::PI / 180;
-        return -Vector3D(sin(rad), cos(rad), 0) * groundWindSpeed_;
+        const double rad = m_groundWindDirection * Constant::PI / 180;
+        return -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
     } else {
-        const double rad    = groundWindDirection_ * Constant::PI / 180;
-        const Vector3D wind = -Vector3D(sin(rad), cos(rad), 0) * groundWindSpeed_;
+        const double rad    = m_groundWindDirection * Constant::PI / 180;
+        const Vector3D wind = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
         return wind * pow(m_height * 0.5, 1.0 / AppSetting::GetSetting().windModel.powerConstant);
     }

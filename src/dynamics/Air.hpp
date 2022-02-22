@@ -18,13 +18,13 @@ struct WindData {
 class Air {
     std::vector<WindData> windData_;
 
-    const double groundWindSpeed_, groundWindDirection_;
+    const double m_groundWindSpeed, m_groundWindDirection;
 
-    double directionInterval_ = 0.0;
+    double m_directionInterval = 0.0;
 
     double m_height             = 0.0;
     double m_geopotentialHeight = 0.0;
-    double gravity_             = 0.0;
+    double m_gravity            = 0.0;
     double m_temperature        = 0.0;
     double m_pressure           = 0.0;
     double m_airDensity         = 0.0;
@@ -48,7 +48,7 @@ public:
     }
 
     double gravity() const {
-        return gravity_;
+        return m_gravity;
     }
 
     bool initialized() const {
