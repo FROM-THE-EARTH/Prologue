@@ -46,7 +46,6 @@ namespace Gnuplot {
     double windSpeed = 0.0, windDirection = 0.0;
 
     namespace Internal {
-
         void Initialize() {
             // reset
             fprintf(p, "reset\n");

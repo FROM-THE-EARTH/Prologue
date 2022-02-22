@@ -11,9 +11,7 @@ struct Commands {
 };
 
 namespace CommandLine {
-
     namespace Internal {
-
         size_t Counter = 1;
 
         std::string OutputDir;
