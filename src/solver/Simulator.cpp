@@ -20,7 +20,7 @@ bool Simulator::run() {
 
     createResultDirectory();
 
-    Gnuplot::Initialize(m_outputDirName.c_str(), MapFeature::GetMapFromName(m_rocketSpec.env.place).map);
+    Gnuplot::Initialize(m_outputDirName.c_str(), MapFeature::GetMapFromName(m_rocketSpec.env.place).mapType);
 
     const auto start = std::chrono::system_clock::now();
 

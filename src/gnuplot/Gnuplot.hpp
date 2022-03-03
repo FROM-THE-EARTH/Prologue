@@ -5,10 +5,10 @@
 
 struct SolvedResult;
 
-enum class Map;
+enum class MapType;
 
 namespace Gnuplot {
-    void Initialize(const char* _dirname, Map m);
+    void Initialize(const char* dirname, MapType mapType);
 
     void Plot(const SolvedResult& result);
 

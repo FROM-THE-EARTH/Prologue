@@ -38,7 +38,7 @@ namespace Gnuplot {
 
     std::string dirname;
     std::string command;
-    Map map = Map::NOSIRO_SEA;
+    MapType mapType = MapType::NOSIRO_SEA;
     PlotDimension dimension;
     GnuplotRange range;
     size_t rocketCount = 0;
@@ -183,28 +183,28 @@ namespace Gnuplot {
             if (dimension == PlotDimension::Dimension2D) {
                 command += "\"../../input/map/";
 
-                switch (map) {
-                case Map::IZU_LAND:
+                switch (mapType) {
+                case MapType::IZU_LAND:
                     command += "izu_land.png\" ";
                     command += "binary filetype=png dx=1.00 dy=1.00 origin=(-720, -850) with rgbimage notitle,";
                     break;
 
-                case Map::IZU_SEA:
+                case MapType::IZU_SEA:
                     command += "izu_sea.png\" ";
                     command += "binary filetype=png dx=5.77 dy=5.77 origin=(-2420,-5650) with rgbimage notitle,";
                     break;
 
-                case Map::NOSIRO_LAND:
+                case MapType::NOSIRO_LAND:
                     command += "nosiro_land.png\" ";
                     command += "binary filetype=png dx=0.59 dy=0.59 origin=(-421,-676) with rgbimage notitle,";
                     break;
 
-                case Map::NOSIRO_SEA:
+                case MapType::NOSIRO_SEA:
                     command += "nosiro_sea.png\" ";
                     command += "binary filetype=png dx=7.0 dy=7.0 origin=(-8700,-3650) with rgbimage notitle,";
                     break;
 
-                case Map::UNKNOWN:
+                case MapType::UNKNOWN:
                     std::cout << "<!----THIS MAP IS UNAVAILABLE----!>" << std::endl;
                     command += "unknown.png\" ";
                     break;
@@ -225,8 +225,8 @@ namespace Gnuplot {
         }
     }
 
-    void Initialize(const char* _dirname, Map m) {
-        map     = m;
+    void Initialize(const char* _dirname, MapType _mapType) {
+        mapType = _mapType;
         dirname = _dirname;
 
         const std::filesystem::path dir = "result/" + dirname + "/data";
