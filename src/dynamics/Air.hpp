@@ -10,7 +10,7 @@ struct WindData {
     double speed     = 0;
     double direction = 0;
 
-    bool operator==(const WindData& w) {
+    bool operator==(const WindData& w) const {
         return (height == w.height && speed == w.speed && direction == w.direction);
     }
 };

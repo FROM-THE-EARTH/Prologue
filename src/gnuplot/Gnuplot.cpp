@@ -120,7 +120,7 @@ namespace Gnuplot {
             }
 
             command += "\n";
-            fprintf(p, command.c_str());
+            fprintf(p, "%s", command.c_str());
         }
 
         void Show3D() {
@@ -144,7 +144,7 @@ namespace Gnuplot {
             }
 
             command += "\n";
-            fprintf(p, command.c_str());
+            fprintf(p, "%s", command.c_str());
         }
 
         void CalcRange(const SolvedResult& result, bool init, bool end) {

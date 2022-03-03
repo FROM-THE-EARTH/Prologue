@@ -112,7 +112,7 @@ void Solver::updateParachuteStatus() {
 
     const bool time_from_detect_peak = m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[0].openingType == 2;
 
-    if (detectpeak && detectpeakConditon || fixedtime && fixedtimeCondition) {
+    if ((detectpeak && detectpeakConditon) || (fixedtime && fixedtimeCondition)) {
         m_rocket.parachuteOpened                                = true;
         m_result.rocket[m_targetRocketIndex].timeAtParaOpened   = m_rocket.elapsedTime;
         m_result.rocket[m_targetRocketIndex].airVelAtParaOpened = m_rocket.airSpeed_b.length();

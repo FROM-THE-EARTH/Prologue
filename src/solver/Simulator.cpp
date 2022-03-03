@@ -22,7 +22,8 @@ bool Simulator::run() {
 
     {
         auto place = m_rocketSpec.env.place;
-        std::transform(place.begin(), place.end(), place.begin(), ::tolower);
+        std::transform(
+            place.begin(), place.end(), place.begin(), [](int c) { return static_cast<char>(::tolower(c)); });
         if (const auto map = Map::GetMap(place); map.has_value()) {
             m_mapData = map.value();
             Gnuplot::Initialize(m_outputDirName.c_str(), m_mapData);
