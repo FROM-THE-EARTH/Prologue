@@ -11,7 +11,7 @@ struct VsAirspeed {
     double Cd_a2;
     double Cna;
 
-    bool operator==(const VsAirspeed& v) {
+    bool operator==(const VsAirspeed& v) const {
         return (airSpeed == v.airSpeed && Cp == v.Cp && Cp_a == v.Cp_a && Cd == v.Cd && Cd_a2 == v.Cd_a2
                 && Cna == v.Cna);
     }
