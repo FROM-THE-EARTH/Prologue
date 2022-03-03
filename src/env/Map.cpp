@@ -1,6 +1,6 @@
-#include "MapFeature.hpp"
+#include "Map.hpp"
 
-namespace MapFeature {
+namespace Map {
     MapCoordinate GetMapFromName(const std::string& name) {
         if (name == "nosiro_sea") {
             return NoshiroSea;

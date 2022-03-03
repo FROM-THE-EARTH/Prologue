@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "env/MapFeature.hpp"
+#include "env/MapType.hpp"
 #include "solver/Solver.hpp"
 
 #if defined(_WIN32) || defined(WIN32)

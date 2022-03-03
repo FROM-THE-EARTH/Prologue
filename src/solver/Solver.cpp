@@ -2,7 +2,7 @@
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
-#include "env/MapFeature.hpp"
+#include "env/Map.hpp"
 
 bool Solver::run(double windSpeed, double windDirection) {
     switch (AppSetting::GetSetting().windModel.type) {
@@ -364,7 +364,7 @@ void Solver::organizeResult() {
             r.flightData[r.flightData.size() - 1].pos.z = 0.0;  // landing point
         }
         r.lenFromLaunchPoint = r.flightData[r.flightData.size() - 1].pos.length();
-        r.latitude           = MapFeature::NoshiroSea.latitudeAt(r.flightData[r.flightData.size() - 1].pos.y);
-        r.longitude          = MapFeature::NoshiroSea.longitudeAt(r.flightData[r.flightData.size() - 1].pos.x);
+        r.latitude           = Map::NoshiroSea.latitudeAt(r.flightData[r.flightData.size() - 1].pos.y);
+        r.longitude          = Map::NoshiroSea.longitudeAt(r.flightData[r.flightData.size() - 1].pos.x);
     }
 }

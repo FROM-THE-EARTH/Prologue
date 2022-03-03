@@ -29,7 +29,7 @@ set(SOURCE_FILES
 
 	"src/dynamics/Air.cpp"
 
-	"src/env/MapFeature.cpp"
+	"src/env/Map.cpp"
 
 	"src/gnuplot/Gnuplot.cpp"
 

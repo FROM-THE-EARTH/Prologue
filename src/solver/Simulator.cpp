@@ -8,7 +8,7 @@
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
-#include "env/MapFeature.hpp"
+#include "env/Map.hpp"
 #include "utils/ResultSaver.hpp"
 #include "utils/RocketSpecReader.hpp"
 
@@ -20,7 +20,7 @@ bool Simulator::run() {
 
     createResultDirectory();
 
-    Gnuplot::Initialize(m_outputDirName.c_str(), MapFeature::GetMapFromName(m_rocketSpec.env.place).mapType);
+    Gnuplot::Initialize(m_outputDirName.c_str(), Map::GetMapFromName(m_rocketSpec.env.place).mapType);
 
     const auto start = std::chrono::system_clock::now();
 
