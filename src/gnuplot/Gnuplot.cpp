@@ -306,7 +306,7 @@ namespace Gnuplot {
 
         system(PAUSE_COMMAND);
 
-        fprintf(p, "exit\n");
+        fprintf(p, " exit\n");
 
         PCLOSE(p);
     }
