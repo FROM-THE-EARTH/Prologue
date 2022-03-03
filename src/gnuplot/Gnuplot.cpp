@@ -194,10 +194,10 @@ namespace Gnuplot {
                     command += "binary filetype=png dx=5.77 dy=5.77 origin=(-2420,-5650) with rgbimage notitle,";
                     break;
 
-                case MapType::NOSIRO_LAND:
-                    command += "nosiro_land.png\" ";
-                    command += "binary filetype=png dx=0.59 dy=0.59 origin=(-421,-676) with rgbimage notitle,";
-                    break;
+                    /*case MapType::NOSIRO_LAND:
+                        command += "nosiro_land.png\" ";
+                        command += "binary filetype=png dx=0.59 dy=0.59 origin=(-421,-676) with rgbimage notitle,";
+                        break;*/
 
                 case MapType::NOSIRO_SEA:
                     command += "nosiro_sea.png\" ";

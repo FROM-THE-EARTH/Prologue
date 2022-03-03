@@ -6,9 +6,9 @@ namespace Map {
             return NoshiroSea;
         }
 
-        if (name == "nosiro_land") {
+        /*if (name == "nosiro_land") {
             return NoshiroLand;
-        }
+        }*/
 
         if (name == "izu_sea") {
             return IzuSea;

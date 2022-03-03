@@ -6,7 +6,7 @@
 namespace Map {
     const MapCoordinate NoshiroSea{MapType::NOSIRO_SEA, 40.242865, 140.010450};
 
-    const MapCoordinate NoshiroLand{MapType::NOSIRO_LAND, 0, 0};
+    // const MapCoordinate NoshiroLand{MapType::NOSIRO_LAND, 0, 0};
 
     const MapCoordinate IzuSea{MapType::IZU_SEA, 34.680197, 139.439090};
 
