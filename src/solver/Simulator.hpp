@@ -25,6 +25,7 @@ class Simulator {
 
     // from json
     RocketSpec m_rocketSpec;
+    MapData m_mapData;
 
     // result
     std::string m_outputDirName;

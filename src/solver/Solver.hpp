@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dynamics/Air.hpp"
+#include "env/Map.hpp"
 #include "rocket/Rocket.hpp"
 #include "rocket/RocketSpec.hpp"
 
@@ -45,6 +46,17 @@ struct SolvedResult {
     double windSpeed           = 0.0;
     double windDirection       = 0.0;
     double launchClearVelocity = 0.0;
+
+    void organize(MapData map) {
+        for (auto& r : rocket) {
+            if (r.flightData[r.flightData.size() - 1].pos.z < 0) {
+                r.flightData[r.flightData.size() - 1].pos.z = 0.0;  // landing point
+            }
+            r.lenFromLaunchPoint = r.flightData[r.flightData.size() - 1].pos.length();
+            r.latitude           = map.coordinate.latitudeAt(r.flightData[r.flightData.size() - 1].pos.y);
+            r.longitude          = map.coordinate.longitudeAt(r.flightData[r.flightData.size() - 1].pos.x);
+        }
+    }
 };
 
 class Solver {
@@ -115,6 +127,4 @@ private:
     void updateDelta();
 
     void finalUpdate();
-
-    void organizeResult();
 };

@@ -1,18 +1,51 @@
 #pragma once
 
+#include <optional>
+
 #include "env/MapCoordinate.hpp"
 #include "env/MapType.hpp"
 
+struct MapData {
+    std::string key;
+    MapType type;
+    MapCoordinate coordinate;
+    std::string imageFileName;
+    double gnuplot_dx, gnuplot_dy;
+    double gnuplot_origin_x, gnuplot_origin_y;
+
+    MapData() = default;
+
+    MapData(const std::string& keyForJson,
+            MapType mapType,
+            double launchPointLatitude,
+            double launchPointLongitude,
+            std::string imageFileNameForGnuplot,
+            double dxForGnuplot,
+            double dyForGnuplot,
+            double originXForGnuplot,
+            double originYForGnuplot) :
+        key(keyForJson),
+        type(mapType),
+        coordinate(MapCoordinate(launchPointLatitude, launchPointLongitude)),
+        imageFileName(imageFileNameForGnuplot),
+        gnuplot_dx(dxForGnuplot),
+        gnuplot_dy(dyForGnuplot),
+        gnuplot_origin_x(originXForGnuplot),
+        gnuplot_origin_y(originYForGnuplot) {}
+};
+
 namespace Map {
-    const MapCoordinate NoshiroSea{MapType::NOSIRO_SEA, 40.242865, 140.010450};
+    const MapData NoshiroLand(
+        "nosiro_land", MapType::NOSIRO_LAND, 40.138624, 139.984906, "nosiro_land.png", 1.0, 1.0, -850, -1200);
 
-    // const MapCoordinate NoshiroLand{MapType::NOSIRO_LAND, 0, 0};
+    const MapData NoshiroSea(
+        "nosiro_sea", MapType::NOSIRO_SEA, 40.242865, 140.010450, "nosiro_sea.png", 7.0, 7.0, -8700, -3650);
 
-    const MapCoordinate IzuSea{MapType::IZU_SEA, 34.680197, 139.439090};
+    const MapData IzuLand("izu_land", MapType::IZU_LAND, 34.735972, 139.420944, "izu_land.png", 1.00, 1.00, -820, -950);
 
-    const MapCoordinate IzuLand{MapType::IZU_LAND, 34.735972, 139.420944};
+    const MapData IzuSea("izu_sea", MapType::IZU_SEA, 34.680197, 139.439090, "izu_sea.png", 5.77, 5.77, -3080, -6210);
 
-    const MapCoordinate Unknown{MapType::UNKNOWN, 0, 0};
+    std::optional<MapData> GetMap(const std::string& key);
 
-    MapCoordinate GetMapFromName(const std::string& name);
+    std::optional<MapData> GetMap(MapType type);
 }

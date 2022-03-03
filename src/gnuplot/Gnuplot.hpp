@@ -3,12 +3,11 @@
 #include <string>
 #include <vector>
 
+struct MapData;
 struct SolvedResult;
 
-enum class MapType;
-
 namespace Gnuplot {
-    void Initialize(const char* dirname, MapType mapType);
+    void Initialize(const char* dirname, MapData mapData);
 
     void Plot(const SolvedResult& result);
 

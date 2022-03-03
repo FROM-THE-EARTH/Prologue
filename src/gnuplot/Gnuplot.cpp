@@ -5,7 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "env/MapType.hpp"
+#include "app/CommandLine.hpp"
+#include "env/Map.hpp"
 #include "solver/Solver.hpp"
 
 #if defined(_WIN32) || defined(WIN32)
@@ -33,12 +34,11 @@ struct GnuplotRange {
 };
 
 namespace Gnuplot {
-
     FILE* p;
 
     std::string dirname;
     std::string command;
-    MapType mapType = MapType::NOSIRO_SEA;
+    MapData mapData;
     PlotDimension dimension;
     GnuplotRange range;
     size_t rocketCount = 0;
@@ -182,33 +182,13 @@ namespace Gnuplot {
         void SetMap() {
             if (dimension == PlotDimension::Dimension2D) {
                 command += "\"../../input/map/";
-
-                switch (mapType) {
-                case MapType::IZU_LAND:
-                    command += "izu_land.png\" ";
-                    command += "binary filetype=png dx=1.00 dy=1.00 origin=(-720, -850) with rgbimage notitle,";
-                    break;
-
-                case MapType::IZU_SEA:
-                    command += "izu_sea.png\" ";
-                    command += "binary filetype=png dx=5.77 dy=5.77 origin=(-2420,-5650) with rgbimage notitle,";
-                    break;
-
-                    /*case MapType::NOSIRO_LAND:
-                        command += "nosiro_land.png\" ";
-                        command += "binary filetype=png dx=0.59 dy=0.59 origin=(-421,-676) with rgbimage notitle,";
-                        break;*/
-
-                case MapType::NOSIRO_SEA:
-                    command += "nosiro_sea.png\" ";
-                    command += "binary filetype=png dx=7.0 dy=7.0 origin=(-8700,-3650) with rgbimage notitle,";
-                    break;
-
-                case MapType::UNKNOWN:
-                    std::cout << "<!----THIS MAP IS UNAVAILABLE----!>" << std::endl;
-                    command += "unknown.png\" ";
-                    break;
-                }
+                command += mapData.imageFileName + "\" ";
+                command += "binary filetype=png ";
+                command += "dx=" + std::to_string(mapData.gnuplot_dx) + " ";
+                command += "dy=" + std::to_string(mapData.gnuplot_dy) + " ";
+                command += "origin=(" + std::to_string(mapData.gnuplot_origin_x) + ", "
+                           + std::to_string(mapData.gnuplot_origin_y) + ") ";
+                command += "with rgbimage notitle,";
             }
         }
 
@@ -225,8 +205,8 @@ namespace Gnuplot {
         }
     }
 
-    void Initialize(const char* _dirname, MapType _mapType) {
-        mapType = _mapType;
+    void Initialize(const char* _dirname, MapData _mapData) {
+        mapData = _mapData;
         dirname = _dirname;
 
         const std::filesystem::path dir = "result/" + dirname + "/data";

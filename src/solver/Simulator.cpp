@@ -20,7 +20,17 @@ bool Simulator::run() {
 
     createResultDirectory();
 
-    Gnuplot::Initialize(m_outputDirName.c_str(), Map::GetMapFromName(m_rocketSpec.env.place).mapType);
+    {
+        auto place = m_rocketSpec.env.place;
+        std::transform(place.begin(), place.end(), place.begin(), ::tolower);
+        if (const auto map = Map::GetMap(place); map.has_value()) {
+            m_mapData = map.value();
+            Gnuplot::Initialize(m_outputDirName.c_str(), m_mapData);
+        } else {
+            CommandLine::PrintInfo(PrintInfoType::Error, "This map is invalid.");
+            return false;
+        }
+    }
 
     const auto start = std::chrono::system_clock::now();
 
@@ -200,6 +210,7 @@ void Simulator::detailSimulation() {
     }
 
     m_detailResult = solver.getResult();
+    m_detailResult.organize(m_mapData);
 }
 
 void Simulator::singleThreadSimulation() {
@@ -212,6 +223,7 @@ void Simulator::singleThreadSimulation() {
         }
 
         auto result = solver.getResult();
+        result.organize(m_mapData);
 
         result = formatResultForScatter(result);
         m_scatterResult.push_back(result);
@@ -287,6 +299,7 @@ void Simulator::solve(double windSpeed, double windDir, SolvedResult* result, bo
     }
 
     *result = solver.getResult();
+    result->organize(m_mapData);
     *result = formatResultForScatter(*result);
     *finish = true;
 }

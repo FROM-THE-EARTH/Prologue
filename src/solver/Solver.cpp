@@ -51,8 +51,6 @@ bool Solver::run(double windSpeed, double windDirection) {
 
     } while (landingCount <= m_rocketAtDetached.size());
 
-    organizeResult();
-
     return true;
 }
 
@@ -356,15 +354,4 @@ void Solver::finalUpdate() {
     const double nForce = rising ? sqrt(m_force_b.z * m_force_b.z + m_force_b.y * m_force_b.y) : 0.0;
     if (m_result.rocket[m_targetRocketIndex].maxNormalForce < nForce)
         m_result.rocket[m_targetRocketIndex].maxNormalForce = nForce;
-}
-
-void Solver::organizeResult() {
-    for (auto& r : m_result.rocket) {
-        if (r.flightData[r.flightData.size() - 1].pos.z < 0) {
-            r.flightData[r.flightData.size() - 1].pos.z = 0.0;  // landing point
-        }
-        r.lenFromLaunchPoint = r.flightData[r.flightData.size() - 1].pos.length();
-        r.latitude           = Map::NoshiroSea.latitudeAt(r.flightData[r.flightData.size() - 1].pos.y);
-        r.longitude          = Map::NoshiroSea.longitudeAt(r.flightData[r.flightData.size() - 1].pos.x);
-    }
 }
