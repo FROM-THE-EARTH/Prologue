@@ -47,6 +47,7 @@ Version: 1.4.2
 ### v1.4.2
 
 - 磁気偏角が結果の緯度経度に対して考慮されていなかった問題を修正
+- サンプルの JSON の`environment.place`を`nosiro_sea`に変更
 
 ### v1.4.1
 
