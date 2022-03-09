@@ -67,17 +67,17 @@ void Solver::initializeParameters() {
     }
 
     // First running
-    rocketDelta_.mass       = m_rocketSpec.rocketParam[0].massInitial;
-    rocketDelta_.reflLength = m_rocketSpec.rocketParam[0].CGLengthInitial;
-    rocketDelta_.iyz        = m_rocketSpec.rocketParam[0].rollingMomentInertiaInitial;
-    rocketDelta_.ix         = 0.02;
-    rocketDelta_.pos        = Vector3D(0, 0, 0);
-    rocketDelta_.velocity   = Vector3D(0, 0, 0);
-    rocketDelta_.omega_b    = Vector3D(0, 0, 0);
-    rocketDelta_.quat       = Quaternion(m_rocketSpec.env.railElevation,
-                                   (-m_rocketSpec.env.railAzimuth + 90) - m_mapData.magneticDeclination);
+    m_rocketDelta.mass       = m_rocketSpec.rocketParam[0].massInitial;
+    m_rocketDelta.reflLength = m_rocketSpec.rocketParam[0].CGLengthInitial;
+    m_rocketDelta.iyz        = m_rocketSpec.rocketParam[0].rollingMomentInertiaInitial;
+    m_rocketDelta.ix         = 0.02;
+    m_rocketDelta.pos        = Vector3D(0, 0, 0);
+    m_rocketDelta.velocity   = Vector3D(0, 0, 0);
+    m_rocketDelta.omega_b    = Vector3D(0, 0, 0);
+    m_rocketDelta.quat       = Quaternion(m_rocketSpec.env.railElevation,
+                                    (-m_rocketSpec.env.railAzimuth + 90) - m_mapData.magneticDeclination);
 
-    m_rocket = rocketDelta_;
+    m_rocket = m_rocketDelta;
 }
 
 void Solver::update() {
@@ -209,21 +209,21 @@ void Solver::updateParameters() {
     m_rocket.Cmqy = m_rocketSpec.rocketParam[m_targetRocketIndex].Cmq;
 
     if (m_combustionTime <= m_rocketSpec.rocketParam[m_targetRocketIndex].engine.combustionTime()) {
-        rocketDelta_.mass = (m_rocketSpec.rocketParam[m_targetRocketIndex].massFinal
-                             - m_rocketSpec.rocketParam[m_targetRocketIndex].massInitial)
+        m_rocketDelta.mass = (m_rocketSpec.rocketParam[m_targetRocketIndex].massFinal
+                              - m_rocketSpec.rocketParam[m_targetRocketIndex].massInitial)
+                             / m_rocketSpec.rocketParam[m_targetRocketIndex].engine.combustionTime();
+        m_rocketDelta.reflLength = (m_rocketSpec.rocketParam[m_targetRocketIndex].CGLengthFinal
+                                    - m_rocketSpec.rocketParam[m_targetRocketIndex].CGLengthInitial)
+                                   / m_rocketSpec.rocketParam[m_targetRocketIndex].engine.combustionTime();
+        m_rocketDelta.iyz = (m_rocketSpec.rocketParam[m_targetRocketIndex].rollingMomentInertiaFinal
+                             - m_rocketSpec.rocketParam[m_targetRocketIndex].rollingMomentInertiaInitial)
                             / m_rocketSpec.rocketParam[m_targetRocketIndex].engine.combustionTime();
-        rocketDelta_.reflLength = (m_rocketSpec.rocketParam[m_targetRocketIndex].CGLengthFinal
-                                   - m_rocketSpec.rocketParam[m_targetRocketIndex].CGLengthInitial)
-                                  / m_rocketSpec.rocketParam[m_targetRocketIndex].engine.combustionTime();
-        rocketDelta_.iyz = (m_rocketSpec.rocketParam[m_targetRocketIndex].rollingMomentInertiaFinal
-                            - m_rocketSpec.rocketParam[m_targetRocketIndex].rollingMomentInertiaInitial)
-                           / m_rocketSpec.rocketParam[m_targetRocketIndex].engine.combustionTime();
-        rocketDelta_.ix = (0.02 - 0.01) / 3;
+        m_rocketDelta.ix = (0.02 - 0.01) / 3;
     } else {
-        rocketDelta_.mass       = 0;
-        rocketDelta_.reflLength = 0;
-        rocketDelta_.iyz        = 0;
-        rocketDelta_.ix         = 0;
+        m_rocketDelta.mass       = 0;
+        m_rocketDelta.reflLength = 0;
+        m_rocketDelta.iyz        = 0;
+        m_rocketDelta.ix         = 0;
     }
 }
 
@@ -267,57 +267,57 @@ void Solver::calcDynamicForce() {
     // update delta
     if (m_rocket.pos.length() <= m_rocketSpec.env.railLength && m_rocket.velocity.z >= 0.0) {  // launch
         if (m_force_b.x < 0) {
-            rocketDelta_.pos      = Vector3D();
-            rocketDelta_.velocity = Vector3D();
-            rocketDelta_.omega_b  = Vector3D();
-            rocketDelta_.quat     = Quaternion();
+            m_rocketDelta.pos      = Vector3D();
+            m_rocketDelta.velocity = Vector3D();
+            m_rocketDelta.omega_b  = Vector3D();
+            m_rocketDelta.quat     = Quaternion();
         } else {
-            m_force_b.y      = 0;
-            m_force_b.z      = 0;
-            rocketDelta_.pos = m_rocket.velocity;
+            m_force_b.y       = 0;
+            m_force_b.z       = 0;
+            m_rocketDelta.pos = m_rocket.velocity;
 
-            rocketDelta_.velocity = m_force_b.applyQuaternion(m_rocket.quat) / m_rocket.mass;
+            m_rocketDelta.velocity = m_force_b.applyQuaternion(m_rocket.quat) / m_rocket.mass;
 
-            rocketDelta_.omega_b = Vector3D();
-            rocketDelta_.quat    = Quaternion();
+            m_rocketDelta.omega_b = Vector3D();
+            m_rocketDelta.quat    = Quaternion();
         }
     } else if (m_rocket.parachuteOpened) {  // parachute opened
         const Vector3D paraSpeed = m_rocket.velocity;
         const double drag        = 0.5 * m_air->density() * paraSpeed.z * paraSpeed.z * 1.0
                             * m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[m_rocket.parachuteIndex].Cd;
 
-        rocketDelta_.velocity.z = drag / m_rocket.mass - m_air->gravity();
-        rocketDelta_.velocity.x = 0;
-        rocketDelta_.velocity.y = 0;
+        m_rocketDelta.velocity.z = drag / m_rocket.mass - m_air->gravity();
+        m_rocketDelta.velocity.x = 0;
+        m_rocketDelta.velocity.y = 0;
 
         m_rocket.velocity.x = m_air->wind().x;
         m_rocket.velocity.y = m_air->wind().y;
 
-        rocketDelta_.pos = m_rocket.velocity;
+        m_rocketDelta.pos = m_rocket.velocity;
 
-        rocketDelta_.omega_b = Vector3D();
-        rocketDelta_.quat    = Quaternion();
+        m_rocketDelta.omega_b = Vector3D();
+        m_rocketDelta.quat    = Quaternion();
     } else if (m_rocket.pos.z < -10) {  // stop simulation
-        rocketDelta_.velocity = Vector3D();
+        m_rocketDelta.velocity = Vector3D();
     } else {  // flight
         if (!m_launchClear) {
             m_result.launchClearVelocity = m_rocket.velocity.length();
             m_launchClear                = true;
         }
 
-        rocketDelta_.pos      = m_rocket.velocity;
-        rocketDelta_.velocity = m_force_b.applyQuaternion(m_rocket.quat) / m_rocket.mass;
+        m_rocketDelta.pos      = m_rocket.velocity;
+        m_rocketDelta.velocity = m_force_b.applyQuaternion(m_rocket.quat) / m_rocket.mass;
 
-        rocketDelta_.omega_b.x = m_moment_b.x / m_rocket.ix;
-        rocketDelta_.omega_b.y = m_moment_b.y / m_rocket.iyz;
-        rocketDelta_.omega_b.z = m_moment_b.z / m_rocket.iyz;
+        m_rocketDelta.omega_b.x = m_moment_b.x / m_rocket.ix;
+        m_rocketDelta.omega_b.y = m_moment_b.y / m_rocket.iyz;
+        m_rocketDelta.omega_b.z = m_moment_b.z / m_rocket.iyz;
 
-        rocketDelta_.quat = m_rocket.quat.angularVelocityApplied(rocketDelta_.omega_b);
+        m_rocketDelta.quat = m_rocket.quat.angularVelocityApplied(m_rocketDelta.omega_b);
     }
 }
 
 void Solver::updateDelta() {
-    m_rocket += rocketDelta_ * m_dt;
+    m_rocket += m_rocketDelta * m_dt;
     m_rocket.quat = m_rocket.quat.normalized();
 
     m_rocket.elapsedTime += m_dt;

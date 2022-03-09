@@ -71,7 +71,7 @@ class Solver {
     RocketSpec m_rocketSpec;
 
     // rocket
-    Rocket m_rocket, rocketDelta_;
+    Rocket m_rocket, m_rocketDelta;
     std::vector<Rocket> m_rocketAtDetached;
 
     // dynamics
