@@ -203,7 +203,7 @@ void Simulator::scatterSimulation() {
 }
 
 void Simulator::detailSimulation() {
-    Solver solver(m_dt, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+    Solver solver(m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
     m_solved = solver.run(m_windSpeed, m_windDirection);
     if (!m_solved) {
@@ -216,7 +216,7 @@ void Simulator::detailSimulation() {
 
 void Simulator::singleThreadSimulation() {
     while (1) {
-        Solver solver(m_dt, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+        Solver solver(m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
         m_solved &= solver.run(m_windSpeed, m_windDirection);
         if (!m_solved) {
@@ -293,7 +293,7 @@ void Simulator::multiThreadSimulation() {
 }
 
 void Simulator::solve(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
-    Solver solver(m_dt, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+    Solver solver(m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
 
     if (*error = !solver.run(windSpeed, windDir); *error) {
         return;

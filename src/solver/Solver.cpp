@@ -7,11 +7,11 @@
 bool Solver::run(double windSpeed, double windDirection) {
     switch (AppSetting::GetSetting().windModel.type) {
     case WindModelType::Real:
-        m_air = new Air();
+        m_air = new Air(m_mapData.magneticDeclination);
         break;
 
     default:
-        m_air = new Air(windSpeed, windDirection);
+        m_air = new Air(windSpeed, windDirection, m_mapData.magneticDeclination);
         break;
     }
 
@@ -74,7 +74,8 @@ void Solver::initializeParameters() {
     rocketDelta_.pos        = Vector3D(0, 0, 0);
     rocketDelta_.velocity   = Vector3D(0, 0, 0);
     rocketDelta_.omega_b    = Vector3D(0, 0, 0);
-    rocketDelta_.quat       = Quaternion(m_rocketSpec.env.railElevation, -m_rocketSpec.env.railAzimuth + 90);
+    rocketDelta_.quat       = Quaternion(m_rocketSpec.env.railElevation,
+                                   (-m_rocketSpec.env.railAzimuth + 90) - m_mapData.magneticDeclination);
 
     m_rocket = rocketDelta_;
 }
