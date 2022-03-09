@@ -4,7 +4,7 @@
 
 物理とか風とか解析部分ついては[ここ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DYNAMICS.md)
 
-## 開発環境等
+## 開発環境
 
 |                  |                    |
 | ---------------- | ------------------ |
@@ -13,7 +13,9 @@
 | ライブラリ       | boost 1.71.0       |
 | 外部ソフトウェア | Gnuplot 5.2.8      |
 
-Visual Studio Code での開発を想定して環境構築しているため、エディタは VSCode を使用し、推奨拡張機能をインストールして開発してください。
+[Visual Studio Code](https://code.visualstudio.com/download) での開発を想定して環境構築しているため、エディタは VSCode を使用し、推奨拡張機能をインストールして開発してください。
+
+MSVC, GCC, Clang などのコンパイラが入っていない場合はインストールしてください。
 
 ## ビルド
 
