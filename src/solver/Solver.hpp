@@ -79,6 +79,9 @@ class Solver {
     Vector3D m_force_b;
     Vector3D m_moment_b;
 
+    // map
+    MapData m_mapData;
+
     // stastus
     bool m_launchClear         = false;
     double m_combustionTime    = 0.0;
@@ -89,12 +92,14 @@ class Solver {
 
 public:
     Solver(double dt,
+           MapData mapData,
            RocketType rocketType,
            TrajectoryMode mode,
            DetachType detachType,
            double detachTime,
            const RocketSpec& spec) :
         m_dt(dt),
+        m_mapData(mapData),
         m_rocketType(rocketType),
         m_trajectoryMode(mode),
         m_detachType(detachType),

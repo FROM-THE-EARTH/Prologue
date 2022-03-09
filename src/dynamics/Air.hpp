@@ -33,9 +33,9 @@ class Air {
     bool m_initialized = false;
 
 public:
-    Air();  // real
+    Air(double magneticDeclination);  // real
 
-    Air(double groundWindSpeed, double groundWindDirection);  // original or only_powerlow
+    Air(double groundWindSpeed, double groundWindDirection, double magneticDeclination);  // original or only_powerlow
 
     void update(double height);
 

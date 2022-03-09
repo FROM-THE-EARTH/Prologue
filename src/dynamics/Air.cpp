@@ -20,8 +20,8 @@ constexpr double geostrophicWind   = 15;    //[m/s]
 constexpr double surfaceLayerLimit = 300;   //[m] Surface layer -300[m]
 constexpr double ekmanLayerLimit   = 1000;  //[m] Ekman layer 300-1000[m]
 
-Air::Air(double groundWindSpeed, double groundWindDirection) :
-    m_groundWindSpeed(groundWindSpeed), m_groundWindDirection(groundWindDirection) {
+Air::Air(double groundWindSpeed, double groundWindDirection, double magneticDeclination) :
+    m_groundWindSpeed(groundWindSpeed), m_groundWindDirection(groundWindDirection - magneticDeclination) {
     m_directionInterval = 270 - m_groundWindDirection;
     if (m_directionInterval <= -45.0) {
         m_directionInterval = 270 - m_groundWindDirection + 360;
@@ -30,12 +30,7 @@ Air::Air(double groundWindSpeed, double groundWindDirection) :
     m_initialized = true;
 }
 
-Air::Air() : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
-    if (!m_windData.empty()) {
-        m_initialized = true;
-        return;
-    }
-
+Air::Air(double magneticDeclination) : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
     std::fstream windfile("input/wind/" + AppSetting::GetSetting().windModel.realdataFilename);
 
     char header[1024];
@@ -58,9 +53,8 @@ Air::Air() : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
 
     windfile.close();
 
-    if (m_windData.size() == 0) {
-        m_initialized = false;
-        return;
+    for (auto& wind : m_windData) {
+        wind.direction -= magneticDeclination;
     }
 
     m_initialized = true;
