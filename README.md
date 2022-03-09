@@ -8,9 +8,9 @@
 
 ## Download
 
-Latest Update: 2022/03/03
+Latest Update: 2022/03/09
 
-Version: 1.4.1
+Version: 1.4.2
 
 [**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)
 
@@ -44,7 +44,12 @@ Version: 1.4.1
 
 ## 変更履歴
 
+### v1.4.2
+
+- 磁気偏角が結果の緯度経度に対して考慮されていなかった問題を修正
+
 ### v1.4.1
+
 - 能代陸・伊豆陸・伊豆海マップに磁気偏角を適用
 - 結果の緯度経度がどのマップかに関わらず能代海基準になっていた問題を修正
 - `spec_single_json` の`info.NAME`の値を`sample_multi`から`sample_single`に修正
