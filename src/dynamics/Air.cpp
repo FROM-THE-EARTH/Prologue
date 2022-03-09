@@ -31,7 +31,7 @@ Air::Air(double groundWindSpeed, double groundWindDirection) :
 }
 
 Air::Air() : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
-    if (!windData_.empty()) {
+    if (!m_windData.empty()) {
         m_initialized = true;
         return;
     }
@@ -43,22 +43,22 @@ Air::Air() : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
     size_t i = 1;
     char c;
     std::string dummy;
-    windData_.push_back(WindData());
+    m_windData.push_back(WindData());
     while (!windfile.eof()) {
-        windData_.push_back(WindData());
-        windfile >> windData_[i].height >> c >> windData_[i].speed >> c >> windData_[i].direction;
-        if (windData_[i] == WindData()) {
+        m_windData.push_back(WindData());
+        windfile >> m_windData[i].height >> c >> m_windData[i].speed >> c >> m_windData[i].direction;
+        if (m_windData[i] == WindData()) {
             break;
         }
         i++;
     }
-    if (windData_[windData_.size() - 1] == WindData()) {
-        windData_.pop_back();
+    if (m_windData[m_windData.size() - 1] == WindData()) {
+        m_windData.pop_back();
     }
 
     windfile.close();
 
-    if (windData_.size() == 0) {
+    if (m_windData.size() == 0) {
         m_initialized = false;
         return;
     }
@@ -137,8 +137,8 @@ double Air::getAirDensity() {
 
 Vector3D Air::getWindFromData() {
     size_t index = 0;
-    for (size_t i = 0; i < windData_.size(); i++) {
-        if (m_height > windData_[i].height) {
+    for (size_t i = 0; i < m_windData.size(); i++) {
+        if (m_height > m_windData[i].height) {
             index++;
         }
     }
@@ -147,15 +147,15 @@ Vector3D Air::getWindFromData() {
         return Vector3D(0, 0, 0);
     }
 
-    const double windSpeed = windData_[index - 1].speed
-                             + (windData_[index].speed - windData_[index - 1].speed)
-                                   / (windData_[index].height - windData_[index - 1].height)
-                                   * (m_height - windData_[index - 1].height);
+    const double windSpeed = m_windData[index - 1].speed
+                             + (m_windData[index].speed - m_windData[index - 1].speed)
+                                   / (m_windData[index].height - m_windData[index - 1].height)
+                                   * (m_height - m_windData[index - 1].height);
 
-    const double direction = windData_[index - 1].direction
-                             + (windData_[index].direction - windData_[index - 1].direction)
-                                   / (windData_[index].height - windData_[index - 1].height)
-                                   * (m_height - windData_[index - 1].height);
+    const double direction = m_windData[index - 1].direction
+                             + (m_windData[index].direction - m_windData[index - 1].direction)
+                                   / (m_windData[index].height - m_windData[index - 1].height)
+                                   * (m_height - m_windData[index - 1].height);
 
     const double rad = direction * Constant::PI / 180;
 

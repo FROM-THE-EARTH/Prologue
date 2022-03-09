@@ -16,7 +16,7 @@ struct WindData {
 };
 
 class Air {
-    std::vector<WindData> windData_;
+    std::vector<WindData> m_windData;
 
     const double m_groundWindSpeed, m_groundWindDirection;
 
