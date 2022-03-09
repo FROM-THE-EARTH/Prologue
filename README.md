@@ -1,6 +1,6 @@
 # Prologue
 
-単段/多段式ロケットの軌道解析シミュレーターです。
+単段 / 多段式ロケットの軌道解析シミュレーターです。
 
 出力ファイルは審査書書きやすいようにしてます。
 
@@ -23,16 +23,16 @@ Version: 1.4.2
    - **macOS**: [Homebrew](https://brew.sh/index_ja)をインストール後、ターミナルで `brew install gnuplot`
    - **Linux**: ターミナルで `sudo apt install gnuplot`
 
-2. Prologue.zip を展開
+2. ダウンロードした zip ファイルを展開
 
 3. [各パラメータの入力形式](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/INPUT.md)に沿ってファイルを作成する
 
-4. Prologue.exe を起動<br>
+4. `Prologue` を起動<br>
    macOS, Linux の場合はターミナル上でのみ実行可能
 
 5. 指示に従ってシミュレーションを行う
 
-6. result/フォルダ下に結果が格納される
+6. `result/`フォルダ下に結果が格納される
 
 **\* ファイル名に全角を使用すると不具合が生じる可能性があります**
 
@@ -40,7 +40,7 @@ Version: 1.4.2
 
 必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOPMENT.md)を読んでください。
 
-やることがなかったら Issues にあるものを消化するといいと思います。
+やることがなかったら [Issues](https://github.com/FROM-THE-EARTH/Prologue/issues) にあるものを消化するといいと思います。
 
 ## 変更履歴
 
