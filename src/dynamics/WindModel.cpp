@@ -1,4 +1,4 @@
-#include "Air.hpp"
+#include "WindModel.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -20,7 +20,7 @@ constexpr double geostrophicWind   = 15;    //[m/s]
 constexpr double surfaceLayerLimit = 300;   //[m] Surface layer -300[m]
 constexpr double ekmanLayerLimit   = 1000;  //[m] Ekman layer 300-1000[m]
 
-Air::Air(double groundWindSpeed, double groundWindDirection, double magneticDeclination) :
+WindModel::WindModel(double groundWindSpeed, double groundWindDirection, double magneticDeclination) :
     m_groundWindSpeed(groundWindSpeed), m_groundWindDirection(groundWindDirection - magneticDeclination) {
     m_directionInterval = 270 - m_groundWindDirection;
     if (m_directionInterval <= -45.0) {
@@ -30,7 +30,7 @@ Air::Air(double groundWindSpeed, double groundWindDirection, double magneticDecl
     m_initialized = true;
 }
 
-Air::Air(double magneticDeclination) : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
+WindModel::WindModel(double magneticDeclination) : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
     std::fstream windfile("input/wind/" + AppSetting::GetSetting().windModel.realdataFilename);
 
     char header[1024];
@@ -60,7 +60,7 @@ Air::Air(double magneticDeclination) : m_groundWindSpeed(0.0), m_groundWindDirec
     m_initialized = true;
 }
 
-void Air::update(double height) {
+void WindModel::update(double height) {
     m_height = height;
 
     m_geopotentialHeight = getGeopotentialHeight();
@@ -84,16 +84,16 @@ void Air::update(double height) {
     }
 }
 
-double Air::getGeopotentialHeight() {
+double WindModel::getGeopotentialHeight() {
     return Constant::EarthRadius * m_height / (Constant::EarthRadius + m_height);
 }
 
-double Air::getGravity() {
+double WindModel::getGravity() {
     const double k = (Constant::EarthRadius / (Constant::EarthRadius + m_height));
     return Constant::G * k * k;
 }
 
-double Air::getTemperature() {
+double WindModel::getTemperature() {
     for (size_t i = 0; i < N; i++) {
         if (m_geopotentialHeight < heightList[i + 1])
             return baseTemperature[i] + tempDecayRate[i] * (m_geopotentialHeight - heightList[i])
@@ -105,7 +105,7 @@ double Air::getTemperature() {
     return 0;
 }
 
-double Air::getPressure() {
+double WindModel::getPressure() {
     const double temp = m_temperature - Constant::AbsoluteZero;  //[kelvin]
 
     for (size_t i = 0; i < N; i++) {
@@ -125,11 +125,11 @@ double Air::getPressure() {
     return 0;
 }
 
-double Air::getAirDensity() {
+double WindModel::getAirDensity() {
     return m_pressure / ((m_temperature - Constant::AbsoluteZero) * Constant::GasConstant);
 }
 
-Vector3D Air::getWindFromData() {
+Vector3D WindModel::getWindFromData() {
     size_t index = 0;
     for (size_t i = 0; i < m_windData.size(); i++) {
         if (m_height > m_windData[i].height) {
@@ -156,7 +156,7 @@ Vector3D Air::getWindFromData() {
     return -Vector3D(sin(rad), cos(rad), 0) * windSpeed;
 }
 
-Vector3D Air::getWindOriginalModel() {
+Vector3D WindModel::getWindOriginalModel() {
     if (m_height <= 0) {
         const double rad          = m_groundWindDirection * Constant::PI / 180;
         const Vector3D groundWind = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
@@ -190,7 +190,7 @@ Vector3D Air::getWindOriginalModel() {
     }
 }
 
-Vector3D Air::getWindOnlyPowerLow() {
+Vector3D WindModel::getWindOnlyPowerLow() {
     if (m_height <= 0) {
         const double rad = m_groundWindDirection * Constant::PI / 180;
         return -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;

@@ -7,15 +7,15 @@
 bool Solver::run(double windSpeed, double windDirection) {
     switch (AppSetting::GetSetting().windModel.type) {
     case WindModelType::Real:
-        m_air = new Air(m_mapData.magneticDeclination);
+        m_windModel = new WindModel(m_mapData.magneticDeclination);
         break;
 
     default:
-        m_air = new Air(windSpeed, windDirection, m_mapData.magneticDeclination);
+        m_windModel = new WindModel(windSpeed, windDirection, m_mapData.magneticDeclination);
         break;
     }
 
-    if (!m_air->initialized()) {
+    if (!m_windModel->initialized()) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Cannot create wind model");
         return false;
     }
@@ -81,7 +81,7 @@ void Solver::initializeParameters() {
 }
 
 void Solver::update() {
-    m_air->update(m_rocket.pos.z);
+    m_windModel->update(m_rocket.pos.z);
 
     const double fixedtime =
         m_rocketAtDetached.size() == 0 ? 0.0 : m_rocketAtDetached[m_rocketAtDetached.size() - 1].elapsedTime;
@@ -188,8 +188,8 @@ void Solver::updateDetachedStatus() {
 }
 
 void Solver::updateParameters() {
-    if ((m_rocket.velocity - m_air->wind()).length() != 0) {
-        m_rocket.airSpeed_b = (m_rocket.velocity - m_air->wind()).applyQuaternion(m_rocket.quat.conjugate());
+    if ((m_rocket.velocity - m_windModel->wind()).length() != 0) {
+        m_rocket.airSpeed_b = (m_rocket.velocity - m_windModel->wind()).applyQuaternion(m_rocket.quat.conjugate());
     } else {
         m_rocket.airSpeed_b = Vector3D();
     }
@@ -236,7 +236,8 @@ void Solver::calcDynamicForce() {
 
     if (!m_rocket.parachuteOpened) {
         // Aero
-        const double preForceCalc = 0.5 * m_air->density() * m_rocket.airSpeed_b.length() * m_rocket.airSpeed_b.length()
+        const double preForceCalc = 0.5 * m_windModel->density() * m_rocket.airSpeed_b.length()
+                                    * m_rocket.airSpeed_b.length()
                                     * m_rocketSpec.rocketParam[m_targetRocketIndex].bottomArea;
         const double cd = m_rocketSpec.rocketParam[m_targetRocketIndex].airspeedParam.getParam().Cd
                           + m_rocketSpec.rocketParam[m_targetRocketIndex].airspeedParam.getParam().Cd_a2
@@ -246,7 +247,7 @@ void Solver::calcDynamicForce() {
         m_force_b.z -= m_rocket.Cnp * preForceCalc;
 
         // Moment
-        const double preMomentCalc = 0.25 * m_air->density() * m_rocket.airSpeed_b.length()
+        const double preMomentCalc = 0.25 * m_windModel->density() * m_rocket.airSpeed_b.length()
                                      * m_rocketSpec.rocketParam[m_targetRocketIndex].length
                                      * m_rocketSpec.rocketParam[m_targetRocketIndex].length
                                      * m_rocketSpec.rocketParam[m_targetRocketIndex].bottomArea;
@@ -261,7 +262,7 @@ void Solver::calcDynamicForce() {
         m_moment_b.z -= m_force_b.y * (cp - m_rocket.reflLength);
 
         // Gravity
-        m_force_b += Vector3D(0, 0, -m_air->gravity()).applyQuaternion(m_rocket.quat.conjugate()) * m_rocket.mass;
+        m_force_b += Vector3D(0, 0, -m_windModel->gravity()).applyQuaternion(m_rocket.quat.conjugate()) * m_rocket.mass;
     }
 
     // update delta
@@ -283,15 +284,15 @@ void Solver::calcDynamicForce() {
         }
     } else if (m_rocket.parachuteOpened) {  // parachute opened
         const Vector3D paraSpeed = m_rocket.velocity;
-        const double drag        = 0.5 * m_air->density() * paraSpeed.z * paraSpeed.z * 1.0
+        const double drag        = 0.5 * m_windModel->density() * paraSpeed.z * paraSpeed.z * 1.0
                             * m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[m_rocket.parachuteIndex].Cd;
 
-        m_rocketDelta.velocity.z = drag / m_rocket.mass - m_air->gravity();
+        m_rocketDelta.velocity.z = drag / m_rocket.mass - m_windModel->gravity();
         m_rocketDelta.velocity.x = 0;
         m_rocketDelta.velocity.y = 0;
 
-        m_rocket.velocity.x = m_air->wind().x;
-        m_rocket.velocity.y = m_air->wind().y;
+        m_rocket.velocity.x = m_windModel->wind().x;
+        m_rocket.velocity.y = m_windModel->wind().y;
 
         m_rocketDelta.pos = m_rocket.velocity;
 

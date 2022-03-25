@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dynamics/Air.hpp"
+#include "dynamics/WindModel.hpp"
 #include "env/Map.hpp"
 #include "rocket/Rocket.hpp"
 #include "rocket/RocketSpec.hpp"
@@ -75,7 +75,7 @@ class Solver {
     std::vector<Rocket> m_rocketAtDetached;
 
     // dynamics
-    Air* m_air = nullptr;
+    WindModel* m_windModel = nullptr;
     Vector3D m_force_b;
     Vector3D m_moment_b;
 
@@ -107,7 +107,7 @@ public:
         m_rocketSpec(spec) {}
 
     ~Solver() {
-        delete m_air;
+        delete m_windModel;
     }
 
     bool run(double windSpeed, double windDirection);

@@ -15,7 +15,7 @@ struct WindData {
     }
 };
 
-class Air {
+class WindModel {
     std::vector<WindData> m_windData;
 
     const double m_groundWindSpeed, m_groundWindDirection;
@@ -33,9 +33,11 @@ class Air {
     bool m_initialized = false;
 
 public:
-    Air(double magneticDeclination);  // real
+    WindModel(double magneticDeclination);  // real
 
-    Air(double groundWindSpeed, double groundWindDirection, double magneticDeclination);  // original or only_powerlow
+    WindModel(double groundWindSpeed,
+              double groundWindDirection,
+              double magneticDeclination);  // original or only_powerlow
 
     void update(double height);
 

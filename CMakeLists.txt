@@ -27,7 +27,7 @@ set(SOURCE_FILES
 	"src/app/AppSetting.cpp"
 	"src/app/CommandLine.cpp"
 
-	"src/dynamics/Air.cpp"
+	"src/dynamics/WindModel.cpp"
 
 	"src/env/Map.cpp"
 
