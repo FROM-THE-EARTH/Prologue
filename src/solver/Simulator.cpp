@@ -9,8 +9,8 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
+#include "rocket/RocketSpec.hpp"
 #include "utils/ResultSaver.hpp"
-#include "utils/RocketSpecReader.hpp"
 
 bool Simulator::run() {
     if (!initialize()) {
@@ -87,7 +87,7 @@ bool Simulator::initialize() {
         setWindCondition();
     }
 
-    if (RocketSpecReader::IsMultipleRocket(m_jsonFilename)) {
+    if (RocketSpec::IsMultipleRocket(m_jsonFilename)) {
         CommandLine::PrintInfo(PrintInfoType::Information, "This is Multiple Rocket");
         m_rocketType = RocketType::Multi;
         setDetachType();
@@ -101,7 +101,7 @@ bool Simulator::initialize() {
     std::cout << "----------------------------------------------------------" << std::endl;
 
     // read json
-    m_rocketSpec = RocketSpecReader::ReadJson(m_jsonFilename);
+    m_rocketSpec.initialize(m_jsonFilename);
 
     // output
     m_outputDirName = m_jsonFilename;

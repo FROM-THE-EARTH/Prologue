@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/property_tree/ptree.hpp>
 #include <string>
 #include <vector>
 
@@ -53,7 +54,24 @@ struct Environment {
 };
 
 struct RocketSpec {
+private:
+    bool m_existInfCd = false;
+
+public:
     Information info;
     std::vector<RocketParam> rocketParam;  // could be multiple(multiple rocket)
     Environment env;
+
+    void initialize(const std::string& filename);
+
+    static bool IsMultipleRocket(const std::string& filename);
+
+private:
+    void setEnvironment(const boost::property_tree::ptree& pt);
+
+    void setExtraInfo(const boost::property_tree::ptree& pt);
+
+    void setRocketParam(const boost::property_tree::ptree& pt, size_t index);
+
+    void setInfParachuteCd();
 };

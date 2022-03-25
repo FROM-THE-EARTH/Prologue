@@ -39,13 +39,13 @@ set(SOURCE_FILES
 
 	"src/rocket/AirspeedParam.cpp"
 	"src/rocket/Engine.cpp"
+	"src/rocket/RocketSpec.cpp"
 
 	"src/solver/Simulator.cpp"
 	"src/solver/Solver.cpp"
 
 	"src/utils/JsonUtils.cpp"
 	"src/utils/ResultSaver.cpp"
-	"src/utils/RocketSpecReader.cpp"
 
 	"src/main.cpp"
 )
