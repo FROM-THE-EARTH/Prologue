@@ -34,8 +34,6 @@ Version: 1.4.2
 
 6. `result/`フォルダ下に結果が格納される
 
-**\* ファイル名に全角を使用すると不具合が生じる可能性があります**
-
 ## For Developers
 
 必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOPMENT.md)を読んでください。
