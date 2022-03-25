@@ -7,18 +7,6 @@
 #include "CommandLine.hpp"
 #include "utils/JsonUtils.hpp"
 
-template <typename T>
-T GetValueExc(const boost::property_tree::ptree& pt, const std::string& key) {
-    if (!JsonUtils::HasValue<T>(pt, key)) {
-        const std::string k = "key: " + key;
-        CommandLine::PrintInfo(
-            PrintInfoType::Error, "In prologue.settings.json", k.c_str(), "This key does not have value");
-        throw 0;
-    }
-
-    return JsonUtils::GetValue<T>(pt, key);
-}
-
 namespace AppSetting {
     namespace Internal {
         bool initialized = false;
@@ -31,7 +19,7 @@ namespace AppSetting {
                 initialized = true;
             }
 
-            return GetValueExc<T>(pt, key);
+            return JsonUtils::GetValueExc<T>(pt, key);
         }
 
         WindModelType InitWindModelType() {

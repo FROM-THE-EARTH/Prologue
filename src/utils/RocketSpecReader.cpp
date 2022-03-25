@@ -22,38 +22,26 @@ namespace RocketSpecReader {
     bool isMultiple     = false;
 
     namespace Internal {
-
-        template <typename T>
-        T GetValueWithError(const boost::property_tree::ptree& pt, const std::string& key) {
-            if (JsonUtils::HasValue<double>(pt, key)) {
-                return JsonUtils::GetValue<T>(pt, key);
-            } else {
-                CommandLine::PrintInfo(PrintInfoType::Error,
-                                       ("key \"" + key + "\" in json file is not valid.").c_str());
-                exit(1);
-            }
-        }
-
         void ReadRocketParam(const boost::property_tree::ptree& pt, RocketSpec* spec, size_t index) {
             const std::string key = RocketParamList[index];
 
             spec->rocketParam.push_back({});
 
-            spec->rocketParam[index].length   = GetValueWithError<double>(pt, key + ".ref_len");
-            spec->rocketParam[index].diameter = GetValueWithError<double>(pt, key + ".diam");
+            spec->rocketParam[index].length   = JsonUtils::GetValueExc<double>(pt, key + ".ref_len");
+            spec->rocketParam[index].diameter = JsonUtils::GetValueExc<double>(pt, key + ".diam");
             spec->rocketParam[index].bottomArea =
                 spec->rocketParam[index].diameter * spec->rocketParam[index].diameter * 0.25 * Constant::PI;
 
-            spec->rocketParam[index].CGLengthInitial = GetValueWithError<double>(pt, key + ".CGlen_i");
-            spec->rocketParam[index].CGLengthFinal   = GetValueWithError<double>(pt, key + ".CGlen_f");
+            spec->rocketParam[index].CGLengthInitial = JsonUtils::GetValueExc<double>(pt, key + ".CGlen_i");
+            spec->rocketParam[index].CGLengthFinal   = JsonUtils::GetValueExc<double>(pt, key + ".CGlen_f");
 
-            spec->rocketParam[index].massInitial = GetValueWithError<double>(pt, key + ".mass_i");
-            spec->rocketParam[index].massFinal   = GetValueWithError<double>(pt, key + ".mass_f");
+            spec->rocketParam[index].massInitial = JsonUtils::GetValueExc<double>(pt, key + ".mass_i");
+            spec->rocketParam[index].massFinal   = JsonUtils::GetValueExc<double>(pt, key + ".mass_f");
 
-            spec->rocketParam[index].rollingMomentInertiaInitial = GetValueWithError<double>(pt, key + ".Iyz_i");
-            spec->rocketParam[index].rollingMomentInertiaFinal   = GetValueWithError<double>(pt, key + ".Iyz_f");
+            spec->rocketParam[index].rollingMomentInertiaInitial = JsonUtils::GetValueExc<double>(pt, key + ".Iyz_i");
+            spec->rocketParam[index].rollingMomentInertiaFinal   = JsonUtils::GetValueExc<double>(pt, key + ".Iyz_f");
 
-            spec->rocketParam[index].Cmq = GetValueWithError<double>(pt, key + ".Cmq");
+            spec->rocketParam[index].Cmq = JsonUtils::GetValueExc<double>(pt, key + ".Cmq");
 
             spec->rocketParam[index].parachute.push_back(Parachute());
             spec->rocketParam[index].parachute[0].terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
@@ -78,11 +66,11 @@ namespace RocketSpecReader {
             if (!spec->rocketParam[index].airspeedParam.exist()) {
                 CommandLine::PrintInfo(
                     PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from JSON");
-                spec->rocketParam[index].airspeedParam.setParam(GetValueWithError<double>(pt, key + ".CPlen"),
+                spec->rocketParam[index].airspeedParam.setParam(JsonUtils::GetValueExc<double>(pt, key + ".CPlen"),
                                                                 JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
-                                                                GetValueWithError<double>(pt, key + ".Cd"),
+                                                                JsonUtils::GetValueExc<double>(pt, key + ".Cd"),
                                                                 JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
-                                                                GetValueWithError<double>(pt, key + ".Cna"));
+                                                                JsonUtils::GetValueExc<double>(pt, key + ".Cna"));
             } else {
                 CommandLine::PrintInfo(
                     PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from CSV");
@@ -98,9 +86,9 @@ namespace RocketSpecReader {
 
         void ReadEnvironment(const boost::property_tree::ptree& pt, RocketSpec* spec) {
             spec->env.place         = JsonUtils::GetValue<std::string>(pt, "environment.place");
-            spec->env.railLength    = GetValueWithError<double>(pt, "environment.rail_len");
-            spec->env.railAzimuth   = GetValueWithError<double>(pt, "environment.rail_azi");
-            spec->env.railElevation = GetValueWithError<double>(pt, "environment.rail_elev");
+            spec->env.railLength    = JsonUtils::GetValueExc<double>(pt, "environment.rail_len");
+            spec->env.railAzimuth   = JsonUtils::GetValueExc<double>(pt, "environment.rail_azi");
+            spec->env.railElevation = JsonUtils::GetValueExc<double>(pt, "environment.rail_elev");
         }
 
         void SetInfParachuteCd(RocketSpec* spec) {
