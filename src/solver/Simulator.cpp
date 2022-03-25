@@ -75,7 +75,7 @@ bool Simulator::initialize() {
     // settings on commandline
     setJSONFile();
 
-    if (AppSetting::GetSetting().windModel.type == WindModelType::Real) {
+    if (AppSetting::WindModel::type == WindModelType::Real) {
         m_simulationMode = SimulationMode::Detail;
     } else {
         setSimulationMode();
@@ -83,7 +83,7 @@ bool Simulator::initialize() {
 
     setTrajectoryMode();
 
-    if (AppSetting::GetSetting().windModel.type != WindModelType::Real && m_simulationMode == SimulationMode::Detail) {
+    if (AppSetting::WindModel::type != WindModelType::Real && m_simulationMode == SimulationMode::Detail) {
         setWindCondition();
     }
 
@@ -108,8 +108,8 @@ bool Simulator::initialize() {
     m_outputDirName.erase(m_outputDirName.size() - 5, 5);
     m_outputDirName += "[";
 
-    const std::filesystem::path f = AppSetting::GetSetting().windModel.realdataFilename;
-    switch (AppSetting::GetSetting().windModel.type) {
+    const std::filesystem::path f = AppSetting::WindModel::realdataFilename;
+    switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
         m_outputDirName += "(" + f.stem().string() + ")";
         break;
@@ -190,12 +190,12 @@ void Simulator::setDetachTime() {
 }
 
 void Simulator::scatterSimulation() {
-    m_windSpeed     = AppSetting::GetSetting().simulation.windSpeedMin;
+    m_windSpeed     = AppSetting::Simulation::windSpeedMin;
     m_windDirection = 0.0;
 
     m_solved = true;
 
-    if (AppSetting::GetSetting().processing.multiThread) {
+    if (AppSetting::Processing::multiThread) {
         multiThreadSimulation();
     } else {
         singleThreadSimulation();
@@ -358,11 +358,11 @@ void Simulator::saveResult() {
 }
 
 bool Simulator::updateWindCondition() {
-    m_windDirection += AppSetting::GetSetting().simulation.windDirInterval;
+    m_windDirection += AppSetting::Simulation::windDirInterval;
     if (m_windDirection >= 360.0) {
         m_windDirection = 0.0;
         m_windSpeed += 1.0;
-        if (m_windSpeed > AppSetting::GetSetting().simulation.windSpeedMax) {
+        if (m_windSpeed > AppSetting::Simulation::windSpeedMax) {
             return false;
         }
     }

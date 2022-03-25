@@ -7,8 +7,6 @@
 #include "CommandLine.hpp"
 #include "utils/JsonUtils.hpp"
 
-Setting AppSetting::m_Setting;
-
 template <typename T>
 T GetValueExc(const boost::property_tree::ptree& pt, const std::string& key) {
     if (!JsonUtils::HasValue<T>(pt, key)) {
@@ -21,42 +19,50 @@ T GetValueExc(const boost::property_tree::ptree& pt, const std::string& key) {
     return JsonUtils::GetValue<T>(pt, key);
 }
 
-bool AppSetting::Initialize() {
-    boost::property_tree::ptree pt;
-    boost::property_tree::read_json("prologue.settings.json", pt);
+namespace AppSetting {
+    namespace Internal {
+        bool initialized = false;
+        boost::property_tree::ptree pt;
 
-    if (pt.empty()) {
-        return false;
-    }
+        template <typename T>
+        T InitValue(const std::string& key) {
+            if (!initialized) {
+                boost::property_tree::read_json("prologue.settings.json", pt);
+                initialized = true;
+            }
 
-    try {
-        // processing
-        m_Setting.processing.multiThread = GetValueExc<bool>(pt, "processing.multi_thread");
-
-        // simulation
-        m_Setting.simulation.dt                  = GetValueExc<double>(pt, "simulation.dt");
-        m_Setting.simulation.detectPeakThreshold = GetValueExc<double>(pt, "simulation.detect_peak_threshold");
-        // scatter
-        m_Setting.simulation.windSpeedMin    = GetValueExc<double>(pt, "simulation.scatter.wind_speed_min");
-        m_Setting.simulation.windSpeedMax    = GetValueExc<double>(pt, "simulation.scatter.wind_speed_max");
-        m_Setting.simulation.windDirInterval = GetValueExc<double>(pt, "simulation.scatter.wind_dir_interval");
-
-        // wind model
-        m_Setting.windModel.powerConstant = GetValueExc<double>(pt, "wind_model.power_constant");
-        const std::string windmodeltype   = GetValueExc<std::string>(pt, "wind_model.type");
-        if (windmodeltype == "real") {
-            m_Setting.windModel.type = WindModelType::Real;
-        } else if (windmodeltype == "original") {
-            m_Setting.windModel.type = WindModelType::Original;
-        } else if (windmodeltype == "only_powerlow") {
-            m_Setting.windModel.type = WindModelType::OnlyPowerLow;
-        } else {
-            throw 0;
+            return GetValueExc<T>(pt, key);
         }
-        m_Setting.windModel.realdataFilename = GetValueExc<std::string>(pt, "wind_model.realdata_filename");
-    } catch (...) {
-        return false;
+
+        WindModelType InitWindModelType() {
+            const std::string windmodeltype = InitValue<std::string>("wind_model.type");
+
+            if (windmodeltype == "real") {
+                return WindModelType::Real;
+            } else if (windmodeltype == "original") {
+                return WindModelType::Original;
+            } else if (windmodeltype == "only_powerlow") {
+                return WindModelType::OnlyPowerLow;
+            } else {
+                CommandLine::PrintInfo(PrintInfoType::Error,
+                                       "In prologue.settings.json",
+                                       "wind_model.type",
+                                       ("\"" + windmodeltype + "\" is invalid string.").c_str(),
+                                       "Set \"real\", \"original\" or \"only_powerlow\"");
+                throw 0;
+            }
+        }
     }
 
-    return true;
+    const bool Processing::multiThread = Internal::InitValue<bool>("processing.multi_thread");
+
+    const double Simulation::dt                  = Internal::InitValue<double>("simulation.dt");
+    const double Simulation::detectPeakThreshold = Internal::InitValue<double>("simulation.detect_peak_threshold");
+    const double Simulation::windSpeedMin        = Internal::InitValue<double>("simulation.scatter.wind_speed_min");
+    const double Simulation::windSpeedMax        = Internal::InitValue<double>("simulation.scatter.wind_speed_max");
+    const double Simulation::windDirInterval     = Internal::InitValue<double>("simulation.scatter.wind_dir_interval");
+
+    const double WindModel::powerConstant         = Internal::InitValue<double>("wind_model.power_constant");
+    const WindModelType WindModel::type           = Internal::InitWindModelType();
+    const std::string WindModel::realdataFilename = Internal::InitValue<std::string>("wind_model.realdata_filename");
 }

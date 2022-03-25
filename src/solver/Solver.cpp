@@ -5,7 +5,7 @@
 #include "env/Map.hpp"
 
 bool Solver::run(double windSpeed, double windDirection) {
-    switch (AppSetting::GetSetting().windModel.type) {
+    switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
         m_windModel = new WindModel(m_mapData.magneticDeclination);
         break;
@@ -94,8 +94,8 @@ void Solver::update() {
 }
 
 void Solver::updateParachuteStatus() {
-    const bool detectpeakConditon = m_result.rocket[m_targetRocketIndex].maxHeight
-                                    > m_rocket.pos.z + AppSetting::GetSetting().simulation.detectPeakThreshold;
+    const bool detectpeakConditon =
+        m_result.rocket[m_targetRocketIndex].maxHeight > m_rocket.pos.z + AppSetting::Simulation::detectPeakThreshold;
 
     if (detectpeakConditon && !m_rocket.detectPeak) {
         m_rocket.detectPeak = true;

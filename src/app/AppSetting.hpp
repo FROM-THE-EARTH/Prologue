@@ -4,41 +4,24 @@
 
 enum class WindModelType { Real, Original, OnlyPowerLow };
 
-namespace Settings {
-    struct Processing {
-        bool multiThread = false;
-    };
+namespace AppSetting {
+    namespace Processing {
+        extern const bool multiThread;
+    }
 
-    struct Simulation {
-        double dt                  = 0.001;
-        double detectPeakThreshold = 15.0;
+    namespace Simulation {
+        extern const double dt;
+        extern const double detectPeakThreshold;
 
         // scatter
-        double windSpeedMin    = 1.0;
-        double windSpeedMax    = 7.0;
-        double windDirInterval = 30.0;
-    };
-
-    struct WindModel {
-        double powerConstant = 7.0;
-        WindModelType type;
-        std::string realdataFilename = "wind_data_template.csv";
-    };
-}
-
-struct Setting {
-    Settings::Processing processing;
-    Settings::Simulation simulation;
-    Settings::WindModel windModel;
-};
-
-class AppSetting {
-    static Setting m_Setting;
-
-public:
-    static bool Initialize();
-
-    const static Setting& GetSetting() {
-        return m_Setting;
+        extern const double windSpeedMin;
+        extern const double windSpeedMax;
+        extern const double windDirInterval;
     }
-};
+
+    namespace WindModel {
+        extern const double powerConstant;
+        extern const WindModelType type;
+        extern const std::string realdataFilename;
+    }
+}

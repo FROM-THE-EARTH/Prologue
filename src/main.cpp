@@ -13,14 +13,9 @@ void ShowSettingInfo();
 int main() {
     std::cout << "Prologue v" << VERSION << std::endl << std::endl;
 
-    if (!AppSetting::Initialize()) {
-        std::cout << "Failed to initialize application" << std::endl;
-        return 1;
-    }
-
     ShowSettingInfo();
 
-    Simulator simulator(AppSetting::GetSetting().simulation.dt);
+    Simulator simulator(AppSetting::Simulation::dt);
     if (!simulator.run()) {
         return 1;
     }
@@ -36,8 +31,8 @@ int main() {
 
 void ShowSettingInfo() {
     // Wind model
-    const std::string s = "Wind data file: " + AppSetting::GetSetting().windModel.realdataFilename;
-    switch (AppSetting::GetSetting().windModel.type) {
+    const std::string s = "Wind data file: " + AppSetting::WindModel::realdataFilename;
+    switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
         CommandLine::PrintInfo(PrintInfoType::Information, "Wind model: Real", s.c_str(), "Run detail mode simulation");
         break;
