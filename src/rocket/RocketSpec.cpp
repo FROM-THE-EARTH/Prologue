@@ -34,48 +34,49 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
 
     rocketParam.push_back({});
 
-    rocketParam[index].length     = JsonUtils::GetValueExc<double>(pt, key + ".ref_len");
-    rocketParam[index].diameter   = JsonUtils::GetValueExc<double>(pt, key + ".diam");
-    rocketParam[index].bottomArea = rocketParam[index].diameter * rocketParam[index].diameter * 0.25 * Constant::PI;
+    RocketParam& param = rocketParam[index];
 
-    rocketParam[index].CGLengthInitial = JsonUtils::GetValueExc<double>(pt, key + ".CGlen_i");
-    rocketParam[index].CGLengthFinal   = JsonUtils::GetValueExc<double>(pt, key + ".CGlen_f");
+    param.length     = JsonUtils::GetValueExc<double>(pt, key + ".ref_len");
+    param.diameter   = JsonUtils::GetValueExc<double>(pt, key + ".diam");
+    param.bottomArea = param.diameter * param.diameter * 0.25 * Constant::PI;
 
-    rocketParam[index].massInitial = JsonUtils::GetValueExc<double>(pt, key + ".mass_i");
-    rocketParam[index].massFinal   = JsonUtils::GetValueExc<double>(pt, key + ".mass_f");
+    param.CGLengthInitial = JsonUtils::GetValueExc<double>(pt, key + ".CGlen_i");
+    param.CGLengthFinal   = JsonUtils::GetValueExc<double>(pt, key + ".CGlen_f");
 
-    rocketParam[index].rollingMomentInertiaInitial = JsonUtils::GetValueExc<double>(pt, key + ".Iyz_i");
-    rocketParam[index].rollingMomentInertiaFinal   = JsonUtils::GetValueExc<double>(pt, key + ".Iyz_f");
+    param.massInitial = JsonUtils::GetValueExc<double>(pt, key + ".mass_i");
+    param.massFinal   = JsonUtils::GetValueExc<double>(pt, key + ".mass_f");
 
-    rocketParam[index].Cmq = JsonUtils::GetValueExc<double>(pt, key + ".Cmq");
+    param.rollingMomentInertiaInitial = JsonUtils::GetValueExc<double>(pt, key + ".Iyz_i");
+    param.rollingMomentInertiaFinal   = JsonUtils::GetValueExc<double>(pt, key + ".Iyz_f");
 
-    rocketParam[index].parachute.push_back(Parachute());
-    rocketParam[index].parachute[0].terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
-    rocketParam[index].parachute[0].openingType      = JsonUtils::GetValue<int>(pt, key + ".op_type_1st");
-    rocketParam[index].parachute[0].openingTime      = JsonUtils::GetValue<double>(pt, key + ".op_time_1st");
-    rocketParam[index].parachute[0].delayTime        = JsonUtils::GetValue<double>(pt, key + ".delay_time_1st");
+    param.Cmq = JsonUtils::GetValueExc<double>(pt, key + ".Cmq");
 
-    if (rocketParam[index].parachute[0].terminalVelocity == 0.0) {
+    param.parachute.push_back(Parachute());
+    param.parachute[0].terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
+    param.parachute[0].openingType      = JsonUtils::GetValue<int>(pt, key + ".op_type_1st");
+    param.parachute[0].openingTime      = JsonUtils::GetValue<double>(pt, key + ".op_time_1st");
+    param.parachute[0].delayTime        = JsonUtils::GetValue<double>(pt, key + ".delay_time_1st");
+
+    if (param.parachute[0].terminalVelocity == 0.0) {
         m_existInfCd = true;
         CommandLine::PrintInfo(PrintInfoType::Warning,
                                (std::string("Rocket: ") + key).c_str(),
                                "Terminal velocity is undefined.",
                                "Parachute Cd value is automatically calculated.");
     } else {
-        rocketParam[index].parachute[0].Cd =
-            CalcParachuteCd(rocketParam[index].massFinal, rocketParam[index].parachute[0].terminalVelocity);
+        param.parachute[0].Cd = CalcParachuteCd(param.massFinal, param.parachute[0].terminalVelocity);
     }
 
-    rocketParam[index].engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
-    rocketParam[index].airspeedParam.loadParam(JsonUtils::GetValue<std::string>(pt, key + ".airspeed_param_file"));
-    if (!rocketParam[index].airspeedParam.exist()) {
+    param.engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
+    param.airspeedParam.loadParam(JsonUtils::GetValue<std::string>(pt, key + ".airspeed_param_file"));
+    if (!param.airspeedParam.exist()) {
         CommandLine::PrintInfo(
             PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from JSON");
-        rocketParam[index].airspeedParam.setParam(JsonUtils::GetValueExc<double>(pt, key + ".CPlen"),
-                                                  JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
-                                                  JsonUtils::GetValueExc<double>(pt, key + ".Cd"),
-                                                  JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
-                                                  JsonUtils::GetValueExc<double>(pt, key + ".Cna"));
+        param.airspeedParam.setParam(JsonUtils::GetValueExc<double>(pt, key + ".CPlen"),
+                                     JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
+                                     JsonUtils::GetValueExc<double>(pt, key + ".Cd"),
+                                     JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
+                                     JsonUtils::GetValueExc<double>(pt, key + ".Cna"));
     } else {
         CommandLine::PrintInfo(
             PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from CSV");
@@ -121,6 +122,5 @@ void RocketSpec::initialize(const std::string& filename) {
 bool RocketSpec::IsMultipleRocket(const std::string& filename) {
     boost::property_tree::ptree pt;
     boost::property_tree::read_json("input/json/" + filename, pt);
-
     return JsonUtils::Exist(pt, RocketParamList[1]);
 }
