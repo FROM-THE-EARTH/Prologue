@@ -16,7 +16,6 @@ double calcParachuteCd(double massFinal, double terminalVelocity) {
 }
 
 namespace RocketSpecReader {
-
     bool existInfCd     = false;
     bool multipleJudged = false;
     bool isMultiple     = false;
@@ -109,17 +108,19 @@ namespace RocketSpecReader {
 
         existInfCd = false;
 
-        /*Read once*/
+        /* Read once */
         Internal::ReadExtraInfo(pt, &spec);
 
         Internal::ReadEnvironment(pt, &spec);
 
-        /*Read once or more*/
-        size_t i = 0;
-        do {
-            Internal::ReadRocketParam(pt, &spec, i);
-            i++;
-        } while (IsMultipleRocket(filename) && i < multipleRocketNum);
+        /* Read once or more */
+        {
+            size_t i = 0;
+            do {
+                Internal::ReadRocketParam(pt, &spec, i);
+                i++;
+            } while (IsMultipleRocket(filename) && i < multipleRocketNum);
+        }
 
         // Set parachute Cd (Multiple rocket)
         if (existInfCd) {
