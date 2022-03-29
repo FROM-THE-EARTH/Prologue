@@ -42,6 +42,13 @@ struct Quaternion {
     }
 
     /*============================operator=========================*/
+    constexpr bool operator==(const Quaternion& q) const {
+        return (x == q.x) && (y == q.y) && (z == q.z) && (w == q.w);
+    }
+
+    constexpr Quaternion operator+(const Quaternion& q) const {
+        return {x + q.x, y + q.y, z + q.z, w + q.w};
+    }
 
     constexpr Quaternion operator*(const Quaternion& q) const {
         return {w * q.x - z * q.y + y * q.z + x * q.w,
@@ -50,26 +57,32 @@ struct Quaternion {
                 -x * q.x - y * q.y - z * q.z + w * q.w};
     }
 
-    Quaternion& operator+=(const Quaternion& q) {
+    constexpr Quaternion operator*(double value) const {
+        return {x * value, y * value, z * value, w * value};
+    }
+
+    constexpr Quaternion& operator+=(const Quaternion& q) {
         x += q.x;
         y += q.y;
         z += q.z;
         w += q.w;
-
         return *this;
     }
 
-    Quaternion& operator*=(const Quaternion& q) {
+    constexpr Quaternion& operator*=(const Quaternion& q) {
         x = w * q.x - z * q.y + y * q.z + x * q.w;
         y = z * q.x + w * q.y - x * q.z + y * q.w;
         z = -y * q.x + x * q.y + w * q.z + z * q.w;
         w = -x * q.x - y * q.y - z * q.z + w * q.w;
-
         return *this;
     }
 
-    constexpr Quaternion operator*(double value) const {
-        return {x * value, y * value, z * value, w * value};
+    constexpr Quaternion operator*=(double value) {
+        x *= value;
+        y *= value;
+        z *= value;
+        w *= value;
+        return *this;
     }
 };
 

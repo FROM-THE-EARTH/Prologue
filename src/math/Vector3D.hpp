@@ -48,39 +48,35 @@ struct Vector3D {
         return {x * value, y * value, z * value};
     }
 
-    constexpr Vector3D operator*(const Vector3D& v) const {
-        return {x * v.x, y * v.y, z * v.z};
-    }
-
     constexpr Vector3D operator/(double value) const {
         return {x / value, y / value, z / value};
     }
 
-    Vector3D& operator+=(const Vector3D& v) {
+    constexpr Vector3D& operator+=(const Vector3D& v) {
         x += v.x;
         y += v.y;
         z += v.z;
         return *this;
     }
 
-    Vector3D& operator-=(const Vector3D& v) {
+    constexpr Vector3D& operator-=(const Vector3D& v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
         return *this;
     }
 
-    Vector3D& operator*=(const Vector3D& v) {
-        x *= v.x;
-        y *= v.y;
-        z *= v.z;
+    constexpr Vector3D operator*=(double value) {
+        x *= value;
+        y *= value;
+        z *= value;
         return *this;
     }
 
-    Vector3D& operator/=(const Vector3D& v) {
-        x /= v.x;
-        y /= v.y;
-        z /= v.z;
+    constexpr Vector3D operator/=(double value) {
+        x /= value;
+        y /= value;
+        z /= value;
         return *this;
     }
 
