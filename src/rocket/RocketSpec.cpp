@@ -15,13 +15,6 @@ double CalcParachuteCd(double massFinal, double terminalVelocity) {
     return massFinal * Constant::G / (0.5 * 1.25 * std::pow(terminalVelocity, 2) * 1.0);
 }
 
-void RocketSpec::setEnvironment(const boost::property_tree::ptree& pt) {
-    env.place         = JsonUtils::GetValue<std::string>(pt, "environment.place");
-    env.railLength    = JsonUtils::GetValueExc<double>(pt, "environment.rail_len");
-    env.railAzimuth   = JsonUtils::GetValueExc<double>(pt, "environment.rail_azi");
-    env.railElevation = JsonUtils::GetValueExc<double>(pt, "environment.rail_elev");
-}
-
 void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t index) {
     const std::string key = RocketParamList[index];
 
@@ -92,10 +85,6 @@ void RocketSpec::initialize(const std::string& filename) {
 
     m_existInfCd = false;
 
-    /* Read once */
-    setEnvironment(pt);
-
-    /* Read once or more */
     {
         const bool isMultipleRocket = IsMultipleRocket(filename);
         size_t i                    = 0;

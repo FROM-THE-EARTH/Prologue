@@ -74,8 +74,8 @@ void Solver::initializeParameters() {
     m_rocketDelta.pos        = Vector3D(0, 0, 0);
     m_rocketDelta.velocity   = Vector3D(0, 0, 0);
     m_rocketDelta.omega_b    = Vector3D(0, 0, 0);
-    m_rocketDelta.quat       = Quaternion(m_rocketSpec.env.railElevation,
-                                    (-m_rocketSpec.env.railAzimuth + 90) - m_mapData.magneticDeclination);
+    m_rocketDelta.quat =
+        Quaternion(m_environment.railElevation, (-m_environment.railAzimuth + 90) - m_mapData.magneticDeclination);
 
     m_rocket = m_rocketDelta;
 }
@@ -266,7 +266,7 @@ void Solver::calcDynamicForce() {
     }
 
     // update delta
-    if (m_rocket.pos.length() <= m_rocketSpec.env.railLength && m_rocket.velocity.z >= 0.0) {  // launch
+    if (m_rocket.pos.length() <= m_environment.railLength && m_rocket.velocity.z >= 0.0) {  // launch
         if (m_force_b.x < 0) {
             m_rocketDelta.pos      = Vector3D();
             m_rocketDelta.velocity = Vector3D();

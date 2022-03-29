@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dynamics/WindModel.hpp"
+#include "env/Environment.hpp"
 #include "env/Map.hpp"
 #include "rocket/Rocket.hpp"
 #include "rocket/RocketSpec.hpp"
@@ -79,7 +80,8 @@ class Solver {
     Vector3D m_force_b;
     Vector3D m_moment_b;
 
-    // map
+    // env
+    Environment m_environment;
     MapData m_mapData;
 
     // stastus
@@ -97,6 +99,7 @@ public:
            TrajectoryMode mode,
            DetachType detachType,
            double detachTime,
+           const Environment& env,
            const RocketSpec& spec) :
         m_dt(dt),
         m_mapData(mapData),
@@ -104,6 +107,7 @@ public:
         m_trajectoryMode(mode),
         m_detachType(detachType),
         m_detachTime(detachTime),
+        m_environment(env),
         m_rocketSpec(spec) {}
 
     ~Solver() {

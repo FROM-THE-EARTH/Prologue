@@ -29,6 +29,7 @@ set(SOURCE_FILES
 
 	"src/dynamics/WindModel.cpp"
 
+	"src/env/Environment.cpp"
 	"src/env/Map.cpp"
 
 	"src/gnuplot/Gnuplot.cpp"

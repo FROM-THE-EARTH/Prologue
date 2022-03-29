@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Solver.hpp"
+#include "env/Environment.hpp"
 #include "gnuplot/Gnuplot.hpp"
 #include "rocket/RocketSpec.hpp"
 
@@ -24,6 +25,7 @@ class Simulator {
     bool m_solved          = false;
 
     // from json
+    Environment m_environment;
     RocketSpec m_rocketSpec;
     MapData m_mapData;
 

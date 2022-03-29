@@ -21,7 +21,7 @@ bool Simulator::run() {
     createResultDirectory();
 
     {
-        auto place = m_rocketSpec.env.place;
+        auto place = m_environment.place;
         std::transform(
             place.begin(), place.end(), place.begin(), [](int c) { return static_cast<char>(::tolower(c)); });
         if (const auto map = Map::GetMap(place); map.has_value()) {
@@ -101,6 +101,7 @@ bool Simulator::initialize() {
     std::cout << "----------------------------------------------------------" << std::endl;
 
     // read json
+    m_environment.initialize(m_jsonFilename);
     m_rocketSpec.initialize(m_jsonFilename);
 
     // output
@@ -203,7 +204,8 @@ void Simulator::scatterSimulation() {
 }
 
 void Simulator::detailSimulation() {
-    Solver solver(m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+    Solver solver(
+        m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
     m_solved = solver.run(m_windSpeed, m_windDirection);
     if (!m_solved) {
@@ -216,7 +218,8 @@ void Simulator::detailSimulation() {
 
 void Simulator::singleThreadSimulation() {
     while (1) {
-        Solver solver(m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+        Solver solver(
+            m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
         m_solved &= solver.run(m_windSpeed, m_windDirection);
         if (!m_solved) {
@@ -293,7 +296,8 @@ void Simulator::multiThreadSimulation() {
 }
 
 void Simulator::solve(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
-    Solver solver(m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_rocketSpec);
+    Solver solver(
+        m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
     if (*error = !solver.run(windSpeed, windDir); *error) {
         return;
