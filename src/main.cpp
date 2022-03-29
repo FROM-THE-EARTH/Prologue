@@ -4,7 +4,7 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "gnuplot/Gnuplot.hpp"
-#include "solver/Simulator.hpp"
+#include "solver/ScatterSimulator.hpp"
 
 const auto VERSION = "1.4.2";
 
@@ -15,12 +15,21 @@ int main() {
 
     ShowSettingInfo();
 
-    Simulator simulator(AppSetting::Simulation::dt);
-    if (!simulator.run()) {
+    Simulator* simulator = Simulator::New(AppSetting::Simulation::dt);
+    if (simulator == nullptr) {
+        CommandLine::PrintInfo(PrintInfoType::Error, "Failed to initialize simulator");
         return 1;
     }
 
-    simulator.plotToGnuplot();
+    if (!simulator->run()) {
+        CommandLine::PrintInfo(PrintInfoType::Error, "Failed to simulate");
+        delete simulator;
+        return 1;
+    }
+
+    simulator->plotToGnuplot();
+
+    delete simulator;
 
     Gnuplot::Save();
 

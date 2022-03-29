@@ -42,6 +42,8 @@ set(SOURCE_FILES
 	"src/rocket/Engine.cpp"
 	"src/rocket/RocketSpec.cpp"
 
+	"src/solver/DetailSimulator.cpp"
+	"src/solver/ScatterSimulator.cpp"
 	"src/solver/Simulator.cpp"
 	"src/solver/Solver.cpp"
 
