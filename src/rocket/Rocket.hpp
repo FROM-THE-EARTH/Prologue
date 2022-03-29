@@ -31,40 +31,4 @@ struct Rocket {
     // calculated
     Vector3D airSpeed_b;  // [m/s]
     double attackAngle;   // [rad]
-
-    /*============================operator==========================*/
-    Rocket& operator+=(const Rocket& r) {
-        mass += r.mass;
-        reflLength += r.reflLength;
-        iyz += r.iyz;
-        ix += r.ix;
-        pos += r.pos;
-        velocity += r.velocity;
-        omega_b += r.omega_b;
-        quat += r.quat;
-
-        return *this;
-    }
-
-    Rocket operator*(double s) {
-        return {mass * s,
-                reflLength * s,
-                iyz * s,
-                ix * s,
-                pos * s,
-                velocity * s,
-                omega_b * s,
-                quat * s,
-                Cnp,
-                Cny,
-                Cmqp,
-                Cmqy,
-                elapsedTime,
-                parachuteIndex,
-                parachuteOpened,
-                waitForOpenPara,
-                detectPeak,
-                airSpeed_b,
-                attackAngle};
-    }
 };

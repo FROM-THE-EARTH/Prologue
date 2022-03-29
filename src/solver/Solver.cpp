@@ -318,7 +318,16 @@ void Solver::calcDynamicForce() {
 }
 
 void Solver::updateDelta() {
-    m_rocket += m_rocketDelta * m_dt;
+    // Update rocket
+    m_rocket.mass += m_rocketDelta.mass * m_dt;
+    m_rocket.reflLength += m_rocketDelta.reflLength * m_dt;
+    m_rocket.iyz += m_rocketDelta.iyz * m_dt;
+    m_rocket.ix += m_rocketDelta.ix * m_dt;
+    m_rocket.pos += m_rocketDelta.pos * m_dt;
+    m_rocket.velocity += m_rocketDelta.velocity * m_dt;
+    m_rocket.omega_b += m_rocketDelta.omega_b * m_dt;
+    m_rocket.quat += m_rocketDelta.quat * m_dt;
+
     m_rocket.quat = m_rocket.quat.normalized();
 
     m_rocket.elapsedTime += m_dt;
