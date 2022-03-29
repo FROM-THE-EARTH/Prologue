@@ -1,11 +1,4 @@
 {
-  "info": {
-    "TEAM": "Prologue",
-    "NAME": "sample_single",
-    "DATE": "20201111",
-    "VERSION": "1"
-  },
-
   "rocket1": {
     "ref_len": 2.01,
     "diam": 0.091,

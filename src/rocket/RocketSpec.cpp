@@ -22,13 +22,6 @@ void RocketSpec::setEnvironment(const boost::property_tree::ptree& pt) {
     env.railElevation = JsonUtils::GetValueExc<double>(pt, "environment.rail_elev");
 }
 
-void RocketSpec::setExtraInfo(const boost::property_tree::ptree& pt) {
-    info.teamName       = JsonUtils::GetValue<std::string>(pt, "info.TEAM");
-    info.rocketName     = JsonUtils::GetValue<std::string>(pt, "info.NAME");
-    info.experimentDate = JsonUtils::GetValue<std::string>(pt, "info.DATE");
-    info.version        = JsonUtils::GetValue<std::string>(pt, "info.VERSION");
-}
-
 void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t index) {
     const std::string key = RocketParamList[index];
 
@@ -100,7 +93,6 @@ void RocketSpec::initialize(const std::string& filename) {
     m_existInfCd = false;
 
     /* Read once */
-    setExtraInfo(pt);
     setEnvironment(pt);
 
     /* Read once or more */

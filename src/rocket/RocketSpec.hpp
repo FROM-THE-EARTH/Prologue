@@ -7,13 +7,6 @@
 #include "AirspeedParam.hpp"
 #include "Engine.hpp"
 
-struct Information {
-    std::string teamName;
-    std::string rocketName;
-    std::string experimentDate;
-    std::string version;
-};
-
 struct Parachute {
     double terminalVelocity;
     int openingType;
@@ -58,7 +51,6 @@ private:
     bool m_existInfCd = false;
 
 public:
-    Information info;
     std::vector<RocketParam> rocketParam;  // could be multiple(multiple rocket)
     Environment env;
 
@@ -68,8 +60,6 @@ public:
 
 private:
     void setEnvironment(const boost::property_tree::ptree& pt);
-
-    void setExtraInfo(const boost::property_tree::ptree& pt);
 
     void setRocketParam(const boost::property_tree::ptree& pt, size_t index);
 
