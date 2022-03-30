@@ -4,7 +4,7 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "gnuplot/Gnuplot.hpp"
-#include "solver/ScatterSimulator.hpp"
+#include "solver/Simulator.hpp"
 
 const auto VERSION = "1.4.2";
 
