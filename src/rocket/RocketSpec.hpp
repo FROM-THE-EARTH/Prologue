@@ -7,9 +7,15 @@
 #include "AirspeedParam.hpp"
 #include "Engine.hpp"
 
+enum ParaOpenType : int {
+    DetectPeak = 0,
+    FixedTime,
+    TimeFromDetectPeak,
+};
+
 struct Parachute {
     double terminalVelocity;
-    int openingType;
+    ParaOpenType openingType;
     double openingTime;
     double delayTime;
     double openingHeight;

@@ -39,7 +39,7 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
 
     param.parachute.push_back(Parachute());
     param.parachute[0].terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
-    param.parachute[0].openingType      = JsonUtils::GetValue<int>(pt, key + ".op_type_1st");
+    param.parachute[0].openingType      = static_cast<ParaOpenType>(JsonUtils::GetValue<int>(pt, key + ".op_type_1st"));
     param.parachute[0].openingTime      = JsonUtils::GetValue<double>(pt, key + ".op_time_1st");
     param.parachute[0].delayTime        = JsonUtils::GetValue<double>(pt, key + ".delay_time_1st");
 

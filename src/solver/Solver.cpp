@@ -105,13 +105,16 @@ void Solver::updateParachuteStatus() {
         return;
     }
 
-    const bool detectpeak = m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[0].openingType == 0;
+    const bool detectpeak =
+        m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[0].openingType == ParaOpenType::DetectPeak;
 
-    const bool fixedtime = m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[0].openingType == 1;
+    const bool fixedtime =
+        m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[0].openingType == ParaOpenType::FixedTime;
     const bool fixedtimeCondition =
         m_rocket.elapsedTime > m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[0].openingTime;
 
-    const bool time_from_detect_peak = m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[0].openingType == 2;
+    const bool time_from_detect_peak =
+        m_rocketSpec.rocketParam[m_targetRocketIndex].parachute[0].openingType == ParaOpenType::TimeFromDetectPeak;
 
     if ((detectpeak && detectpeakConditon) || (fixedtime && fixedtimeCondition)) {
         m_rocket.parachuteOpened                                = true;
