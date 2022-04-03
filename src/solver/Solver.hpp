@@ -81,8 +81,8 @@ class Solver {
     Vector3D m_moment_b;
 
     // env
-    Environment m_environment;
     MapData m_mapData;
+    Environment m_environment;
 
     // stastus
     bool m_launchClear         = false;
