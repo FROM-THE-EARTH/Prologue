@@ -91,11 +91,6 @@ void Solver::update() {
     const double fixedtime =
         m_rocketAtDetached.size() == 0 ? 0.0 : m_rocketAtDetached[m_rocketAtDetached.size() - 1].elapsedTime;
     m_combustionTime = m_rocket.elapsedTime - fixedtime;
-
-    // next target rocket
-    if (m_targetRocketIndex == m_result.rocket.size()) {
-        m_result.rocket.push_back({});
-    }
 }
 
 void Solver::updateParachute() {
