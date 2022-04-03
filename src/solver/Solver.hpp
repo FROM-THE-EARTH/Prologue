@@ -136,4 +136,7 @@ private:
     void updateDelta();
 
     void finalUpdate();
+
+    // prepare the next rocket (multi rocket)
+    void nextRocket();
 };
