@@ -24,18 +24,23 @@ bool Solver::run(double windSpeed, double windDirection) {
     m_result.windDirection = windDirection;
 
     size_t landingCount = 0;
-    do {
-        initializeParameters();
 
+    // loop until all rockets are solved
+    // single rocket: solve once
+    // multi rokcet : every rockets including after detachment
+    do {
+        initializeRocket();
+
+        // loop until the rocket lands
         while (m_rocket.pos.z > 0.0 || m_rocket.elapsedTime < 0.1) {
             update();
 
             if (m_trajectoryMode == TrajectoryMode::Parachute) {
-                updateParachuteStatus();
+                updateParachute();
             }
 
             if (m_rocketType == RocketType::Multi) {
-                updateDetachedStatus();
+                updateDetachment();
             }
 
             updateParameters();
@@ -54,7 +59,7 @@ bool Solver::run(double windSpeed, double windDirection) {
     return true;
 }
 
-void Solver::initializeParameters() {
+void Solver::initializeRocket() {
     // Second, Third Rocket(Multiple)
     if (m_rocketAtDetached.size() != 0 && m_rocketAtDetached.size() + 1 > m_targetRocketIndex) {
         m_rocket = m_rocketAtDetached[m_targetRocketIndex - 1];
@@ -93,7 +98,7 @@ void Solver::update() {
     }
 }
 
-void Solver::updateParachuteStatus() {
+void Solver::updateParachute() {
     const bool detectpeakConditon =
         m_result.rocket[m_targetRocketIndex].maxHeight > m_rocket.pos.z + AppSetting::Simulation::detectPeakThreshold;
 
@@ -141,7 +146,7 @@ void Solver::updateParachuteStatus() {
     }
 }
 
-void Solver::updateDetachedStatus() {
+void Solver::updateDetachment() {
     bool detachCondition = false;
 
     switch (m_detachType) {

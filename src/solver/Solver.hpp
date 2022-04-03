@@ -121,13 +121,13 @@ public:
     }
 
 private:
-    void initializeParameters();
+    void initializeRocket();
 
     void update();
 
-    void updateParachuteStatus();
+    void updateParachute();
 
-    void updateDetachedStatus();
+    void updateDetachment();
 
     void updateParameters();
 
