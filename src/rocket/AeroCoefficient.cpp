@@ -57,16 +57,18 @@ void AeroCoefficientStorage::init(const std::string& filename) {
     m_exist = true;
 }
 
-AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackAngle) const {
+AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackAngle, bool combustionEnded) const {
     AeroCoefficient aeroCoef;
 
     // No csv file or csv has only one row
     if (m_aeroCoefs.size() == 1) {
         aeroCoef = {m_aeroCoefs[0].Cp,
-                    m_aeroCoefs[0].Cd,
+                    combustionEnded ? m_aeroCoefs[0].internalVars.Cd_f : m_aeroCoefs[0].internalVars.Cd_i,
                     m_aeroCoefs[0].Cna,
                     {
                         airspeed,
+                        m_aeroCoefs[0].internalVars.Cd_i,
+                        m_aeroCoefs[0].internalVars.Cd_f,
                         m_aeroCoefs[0].internalVars.Cp_a,
                         m_aeroCoefs[0].internalVars.Cd_a2,
                     }};
@@ -83,6 +85,8 @@ AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackA
                         m_aeroCoefs[i].Cna,
                         {
                             airspeed,
+                            m_aeroCoefs[i].internalVars.Cd_i,
+                            m_aeroCoefs[i].internalVars.Cd_f,
                             m_aeroCoefs[i].internalVars.Cp_a,
                             m_aeroCoefs[i].internalVars.Cd_a2,
                         }};
@@ -94,6 +98,8 @@ AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackA
                         m_aeroCoefs[i + 1].Cna,
                         {
                             airspeed,
+                            m_aeroCoefs[i + 1].internalVars.Cd_i,
+                            m_aeroCoefs[i + 1].internalVars.Cd_f,
                             m_aeroCoefs[i + 1].internalVars.Cp_a,
                             m_aeroCoefs[i + 1].internalVars.Cd_a2,
                         }};
@@ -105,6 +111,16 @@ AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackA
                         Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cna, m_aeroCoefs[i + 1].Cna),
                         {
                             airspeed,
+                            Algorithm::Lerp(airspeed,
+                                            airspeed1,
+                                            airspeed2,
+                                            m_aeroCoefs[i].internalVars.Cd_i,
+                                            m_aeroCoefs[i + 1].internalVars.Cd_i),
+                            Algorithm::Lerp(airspeed,
+                                            airspeed1,
+                                            airspeed2,
+                                            m_aeroCoefs[i].internalVars.Cd_f,
+                                            m_aeroCoefs[i + 1].internalVars.Cd_f),
                             Algorithm::Lerp(airspeed,
                                             airspeed1,
                                             airspeed2,

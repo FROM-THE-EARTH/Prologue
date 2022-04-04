@@ -4,8 +4,12 @@
 #include <vector>
 
 struct AeroCoefficient {
+    // These vars are used only calculation.
+    // Do not refer to these
     struct InternalVars {
         double airspeed;
+        double Cd_i;
+        double Cd_f;
         double Cp_a;
         double Cd_a2;
     };
@@ -33,13 +37,12 @@ public:
         return m_exist;
     }
 
-    AeroCoefficient valuesIn(double airspeed, double attackAngle) const;
+    AeroCoefficient valuesIn(double airspeed, double attackAngle, bool combustionEnded) const;
 
     // initialize parameters by csv file
     void init(const std::string& filename);
 
-    void setParam(double Cp, double Cp_a, double Cd, double Cd_a2, double Cna) {
-        const AeroCoefficient coef = {Cp, Cd, Cna, {0.0, Cp_a, Cd_a2}};
-        m_aeroCoefs.push_back(coef);
+    void init(double Cp, double Cna, double Cd_i, double Cd_f, double Cp_a, double Cd_a2) {
+        m_aeroCoefs.push_back({Cp, 0.0, Cna, {0.0, Cd_i, Cd_f, Cp_a, Cd_a2}});
     }
 };

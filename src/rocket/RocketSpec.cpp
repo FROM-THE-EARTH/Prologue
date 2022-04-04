@@ -58,11 +58,12 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
     if (!param.aeroCoefStorage.exist()) {
         CommandLine::PrintInfo(
             PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from JSON");
-        param.aeroCoefStorage.setParam(JsonUtils::GetValueExc<double>(pt, key + ".CPlen"),
-                                       JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
-                                       JsonUtils::GetValueExc<double>(pt, key + ".Cd"),
-                                       JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
-                                       JsonUtils::GetValueExc<double>(pt, key + ".Cna"));
+        param.aeroCoefStorage.init(JsonUtils::GetValueExc<double>(pt, key + ".CPlen"),
+                                   JsonUtils::GetValueExc<double>(pt, key + ".Cna"),
+                                   JsonUtils::GetValueExc<double>(pt, key + ".Cd_i"),
+                                   JsonUtils::GetValueExc<double>(pt, key + ".Cd_f"),
+                                   JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
+                                   JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"));
     } else {
         CommandLine::PrintInfo(
             PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from CSV");

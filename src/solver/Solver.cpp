@@ -200,7 +200,8 @@ void Solver::updateAerodynamicParameters() {
         atan(sqrt(m_rocket.airSpeed_b.y * m_rocket.airSpeed_b.y + m_rocket.airSpeed_b.z * m_rocket.airSpeed_b.z)
              / (m_rocket.airSpeed_b.x + 1e-16));
 
-    m_rocket.aeroCoef = THIS_ROCKET_SPEC.aeroCoefStorage.valuesIn(m_rocket.airSpeed_b.length(), m_rocket.attackAngle);
+    m_rocket.aeroCoef = THIS_ROCKET_SPEC.aeroCoefStorage.valuesIn(
+        m_rocket.airSpeed_b.length(), m_rocket.attackAngle, THIS_ROCKET_SPEC.engine.isFinishBurning(m_combustionTime));
 
     const double alpha = atan(m_rocket.airSpeed_b.z / (m_rocket.airSpeed_b.x + 1e-16));
     const double beta  = atan(m_rocket.airSpeed_b.y / (m_rocket.airSpeed_b.x + 1e-16));
