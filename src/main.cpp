@@ -15,21 +15,19 @@ int main() {
 
     ShowSettingInfo();
 
-    Simulator* simulator = Simulator::New(AppSetting::Simulation::dt);
-    if (simulator == nullptr) {
+    const std::unique_ptr<Simulator> simulator(Simulator::New(AppSetting::Simulation::dt));
+
+    if (!simulator) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Failed to initialize simulator");
         return 1;
     }
 
     if (!simulator->run()) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Failed to simulate");
-        delete simulator;
         return 1;
     }
 
     simulator->plotToGnuplot();
-
-    delete simulator;
 
     Gnuplot::Save();
 
