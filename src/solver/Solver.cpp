@@ -200,7 +200,7 @@ void Solver::updateAerodynamicParameters() {
         atan(sqrt(m_rocket.airSpeed_b.y * m_rocket.airSpeed_b.y + m_rocket.airSpeed_b.z * m_rocket.airSpeed_b.z)
              / (m_rocket.airSpeed_b.x + 1e-16));
 
-    m_rocket.aeroCoef = THIS_ROCKET_SPEC.aeroCoefStorage.valuesAt(m_rocket.airSpeed_b.length());
+    m_rocket.aeroCoef = THIS_ROCKET_SPEC.aeroCoefStorage.valuesIn(m_rocket.airSpeed_b.length(), m_rocket.attackAngle);
 
     const double alpha = atan(m_rocket.airSpeed_b.z / (m_rocket.airSpeed_b.x + 1e-16));
     const double beta  = atan(m_rocket.airSpeed_b.y / (m_rocket.airSpeed_b.x + 1e-16));
@@ -240,8 +240,7 @@ void Solver::updateExternalForce() {
         // Aero
         const double preForceCalc = 0.5 * m_windModel->density() * m_rocket.airSpeed_b.length()
                                     * m_rocket.airSpeed_b.length() * THIS_ROCKET_SPEC.bottomArea;
-        const double cd = m_rocket.aeroCoef.Cd + m_rocket.aeroCoef.Cd_a2 * m_rocket.attackAngle * m_rocket.attackAngle;
-        m_force_b.x -= cd * preForceCalc * cos(m_rocket.attackAngle);
+        m_force_b.x -= m_rocket.aeroCoef.Cd * preForceCalc * cos(m_rocket.attackAngle);
         m_force_b.y -= m_rocket.Cny * preForceCalc;
         m_force_b.z -= m_rocket.Cnp * preForceCalc;
 
@@ -252,9 +251,8 @@ void Solver::updateExternalForce() {
         m_moment_b.y = preMomentCalc * m_rocket.Cmqp * m_rocket.omega_b.y;
         m_moment_b.z = preMomentCalc * m_rocket.Cmqy * m_rocket.omega_b.z;
 
-        const double cp = m_rocket.aeroCoef.Cp + m_rocket.aeroCoef.Cp_a * m_rocket.attackAngle;
-        m_moment_b.y += m_force_b.z * (cp - m_rocket.reflLength);
-        m_moment_b.z -= m_force_b.y * (cp - m_rocket.reflLength);
+        m_moment_b.y += m_force_b.z * (m_rocket.aeroCoef.Cp - m_rocket.reflLength);
+        m_moment_b.z -= m_force_b.y * (m_rocket.aeroCoef.Cp - m_rocket.reflLength);
 
         // Gravity
         m_force_b +=

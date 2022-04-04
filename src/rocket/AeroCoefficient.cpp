@@ -10,9 +10,9 @@ size_t search(const std::vector<AeroCoefficient>& vs, double airspeed, size_t be
     }
 
     size_t mid = begin + (end - begin) / 2;
-    if (vs[mid].airspeed == airspeed) {
+    if (vs[mid].internalVars.airspeed == airspeed) {
         return mid;
-    } else if (vs[mid].airspeed > airspeed) {
+    } else if (vs[mid].internalVars.airspeed > airspeed) {
         return search(vs, airspeed, begin, mid);
     } else {
         return search(vs, airspeed, mid, end - 1);
@@ -21,9 +21,9 @@ size_t search(const std::vector<AeroCoefficient>& vs, double airspeed, size_t be
 
 size_t getLowerIndex(const std::vector<AeroCoefficient>& vs, double airspeed) {
     size_t index = vs.size() / 2;
-    if (vs[index].airspeed == airspeed) {
+    if (vs[index].internalVars.airspeed == airspeed) {
         return index;
-    } else if (vs[index].airspeed > airspeed) {
+    } else if (vs[index].internalVars.airspeed > airspeed) {
         return search(vs, airspeed, 0, index);
     } else {
         return search(vs, airspeed, index, vs.size() - 1);
@@ -44,8 +44,8 @@ void AeroCoefficientStorage::init(const std::string& filename) {
     std::string dummy;
     while (!fs.eof()) {
         m_aeroCoefs.push_back(AeroCoefficient());
-        fs >> m_aeroCoefs[i].airspeed >> c >> m_aeroCoefs[i].Cp >> c >> m_aeroCoefs[i].Cp_a >> c >> m_aeroCoefs[i].Cd
-            >> c >> m_aeroCoefs[i].Cd_a2 >> c >> m_aeroCoefs[i].Cna;
+        fs >> m_aeroCoefs[i].internalVars.airspeed >> c >> m_aeroCoefs[i].Cp >> c >> m_aeroCoefs[i].internalVars.Cp_a
+            >> c >> m_aeroCoefs[i].Cd >> c >> m_aeroCoefs[i].internalVars.Cd_a2 >> c >> m_aeroCoefs[i].Cna;
         i++;
     }
     if (m_aeroCoefs[m_aeroCoefs.size() - 1] == AeroCoefficient()) {
@@ -57,43 +57,70 @@ void AeroCoefficientStorage::init(const std::string& filename) {
     m_exist = true;
 }
 
-AeroCoefficient AeroCoefficientStorage::valuesAt(double airspeed) const {
+AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackAngle) const {
+    AeroCoefficient aeroCoef;
+
+    // No csv file or csv has only one row
     if (m_aeroCoefs.size() == 1) {
-        return {airspeed,
-                m_aeroCoefs[0].Cp,
-                m_aeroCoefs[0].Cp_a,
-                m_aeroCoefs[0].Cd,
-                m_aeroCoefs[0].Cd_a2,
-                m_aeroCoefs[0].Cna};
+        aeroCoef = {m_aeroCoefs[0].Cp,
+                    m_aeroCoefs[0].Cd,
+                    m_aeroCoefs[0].Cna,
+                    {
+                        airspeed,
+                        m_aeroCoefs[0].internalVars.Cp_a,
+                        m_aeroCoefs[0].internalVars.Cd_a2,
+                    }};
+    } else {
+        const size_t i = getLowerIndex(m_aeroCoefs, airspeed);
+
+        const double airspeed1 = m_aeroCoefs[i].internalVars.airspeed;
+        const double airspeed2 = m_aeroCoefs[i + 1].internalVars.airspeed;
+
+        // lower than minimum airspeed
+        if (airspeed < airspeed1) {
+            aeroCoef = {m_aeroCoefs[i].Cp,
+                        m_aeroCoefs[i].Cd,
+                        m_aeroCoefs[i].Cna,
+                        {
+                            airspeed,
+                            m_aeroCoefs[i].internalVars.Cp_a,
+                            m_aeroCoefs[i].internalVars.Cd_a2,
+                        }};
+        }
+        // higher than maximum airspeed
+        else if (airspeed > airspeed2) {
+            aeroCoef = {m_aeroCoefs[i + 1].Cp,
+                        m_aeroCoefs[i + 1].Cd,
+                        m_aeroCoefs[i + 1].Cna,
+                        {
+                            airspeed,
+                            m_aeroCoefs[i + 1].internalVars.Cp_a,
+                            m_aeroCoefs[i + 1].internalVars.Cd_a2,
+                        }};
+        }
+        // lerp
+        else {
+            aeroCoef = {Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cp, m_aeroCoefs[i + 1].Cp),
+                        Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cd, m_aeroCoefs[i + 1].Cd),
+                        Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cna, m_aeroCoefs[i + 1].Cna),
+                        {
+                            airspeed,
+                            Algorithm::Lerp(airspeed,
+                                            airspeed1,
+                                            airspeed2,
+                                            m_aeroCoefs[i].internalVars.Cp_a,
+                                            m_aeroCoefs[i + 1].internalVars.Cp_a),
+                            Algorithm::Lerp(airspeed,
+                                            airspeed1,
+                                            airspeed2,
+                                            m_aeroCoefs[i].internalVars.Cd_a2,
+                                            m_aeroCoefs[i + 1].internalVars.Cd_a2),
+                        }};
+        }
     }
 
-    const size_t i = getLowerIndex(m_aeroCoefs, airspeed);
+    aeroCoef.Cd = aeroCoef.Cd + aeroCoef.internalVars.Cd_a2 * attackAngle * attackAngle;
+    aeroCoef.Cp = aeroCoef.Cp + aeroCoef.internalVars.Cp_a * attackAngle;
 
-    const double airspeed1 = m_aeroCoefs[i].airspeed;
-    const double airspeed2 = m_aeroCoefs[i + 1].airspeed;
-
-    if (airspeed < airspeed1) {
-        return {airspeed,
-                m_aeroCoefs[i].Cp,
-                m_aeroCoefs[i].Cp_a,
-                m_aeroCoefs[i].Cd,
-                m_aeroCoefs[i].Cd_a2,
-                m_aeroCoefs[i].Cna};
-    }
-
-    if (airspeed > airspeed2) {
-        return {airspeed,
-                m_aeroCoefs[i + 1].Cp,
-                m_aeroCoefs[i + 1].Cp_a,
-                m_aeroCoefs[i + 1].Cd,
-                m_aeroCoefs[i + 1].Cd_a2,
-                m_aeroCoefs[i + 1].Cna};
-    }
-
-    return {airspeed,
-            Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cp, m_aeroCoefs[i + 1].Cp),
-            Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cp_a, m_aeroCoefs[i + 1].Cp_a),
-            Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cd, m_aeroCoefs[i + 1].Cd),
-            Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cd_a2, m_aeroCoefs[i + 1].Cd_a2),
-            Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cna, m_aeroCoefs[i + 1].Cna)};
+    return aeroCoef;
 }

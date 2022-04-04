@@ -4,16 +4,22 @@
 #include <vector>
 
 struct AeroCoefficient {
-    double airspeed;
+    struct InternalVars {
+        double airspeed;
+        double Cp_a;
+        double Cd_a2;
+    };
+
     double Cp;
-    double Cp_a;
     double Cd;
-    double Cd_a2;
     double Cna;
 
+    InternalVars internalVars;
+
     bool operator==(const AeroCoefficient& other) const {
-        return (airspeed == other.airspeed && Cp == other.Cp && Cp_a == other.Cp_a && Cd == other.Cd
-                && Cd_a2 == other.Cd_a2 && Cna == other.Cna);
+        return (Cp == other.Cp && Cd == other.Cd && Cna == other.Cna
+                && internalVars.airspeed == other.internalVars.airspeed && internalVars.Cp_a == other.internalVars.Cp_a
+                && internalVars.Cd_a2 == other.internalVars.Cd_a2);
     }
 };
 
@@ -27,13 +33,13 @@ public:
         return m_exist;
     }
 
-    AeroCoefficient valuesAt(double airspeed) const;
+    AeroCoefficient valuesIn(double airspeed, double attackAngle) const;
 
     // initialize parameters by csv file
     void init(const std::string& filename);
 
     void setParam(double Cp, double Cp_a, double Cd, double Cd_a2, double Cna) {
-        const AeroCoefficient coef = {0.0, Cp, Cp_a, Cd, Cd_a2, Cna};
+        const AeroCoefficient coef = {Cp, Cd, Cna, {0.0, Cp_a, Cd_a2}};
         m_aeroCoefs.push_back(coef);
     }
 };
