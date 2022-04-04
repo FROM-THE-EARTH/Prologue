@@ -46,13 +46,17 @@ bool Solver::run(double windSpeed, double windDirection) {
                 updateDetachment();
             }
 
-            updateParameters();
+            updateAerodynamicParameters();
 
-            calcDynamicForce();
+            updateRocketProperties();
 
-            updateDelta();
+            updateExternalForce();
 
-            finalUpdate();
+            updateRocketDelta();
+
+            applyDelta();
+
+            organizeResult();
         }
 
         landingCount++;
@@ -185,27 +189,30 @@ void Solver::updateDetachment() {
     }
 }
 
-void Solver::updateParameters() {
+void Solver::updateAerodynamicParameters() {
     if ((m_rocket.velocity - m_windModel->wind()).length() != 0) {
         m_rocket.airSpeed_b = (m_rocket.velocity - m_windModel->wind()).applyQuaternion(m_rocket.quat.conjugate());
     } else {
         m_rocket.airSpeed_b = Vector3D();
     }
 
+    m_rocket.attackAngle =
+        atan(sqrt(m_rocket.airSpeed_b.y * m_rocket.airSpeed_b.y + m_rocket.airSpeed_b.z * m_rocket.airSpeed_b.z)
+             / (m_rocket.airSpeed_b.x + 1e-16));
+
     THIS_ROCKET_PARAM.airspeedParam.update(m_rocket.airSpeed_b.length());
 
     const double alpha = atan(m_rocket.airSpeed_b.z / (m_rocket.airSpeed_b.x + 1e-16));
     const double beta  = atan(m_rocket.airSpeed_b.y / (m_rocket.airSpeed_b.x + 1e-16));
-    m_rocket.attackAngle =
-        atan(sqrt(m_rocket.airSpeed_b.y * m_rocket.airSpeed_b.y + m_rocket.airSpeed_b.z * m_rocket.airSpeed_b.z)
-             / (m_rocket.airSpeed_b.x + 1e-16));
 
     m_rocket.Cnp = THIS_ROCKET_PARAM.airspeedParam.getParam().Cna * alpha;
     m_rocket.Cny = THIS_ROCKET_PARAM.airspeedParam.getParam().Cna * beta;
 
     m_rocket.Cmqp = THIS_ROCKET_PARAM.Cmq;
     m_rocket.Cmqy = THIS_ROCKET_PARAM.Cmq;
+}
 
+void Solver::updateRocketProperties() {
     if (m_combustionTime <= THIS_ROCKET_PARAM.engine.combustionTime()) {
         m_rocketDelta.mass =
             (THIS_ROCKET_PARAM.massFinal - THIS_ROCKET_PARAM.massInitial) / THIS_ROCKET_PARAM.engine.combustionTime();
@@ -223,7 +230,7 @@ void Solver::updateParameters() {
     }
 }
 
-void Solver::calcDynamicForce() {
+void Solver::updateExternalForce() {
     m_force_b  = Vector3D(0, 0, 0);
     m_moment_b = Vector3D(0, 0, 0);
 
@@ -257,8 +264,9 @@ void Solver::calcDynamicForce() {
         // Gravity
         m_force_b += Vector3D(0, 0, -m_windModel->gravity()).applyQuaternion(m_rocket.quat.conjugate()) * m_rocket.mass;
     }
+}
 
-    // update delta
+void Solver::updateRocketDelta() {
     if (m_rocket.pos.length() <= m_environment.railLength && m_rocket.velocity.z >= 0.0) {  // launch
         if (m_force_b.x < 0) {
             m_rocketDelta.pos      = Vector3D();
@@ -310,7 +318,7 @@ void Solver::calcDynamicForce() {
     }
 }
 
-void Solver::updateDelta() {
+void Solver::applyDelta() {
     // Update rocket
     m_rocket.mass += m_rocketDelta.mass * m_dt;
     m_rocket.reflLength += m_rocketDelta.reflLength * m_dt;
@@ -326,7 +334,7 @@ void Solver::updateDelta() {
     m_rocket.elapsedTime += m_dt;
 }
 
-void Solver::finalUpdate() {
+void Solver::organizeResult() {
     THIS_ROCKET_RESULT.flightData.push_back(m_rocket);
 
     const bool rising = m_rocket.velocity.z > 0;

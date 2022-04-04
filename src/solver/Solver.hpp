@@ -129,13 +129,17 @@ private:
 
     void updateDetachment();
 
-    void updateParameters();
+    void updateAerodynamicParameters();
 
-    void calcDynamicForce();
+    void updateRocketProperties();
 
-    void updateDelta();
+    void updateExternalForce();
 
-    void finalUpdate();
+    void updateRocketDelta();
+
+    void applyDelta();
+
+    void organizeResult();
 
     // prepare the next rocket (multi rocket)
     void nextRocket();
