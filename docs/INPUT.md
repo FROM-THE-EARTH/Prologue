@@ -11,8 +11,8 @@
 ## シミュレータの設定
 
 シミュレータの設定を行います。<br>
-**保存ファイル名**: prologue.settings.json<br>
-**拡張子**: json<br>
+**保存ファイル名**: `prologue.settings.json`<br>
+**拡張子**: `json`<br>
 **形式**:
 
 ```
@@ -43,19 +43,12 @@
 ## 機体諸元
 
 機体諸元を記述します。<br>
-**保存フォルダ**: input/json/<br>
-**拡張子**: json<br>
+**保存フォルダ**: `input/json/`<br>
+**拡張子**: `json`<br>
 **形式**:
 
 ```
 {
-	"info": {
-		"TEAM": "Team name",
-		"NAME": "Rocket name",
-		"DATE": "Experiment date",
-		"VERSION": "Submission version"
-	},
-
 	"rocket1": {
 		"ref_len": "Rocket length[m]",
 		"diam": "Rocket diameter[m]",
@@ -72,12 +65,13 @@
 		"delay_time_1st": "パラシュートが開くのにかかる時間",
 		"motor_file": "エンジンの推力履歴ファイル名　分離後1段目などの場合は空白にする",
 
-		"CPlen": "CP place from nose[m] 圧力中心(airspeed_param_fileがある場合は無効)",
-		"Cp_alpha": "圧力中心傾斜[m/rad] from nose(airspeed_param_fileがある場合は無効)",
-		"Cd": "Drag coefficient 抗力係数(airspeed_param_fileがある場合は無効)",
-		"Cd_alpha2": "抗力係数傾斜[/rad^2](airspeed_param_fileがある場合は無効)",
-		"Cna": "Normal force coefficient 法線力整数(airspeed_param_fileがある場合は無効)",
-		"airspeed_param_file": "圧力中心（傾斜），抗力係数（傾斜），法線力係数 vs 機体速度　のcsvファイル名"
+		"CPlen": "CP place from nose[m] 圧力中心(aero_coef_fileがある場合は無効)",
+		"Cp_alpha": "圧力中心傾斜[m/rad] from nose(aero_coef_fileがある場合は無効)",
+		"Cd_i": "燃焼終了前の Drag coefficient 抗力係数(aero_coef_fileがある場合は無効)",
+		"Cd_f": "燃焼終了後の Drag coefficient 抗力係数(aero_coef_fileがある場合は無効)",
+		"Cd_alpha2": "抗力係数傾斜[/rad^2](aero_coef_fileがある場合は無効)",
+		"Cna": "Normal force coefficient 法線力整数(aero_coef_fileがある場合は無効)",
+		"aero_coef_file": "圧力中心（傾斜），抗力係数（傾斜），法線力係数 vs 機体速度　のcsvファイル名"
 	},
 
 	"rocket2": {
@@ -100,8 +94,8 @@
 ## エンジン
 
 エンジンの推力を記述します。<br>
-**保存フォルダ**: input/thrust/<br>
-**拡張子**: txt<br>
+**保存フォルダ**: `input/thrust/`<br>
+**拡張子**: `txt`<br>
 **形式**: 時刻<半角スペース>推力
 
 ```
@@ -113,8 +107,8 @@
 ## 風向風速
 
 実際の風向風速データを使用する場合、このファイルを作成し指定します。<br>
-**保存フォルダ**: input/wind/<br>
-**拡張子**: csv<br>
+**保存フォルダ**: `input/wind/`<br>
+**拡張子**: `csv`<br>
 **形式**: 1 行目をヘッダとし、2 行目から値を入力する。
 
 ```
@@ -128,8 +122,8 @@ geopotential_height,wind_speed[m/s],wind_direction[deg](North:0, East:90)
 
 機体速度に応じたパラメータを使用する場合、このファイルを作成し指定します。<br>
 ファイルが存在しない、または指定されていない場合は機体諸元で指定された値を使用します。<br>
-**保存フォルダ**: input/airspeed_param/<br>
-**拡張子**: csv<br>
+**保存フォルダ**: `input/aero_coef/`<br>
+**拡張子**: `csv`<br>
 **形式**: 1 行目をヘッダとし、2 行目から値を入力する。
 
 ```

@@ -4,13 +4,11 @@
 
 出力ファイルは審査書書きやすいようにしてます。
 
-:warning: macOS 版は Apple Silicon には対応していません。
-
 ## Download
 
-Latest Update: 2022/03/09
+Latest Update: 2022/04/04
 
-Version: 1.4.2
+Version: 1.5.0
 
 [**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)
 
@@ -42,6 +40,20 @@ Version: 1.4.2
 
 ## 変更履歴
 
+### v1.5.0
+
+#### 機体諸元 JSON ファイル
+
+- `info`キーを削除（存在していても読み込みは可能）
+- `airspeed_param_file`キーを`aero_coef_file`に名称変更 <br>
+  また、このファイルの設置フォルダを`input/aero_coef/`に変更
+- `Cd`キーを削除し、`Cd_i`, `Cd_f`キーを追加<br>
+  燃焼終了前は`Cd_i`を、燃焼終了後は`Cd_f`を参照します。`aero_coef_file`が指定されている場合は無効です。
+
+#### その他
+
+- macOS 版 において Apple Silicon プロセッサに対応
+
 ### v1.4.2
 
 - 磁気偏角が結果の緯度経度に対して考慮されていなかった問題を修正
@@ -58,6 +70,9 @@ Version: 1.4.2
 - macOS, Linux に対応<br>
   macOS 版は Apple Silicon には対応していません。
 
+<details>
+<summary>過去の変更履歴</summary>
+
 ### v1.3.1
 
 - エンジン推力の線形補間アルゴリズムを修正
@@ -65,9 +80,6 @@ Version: 1.4.2
 ### v1.3.0
 
 - 詳細解析モードにおいて、各ステップでの主要な値を出力するように変更
-
-<details>
-<summary>過去の変更履歴</summary>
 
 ### v1.2.1
 
