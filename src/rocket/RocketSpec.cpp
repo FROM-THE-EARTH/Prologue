@@ -54,7 +54,7 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
     }
 
     param.engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
-    param.aeroCoef.init(JsonUtils::GetValue<std::string>(pt, key + ".airspeed_param_file"));
+    param.aeroCoef.init(JsonUtils::GetValue<std::string>(pt, key + ".aero_coef_file"));
     if (!param.aeroCoef.exist()) {
         CommandLine::PrintInfo(
             PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from JSON");

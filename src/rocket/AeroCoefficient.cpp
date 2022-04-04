@@ -31,7 +31,7 @@ size_t getLowerIndex(const std::vector<AeroCoefficient>& vs, double airspeed) {
 }
 
 void AeroCoefVsAirspeed::init(const std::string& filename) {
-    std::fstream fs("input/airspeed_param/" + filename);
+    std::fstream fs("input/aero_coef/" + filename);
 
     if (!fs.is_open()) {
         return;
