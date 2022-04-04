@@ -360,8 +360,9 @@ void Solver::organizeResult() {
 
     // normal force
     const double nForce = rising ? sqrt(m_force_b.z * m_force_b.z + m_force_b.y * m_force_b.y) : 0.0;
-    if (THIS_ROCKET_RESULT.maxNormalForce < nForce)
+    if (THIS_ROCKET_RESULT.maxNormalForce < nForce) {
         THIS_ROCKET_RESULT.maxNormalForce = nForce;
+    }
 }
 
 void Solver::nextRocket() {
