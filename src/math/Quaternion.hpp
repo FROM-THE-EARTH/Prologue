@@ -27,7 +27,7 @@ struct Quaternion {
     // to angle
     double toAngle() {
         Quaternion q(1, 0, 0, 0);
-        q = *this * q * conjugate();
+        q = *this * q * conjugated();
         return acos(sqrt(q.x * q.x + q.y * q.y) / sqrt(q.x * q.x + q.y * q.y + q.z * q.z)) * 180 / Constant::PI;
     }
 
@@ -37,7 +37,7 @@ struct Quaternion {
     Quaternion angularVelocityApplied(const Vector3D& v);
 
     // return the conjugate quaternion
-    Quaternion conjugate() const {
+    Quaternion conjugated() const {
         return {-x, -y, -z, w};
     }
 

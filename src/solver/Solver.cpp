@@ -191,7 +191,7 @@ void Solver::updateDetachment() {
 
 void Solver::updateAerodynamicParameters() {
     if ((m_rocket.velocity - m_windModel->wind()).length() != 0) {
-        m_rocket.airSpeed_b = (m_rocket.velocity - m_windModel->wind()).applyQuaternion(m_rocket.quat.conjugate());
+        m_rocket.airSpeed_b = (m_rocket.velocity - m_windModel->wind()).applyQuaternion(m_rocket.quat.conjugated());
     } else {
         m_rocket.airSpeed_b = Vector3D();
     }
@@ -257,7 +257,8 @@ void Solver::updateExternalForce() {
         m_moment_b.z -= m_force_b.y * (cp - m_rocket.reflLength);
 
         // Gravity
-        m_force_b += Vector3D(0, 0, -m_windModel->gravity()).applyQuaternion(m_rocket.quat.conjugate()) * m_rocket.mass;
+        m_force_b +=
+            Vector3D(0, 0, -m_windModel->gravity()).applyQuaternion(m_rocket.quat.conjugated()) * m_rocket.mass;
     }
 }
 

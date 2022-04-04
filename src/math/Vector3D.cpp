@@ -7,7 +7,7 @@ Vector3D Vector3D::applyQuaternion(const Quaternion& q) {
         return Vector3D(0, 0, 0);
     } else {
         const Quaternion vector    = Quaternion(x, y, z, 0).normalized();
-        const Quaternion newVector = q * vector * q.conjugate();
+        const Quaternion newVector = q * vector * q.conjugated();
         return Vector3D(newVector.x, newVector.y, newVector.z) * length();
     }
 }
