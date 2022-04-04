@@ -81,8 +81,8 @@ class Solver {
     Vector3D m_moment_b;
 
     // env
-    MapData m_mapData;
     Environment m_environment;
+    MapData m_mapData;
 
     // stastus
     bool m_launchClear         = false;
@@ -102,13 +102,13 @@ public:
            const Environment& env,
            const RocketSpec& spec) :
         m_dt(dt),
-        m_mapData(mapData),
         m_rocketType(rocketType),
         m_trajectoryMode(mode),
         m_detachType(detachType),
         m_detachTime(detachTime),
+        m_rocketSpec(spec),
         m_environment(env),
-        m_rocketSpec(spec) {}
+        m_mapData(mapData) {}
 
     ~Solver() {
         delete m_windModel;
