@@ -17,7 +17,7 @@ struct AeroCoefficient {
     }
 };
 
-class AeroCoefVsAirspeed {
+class AeroCoefficientStorage {
     std::vector<AeroCoefficient> m_aeroCoefs;
 
     bool m_exist = false;

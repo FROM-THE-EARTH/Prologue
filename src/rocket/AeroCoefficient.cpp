@@ -30,7 +30,7 @@ size_t getLowerIndex(const std::vector<AeroCoefficient>& vs, double airspeed) {
     }
 }
 
-void AeroCoefVsAirspeed::init(const std::string& filename) {
+void AeroCoefficientStorage::init(const std::string& filename) {
     std::fstream fs("input/aero_coef/" + filename);
 
     if (!fs.is_open()) {
@@ -57,7 +57,7 @@ void AeroCoefVsAirspeed::init(const std::string& filename) {
     m_exist = true;
 }
 
-AeroCoefficient AeroCoefVsAirspeed::valuesAt(double airspeed) const {
+AeroCoefficient AeroCoefficientStorage::valuesAt(double airspeed) const {
     if (m_aeroCoefs.size() == 1) {
         return {airspeed,
                 m_aeroCoefs[0].Cp,

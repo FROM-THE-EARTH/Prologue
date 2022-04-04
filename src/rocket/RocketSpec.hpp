@@ -42,7 +42,7 @@ struct RocketParam {
     std::vector<Parachute> parachute;
 
     Engine engine;
-    AeroCoefVsAirspeed aeroCoef;
+    AeroCoefficientStorage aeroCoefStorage;
 };
 
 struct RocketSpec {

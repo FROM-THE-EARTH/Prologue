@@ -54,15 +54,15 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
     }
 
     param.engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
-    param.aeroCoef.init(JsonUtils::GetValue<std::string>(pt, key + ".aero_coef_file"));
-    if (!param.aeroCoef.exist()) {
+    param.aeroCoefStorage.init(JsonUtils::GetValue<std::string>(pt, key + ".aero_coef_file"));
+    if (!param.aeroCoefStorage.exist()) {
         CommandLine::PrintInfo(
             PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from JSON");
-        param.aeroCoef.setParam(JsonUtils::GetValueExc<double>(pt, key + ".CPlen"),
-                                JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
-                                JsonUtils::GetValueExc<double>(pt, key + ".Cd"),
-                                JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
-                                JsonUtils::GetValueExc<double>(pt, key + ".Cna"));
+        param.aeroCoefStorage.setParam(JsonUtils::GetValueExc<double>(pt, key + ".CPlen"),
+                                       JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
+                                       JsonUtils::GetValueExc<double>(pt, key + ".Cd"),
+                                       JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
+                                       JsonUtils::GetValueExc<double>(pt, key + ".Cna"));
     } else {
         CommandLine::PrintInfo(
             PrintInfoType::Information, ("Rocket: " + key).c_str(), "Airspeed param is set from CSV");
