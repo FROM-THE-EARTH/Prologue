@@ -20,23 +20,17 @@ struct AeroCoefficient {
 class AeroCoefVsAirspeed {
     std::vector<AeroCoefficient> m_aeroCoefs;
 
-    AeroCoefficient m_currentAeroCoef;
-
     bool m_exist = false;
 
 public:
-    // initialize parameters by csv file
-    void init(const std::string& filename);
-
     bool exist() const {
         return m_exist;
     }
 
-    void update(double airspeed);
+    AeroCoefficient valuesAt(double airspeed) const;
 
-    AeroCoefficient get() const {
-        return m_currentAeroCoef;
-    }
+    // initialize parameters by csv file
+    void init(const std::string& filename);
 
     void setParam(double Cp, double Cp_a, double Cd, double Cd_a2, double Cna) {
         const AeroCoefficient coef = {0.0, Cp, Cp_a, Cd, Cd_a2, Cna};

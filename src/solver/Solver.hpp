@@ -69,7 +69,7 @@ class Solver {
     const double m_detachTime;
 
     // spec
-    RocketSpec m_rocketSpec;
+    const RocketSpec m_rocketSpec;
 
     // rocket
     Rocket m_rocket, m_rocketDelta;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AeroCoefficient.hpp"
 #include "math/Quaternion.hpp"
 #include "math/Vector3D.hpp"
 
@@ -18,6 +19,7 @@ struct Rocket {
 
     /*========================delta not exists=====================*/
     // param
+    AeroCoefficient aeroCoef;
     double Cnp, Cny;
     double Cmqp, Cmqy;
 
