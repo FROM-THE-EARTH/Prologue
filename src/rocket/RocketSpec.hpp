@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "AirspeedParam.hpp"
+#include "AeroCoefficient.hpp"
 #include "Engine.hpp"
 
 enum ParaOpenType : int {
@@ -42,7 +42,7 @@ struct RocketParam {
     std::vector<Parachute> parachute;
 
     Engine engine;
-    AirspeedParam airspeedParam;
+    AeroCoefVsAirspeed aeroCoef;
 };
 
 struct RocketSpec {

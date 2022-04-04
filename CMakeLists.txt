@@ -42,7 +42,7 @@ set(SOURCE_FILES
 	"src/math/Quaternion.cpp"
 	"src/math/Vector3D.cpp"
 
-	"src/rocket/AirspeedParam.cpp"
+	"src/rocket/AeroCoefficient.cpp"
 	"src/rocket/Engine.cpp"
 	"src/rocket/RocketSpec.cpp"
 

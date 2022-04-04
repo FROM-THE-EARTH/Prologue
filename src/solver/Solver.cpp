@@ -200,13 +200,13 @@ void Solver::updateAerodynamicParameters() {
         atan(sqrt(m_rocket.airSpeed_b.y * m_rocket.airSpeed_b.y + m_rocket.airSpeed_b.z * m_rocket.airSpeed_b.z)
              / (m_rocket.airSpeed_b.x + 1e-16));
 
-    THIS_ROCKET_PARAM.airspeedParam.update(m_rocket.airSpeed_b.length());
+    THIS_ROCKET_PARAM.aeroCoef.update(m_rocket.airSpeed_b.length());
 
     const double alpha = atan(m_rocket.airSpeed_b.z / (m_rocket.airSpeed_b.x + 1e-16));
     const double beta  = atan(m_rocket.airSpeed_b.y / (m_rocket.airSpeed_b.x + 1e-16));
 
-    m_rocket.Cnp = THIS_ROCKET_PARAM.airspeedParam.getParam().Cna * alpha;
-    m_rocket.Cny = THIS_ROCKET_PARAM.airspeedParam.getParam().Cna * beta;
+    m_rocket.Cnp = THIS_ROCKET_PARAM.aeroCoef.get().Cna * alpha;
+    m_rocket.Cny = THIS_ROCKET_PARAM.aeroCoef.get().Cna * beta;
 
     m_rocket.Cmqp = THIS_ROCKET_PARAM.Cmq;
     m_rocket.Cmqy = THIS_ROCKET_PARAM.Cmq;
@@ -241,9 +241,8 @@ void Solver::updateExternalForce() {
         // Aero
         const double preForceCalc = 0.5 * m_windModel->density() * m_rocket.airSpeed_b.length()
                                     * m_rocket.airSpeed_b.length() * THIS_ROCKET_PARAM.bottomArea;
-        const double cd =
-            THIS_ROCKET_PARAM.airspeedParam.getParam().Cd
-            + THIS_ROCKET_PARAM.airspeedParam.getParam().Cd_a2 * m_rocket.attackAngle * m_rocket.attackAngle;
+        const double cd = THIS_ROCKET_PARAM.aeroCoef.get().Cd
+                          + THIS_ROCKET_PARAM.aeroCoef.get().Cd_a2 * m_rocket.attackAngle * m_rocket.attackAngle;
         m_force_b.x -= cd * preForceCalc * cos(m_rocket.attackAngle);
         m_force_b.y -= m_rocket.Cny * preForceCalc;
         m_force_b.z -= m_rocket.Cnp * preForceCalc;
@@ -256,8 +255,8 @@ void Solver::updateExternalForce() {
         m_moment_b.y = preMomentCalc * m_rocket.Cmqp * m_rocket.omega_b.y;
         m_moment_b.z = preMomentCalc * m_rocket.Cmqy * m_rocket.omega_b.z;
 
-        const double cp = THIS_ROCKET_PARAM.airspeedParam.getParam().Cp
-                          + THIS_ROCKET_PARAM.airspeedParam.getParam().Cp_a * m_rocket.attackAngle;
+        const double cp =
+            THIS_ROCKET_PARAM.aeroCoef.get().Cp + THIS_ROCKET_PARAM.aeroCoef.get().Cp_a * m_rocket.attackAngle;
         m_moment_b.y += m_force_b.z * (cp - m_rocket.reflLength);
         m_moment_b.z -= m_force_b.y * (cp - m_rocket.reflLength);
 
