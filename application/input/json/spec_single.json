@@ -17,7 +17,7 @@
     "op_type_1st": 0,
     "delay_time_1st": 0,
     "motor_file": "Sample_K240.txt",
-    "airspeed_param_file": ""
+    "aero_coef_file": ""
   },
 
   "environment": {
