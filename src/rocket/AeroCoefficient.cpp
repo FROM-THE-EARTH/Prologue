@@ -1,6 +1,9 @@
 #include "AeroCoefficient.hpp"
 
-#include <fstream>
+// disable all warnings of fast-cpp-csv-parser
+#pragma warning(push, 0)
+#include <fast-cpp-csv-parser/csv.h>
+#pragma warning(pop)
 
 #include "math/Algorithm.hpp"
 
@@ -31,30 +34,21 @@ size_t getLowerIndex(const std::vector<AeroCoefficient>& vs, double airspeed) {
 }
 
 void AeroCoefficientStorage::init(const std::string& filename) {
-    std::fstream fs("input/aero_coef/" + filename);
+    try {
+        io::CSVReader<6> csv("input/aero_coef/" + filename);
+        csv.read_header(
+            io::ignore_extra_column, "air_speed[m/s]", "Cp_from_nose[m]", "Cp_a[m/rad]", "Cd", "Cd_a2[/rad^2]", "Cna");
 
-    if (!fs.is_open()) {
+        AeroCoefficient coef;
+        while (csv.read_row(
+            coef.internalVars.airspeed, coef.Cp, coef.internalVars.Cp_a, coef.Cd, coef.internalVars.Cd_a2, coef.Cna)) {
+            m_aeroCoefs.push_back(coef);
+        }
+
+        m_exist = true;
+    } catch (...) {
         return;
     }
-
-    char header[1024];
-    fs.getline(header, 1024);
-    size_t i = 0;
-    char c;
-    std::string dummy;
-    while (!fs.eof()) {
-        m_aeroCoefs.push_back(AeroCoefficient());
-        fs >> m_aeroCoefs[i].internalVars.airspeed >> c >> m_aeroCoefs[i].Cp >> c >> m_aeroCoefs[i].internalVars.Cp_a
-            >> c >> m_aeroCoefs[i].Cd >> c >> m_aeroCoefs[i].internalVars.Cd_a2 >> c >> m_aeroCoefs[i].Cna;
-        i++;
-    }
-    if (m_aeroCoefs[m_aeroCoefs.size() - 1] == AeroCoefficient()) {
-        m_aeroCoefs.pop_back();
-    }
-
-    fs.close();
-
-    m_exist = true;
 }
 
 AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackAngle, bool combustionEnded) const {

@@ -7,24 +7,18 @@ struct AeroCoefficient {
     // These vars are used only calculation.
     // Do not refer to these
     struct InternalVars {
-        double airspeed;
-        double Cd_i;
-        double Cd_f;
-        double Cp_a;
-        double Cd_a2;
+        double airspeed = 0;
+        double Cd_i     = 0;
+        double Cd_f     = 0;
+        double Cp_a     = 0;
+        double Cd_a2    = 0;
     };
 
-    double Cp;
-    double Cd;
-    double Cna;
+    double Cp  = 0;
+    double Cd  = 0;
+    double Cna = 0;
 
     InternalVars internalVars;
-
-    bool operator==(const AeroCoefficient& other) const {
-        return (Cp == other.Cp && Cd == other.Cd && Cna == other.Cna
-                && internalVars.airspeed == other.internalVars.airspeed && internalVars.Cp_a == other.internalVars.Cp_a
-                && internalVars.Cd_a2 == other.internalVars.Cd_a2);
-    }
 };
 
 class AeroCoefficientStorage {
