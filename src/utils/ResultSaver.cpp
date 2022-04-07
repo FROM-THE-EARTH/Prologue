@@ -120,22 +120,22 @@ namespace ResultSaver {
 
         void WriteLine(const SolvedResult& result, size_t rocketIndex) {
             const std::string latitude_longitude =
-                Internal::DoubleToString(result.rocket[rocketIndex].latitude, 8) + "N "
-                + Internal::DoubleToString(result.rocket[rocketIndex].longitude, 8) + "E";
+                Internal::DoubleToString(result.rockets[rocketIndex].latitude, 8) + "N "
+                + Internal::DoubleToString(result.rockets[rocketIndex].longitude, 8) + "E";
 
             f << comma << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
               << Internal::WithComma(result.launchClearVelocity)
-              << Internal::WithComma(result.rocket[rocketIndex].maxHeight)
-              << Internal::WithComma(result.rocket[rocketIndex].detectPeakTime)
-              << Internal::WithComma(result.rocket[rocketIndex].maxVelocity)
-              << Internal::WithComma(result.rocket[rocketIndex].timeAtParaOpened)
-              << Internal::WithComma(result.rocket[rocketIndex].heightAtParaOpened)
-              << Internal::WithComma(result.rocket[rocketIndex].airVelAtParaOpened)
-              << Internal::WithComma(result.rocket[rocketIndex].terminalVelocity)
-              << Internal::WithComma(result.rocket[rocketIndex].terminalTime)
-              << Internal::WithComma(result.rocket[rocketIndex].maxAttackAngle)
-              << Internal::WithComma(result.rocket[rocketIndex].maxNormalForce)
-              << Internal::WithComma(result.rocket[rocketIndex].lenFromLaunchPoint) << latitude_longitude;
+              << Internal::WithComma(result.rockets[rocketIndex].maxHeight)
+              << Internal::WithComma(result.rockets[rocketIndex].detectPeakTime)
+              << Internal::WithComma(result.rockets[rocketIndex].maxVelocity)
+              << Internal::WithComma(result.rockets[rocketIndex].timeAtParaOpened)
+              << Internal::WithComma(result.rockets[rocketIndex].heightAtParaOpened)
+              << Internal::WithComma(result.rockets[rocketIndex].airVelAtParaOpened)
+              << Internal::WithComma(result.rockets[rocketIndex].terminalVelocity)
+              << Internal::WithComma(result.rockets[rocketIndex].terminalTime)
+              << Internal::WithComma(result.rockets[rocketIndex].maxAttackAngle)
+              << Internal::WithComma(result.rockets[rocketIndex].maxNormalForce)
+              << Internal::WithComma(result.rockets[rocketIndex].lenFromLaunchPoint) << latitude_longitude;
             f << '\n';
         }
 
@@ -143,7 +143,7 @@ namespace ResultSaver {
             f.close();
         }
 
-        void WriteAll(const std::string& filepath, const std::vector<Rocket>& flightData) {
+        void WriteAll(const std::string& filepath, const std::vector<Body>& flightData) {
             std::ofstream file(filepath);
 
             file << Internal::WithComma("Time[s]") << Internal::WithComma("Height[m]")
@@ -151,10 +151,10 @@ namespace ResultSaver {
                  << Internal::WithComma("AttackAngle[deg]");
             file << '\n';
 
-            for (const auto& data : flightData) {
-                file << Internal::WithComma(data.elapsedTime) << Internal::WithComma(data.pos.z)
-                     << Internal::WithComma(data.velocity.length()) << Internal::WithComma(data.airSpeed_b.length())
-                     << Internal::WithComma(data.attackAngle * 180. / Constant::PI);
+            for (const auto& body : flightData) {
+                file << Internal::WithComma(body.elapsedTime) << Internal::WithComma(body.pos.z)
+                     << Internal::WithComma(body.velocity.length()) << Internal::WithComma(body.airSpeed_b.length())
+                     << Internal::WithComma(body.attackAngle * 180. / Constant::PI);
                 file << '\n';
             }
 
@@ -164,7 +164,7 @@ namespace ResultSaver {
 
     void SaveScatter(const std::string& dir, const std::vector<SolvedResult>& result) {
         // Write special values
-        for (size_t i = 0; i < result[0].rocket.size(); i++) {
+        for (size_t i = 0; i < result[0].rockets.size(); i++) {
             const std::string fileName = "summary_rocket" + std::to_string(i + 1);
             const std::string path     = dir + fileName + ".csv";
 
@@ -180,7 +180,7 @@ namespace ResultSaver {
 
     void SaveDetail(const std::string& dir, const SolvedResult& result) {
         // Write special values
-        for (size_t i = 0; i < result.rocket.size(); i++) {
+        for (size_t i = 0; i < result.rockets.size(); i++) {
             const std::string fileName = "summary_rocket" + std::to_string(i + 1);
             const std::string path     = dir + fileName + ".csv";
 
@@ -197,11 +197,11 @@ namespace ResultSaver {
             const std::string windCondition =
                 "_" + Internal::DoubleToString(r.windSpeed, 1) + "-" + Internal::DoubleToString(r.windDirection, 1);
 
-            for (size_t i = 0; i < r.rocket.size(); i++) {
+            for (size_t i = 0; i < r.rockets.size(); i++) {
                 const std::string fileName = "detail_rocket" + std::to_string(i + 1) + windCondition;
                 const std::string path     = dir + fileName + ".csv";
 
-                Internal::WriteAll(path, r.rocket[i].flightData);
+                Internal::WriteAll(path, r.rockets[i].flightData);
             }
         }
     }
@@ -210,11 +210,11 @@ namespace ResultSaver {
         const std::string windCondition = "[" + Internal::DoubleToString(result.windSpeed, 1) + "-"
                                           + Internal::DoubleToString(result.windDirection, 1) + "]";
 
-        for (size_t i = 0; i < result.rocket.size(); i++) {
+        for (size_t i = 0; i < result.rockets.size(); i++) {
             const std::string fileName = "detail_rocket" + std::to_string(i + 1) + windCondition;
             const std::string path     = dir + fileName + ".csv";
 
-            Internal::WriteAll(path, result.rocket[i].flightData);
+            Internal::WriteAll(path, result.rockets[i].flightData);
         }
     }
 }

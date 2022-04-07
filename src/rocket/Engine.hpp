@@ -22,7 +22,11 @@ public:
         return m_exist ? m_thrustData[m_thrustData.size() - 1].time : 0.0;
     }
 
-    bool isFinishBurning(double time) const {
+    bool isCombusting(double time) const {
+        return m_exist ? time <= combustionTime() : false;
+    }
+
+    bool didCombustion(double time) const {
         return m_exist ? time > combustionTime() : true;
     }
 };

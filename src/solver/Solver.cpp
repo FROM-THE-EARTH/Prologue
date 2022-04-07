@@ -4,8 +4,9 @@
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
 
-#define THIS_ROCKET_SPEC m_rocketSpec.rocketParam[m_targetRocketIndex]
-#define THIS_ROCKET_RESULT m_result.rocket[m_targetRocketIndex]
+#define THIS_BODY m_rocket.bodies[m_currentBodyIndex]
+#define THIS_ROCKET_SPEC m_rocketSpec.rocketParam[m_currentBodyIndex]
+#define THIS_ROCKET_RESULT m_result.rockets[m_currentBodyIndex]
 
 bool Solver::run(double windSpeed, double windDirection) {
     switch (AppSetting::WindModel::type) {
@@ -26,7 +27,7 @@ bool Solver::run(double windSpeed, double windDirection) {
     m_result.windSpeed     = windSpeed;
     m_result.windDirection = windDirection;
 
-    size_t landingCount = 0;
+    size_t solvedBodyCount = 0;
 
     // loop until all rockets are solved
     // single rocket: solve once
@@ -35,15 +36,15 @@ bool Solver::run(double windSpeed, double windDirection) {
         initializeRocket();
 
         // loop until the rocket lands
-        while (m_rocket.pos.z > 0.0 || m_rocket.elapsedTime < 0.1) {
+        while (THIS_BODY.pos.z > 0.0 || THIS_BODY.elapsedTime < 0.1) {
             update();
 
             if (m_trajectoryMode == TrajectoryMode::Parachute) {
                 updateParachute();
             }
 
-            if (m_rocketType == RocketType::Multi) {
-                updateDetachment();
+            if (m_rocketType == RocketType::Multi && updateDetachment()) {
+                break;
             }
 
             updateAerodynamicParameters();
@@ -59,174 +60,175 @@ bool Solver::run(double windSpeed, double windDirection) {
             organizeResult();
         }
 
-        landingCount++;
+        solvedBodyCount++;
 
-    } while (landingCount <= m_rocketAtDetached.size());
+    } while (solvedBodyCount < 2 * m_detachCount + 1);
 
     return true;
 }
 
 void Solver::initializeRocket() {
     // Second, Third Rocket(Multiple)
-    if (m_rocketAtDetached.size() != 0 && m_rocketAtDetached.size() + 1 > m_targetRocketIndex) {
-        m_rocket = m_rocketAtDetached[m_targetRocketIndex - 1];
-
+    if (m_currentBodyIndex < 2 * m_detachCount) {
         nextRocket();
-
         return;
     }
 
-    // First running
-    m_rocketDelta.mass       = m_rocketSpec.rocketParam[0].massInitial;
-    m_rocketDelta.reflLength = m_rocketSpec.rocketParam[0].CGLengthInitial;
-    m_rocketDelta.iyz        = m_rocketSpec.rocketParam[0].rollingMomentInertiaInitial;
-    m_rocketDelta.ix         = 0.02;
-    m_rocketDelta.pos        = Vector3D(0, 0, 0);
-    m_rocketDelta.velocity   = Vector3D(0, 0, 0);
-    m_rocketDelta.omega_b    = Vector3D(0, 0, 0);
-    m_rocketDelta.quat =
+    // First rocket
+    m_bodyDelta.mass       = m_rocketSpec.rocketParam[0].massInitial;
+    m_bodyDelta.reflLength = m_rocketSpec.rocketParam[0].CGLengthInitial;
+    m_bodyDelta.iyz        = m_rocketSpec.rocketParam[0].rollingMomentInertiaInitial;
+    m_bodyDelta.ix         = 0.02;
+    m_bodyDelta.pos        = Vector3D(0, 0, 0);
+    m_bodyDelta.velocity   = Vector3D(0, 0, 0);
+    m_bodyDelta.omega_b    = Vector3D(0, 0, 0);
+    m_bodyDelta.quat =
         Quaternion(m_environment.railElevation, (-m_environment.railAzimuth + 90) - m_mapData.magneticDeclination);
 
-    m_rocket = m_rocketDelta;
+    THIS_BODY = m_bodyDelta;
 }
 
 void Solver::update() {
-    m_windModel->update(m_rocket.pos.z);
-
-    const double fixedtime =
-        m_rocketAtDetached.size() == 0 ? 0.0 : m_rocketAtDetached[m_rocketAtDetached.size() - 1].elapsedTime;
-    m_combustionTime = m_rocket.elapsedTime - fixedtime;
+    m_windModel->update(THIS_BODY.pos.z);
 }
 
 void Solver::updateParachute() {
     const bool detectpeakConditon =
-        THIS_ROCKET_RESULT.maxHeight > m_rocket.pos.z + AppSetting::Simulation::detectPeakThreshold;
+        THIS_ROCKET_RESULT.maxHeight > THIS_BODY.pos.z + AppSetting::Simulation::detectPeakThreshold;
 
-    if (detectpeakConditon && !m_rocket.detectPeak) {
-        m_rocket.detectPeak = true;
+    if (detectpeakConditon && !THIS_BODY.detectPeak) {
+        THIS_BODY.detectPeak = true;
     }
 
-    if (m_rocket.parachuteOpened) {
+    if (THIS_BODY.parachuteOpened) {
         return;
     }
 
     const bool detectpeak = THIS_ROCKET_SPEC.parachute[0].openingType == ParaOpenType::DetectPeak;
 
     const bool fixedtime          = THIS_ROCKET_SPEC.parachute[0].openingType == ParaOpenType::FixedTime;
-    const bool fixedtimeCondition = m_rocket.elapsedTime > THIS_ROCKET_SPEC.parachute[0].openingTime;
+    const bool fixedtimeCondition = THIS_BODY.elapsedTime > THIS_ROCKET_SPEC.parachute[0].openingTime;
 
     const bool time_from_detect_peak = THIS_ROCKET_SPEC.parachute[0].openingType == ParaOpenType::TimeFromDetectPeak;
 
     if ((detectpeak && detectpeakConditon) || (fixedtime && fixedtimeCondition)) {
-        m_rocket.parachuteOpened              = true;
-        THIS_ROCKET_RESULT.timeAtParaOpened   = m_rocket.elapsedTime;
-        THIS_ROCKET_RESULT.airVelAtParaOpened = m_rocket.airSpeed_b.length();
-        THIS_ROCKET_RESULT.heightAtParaOpened = m_rocket.pos.z;
+        THIS_BODY.parachuteOpened             = true;
+        THIS_ROCKET_RESULT.timeAtParaOpened   = THIS_BODY.elapsedTime;
+        THIS_ROCKET_RESULT.airVelAtParaOpened = THIS_BODY.airSpeed_b.length();
+        THIS_ROCKET_RESULT.heightAtParaOpened = THIS_BODY.pos.z;
     }
 
     const bool time_from_detect_peakCondition =
-        m_rocket.elapsedTime - THIS_ROCKET_RESULT.detectPeakTime > THIS_ROCKET_SPEC.parachute[0].openingTime;
+        THIS_BODY.elapsedTime - THIS_ROCKET_RESULT.detectPeakTime > THIS_ROCKET_SPEC.parachute[0].openingTime;
 
     if (time_from_detect_peak) {
-        if (!m_rocket.waitForOpenPara && detectpeakConditon) {
-            m_rocket.waitForOpenPara = true;
+        if (!THIS_BODY.waitForOpenPara && detectpeakConditon) {
+            THIS_BODY.waitForOpenPara = true;
         }
-        if (m_rocket.waitForOpenPara && time_from_detect_peakCondition) {
-            m_rocket.parachuteOpened              = true;
-            THIS_ROCKET_RESULT.timeAtParaOpened   = m_rocket.elapsedTime;
-            THIS_ROCKET_RESULT.airVelAtParaOpened = m_rocket.airSpeed_b.length();
-            THIS_ROCKET_RESULT.heightAtParaOpened = m_rocket.pos.z;
-            m_rocket.waitForOpenPara              = false;
+        if (THIS_BODY.waitForOpenPara && time_from_detect_peakCondition) {
+            THIS_BODY.parachuteOpened             = true;
+            THIS_ROCKET_RESULT.timeAtParaOpened   = THIS_BODY.elapsedTime;
+            THIS_ROCKET_RESULT.airVelAtParaOpened = THIS_BODY.airSpeed_b.length();
+            THIS_ROCKET_RESULT.heightAtParaOpened = THIS_BODY.pos.z;
+            THIS_BODY.waitForOpenPara             = false;
         }
     }
 }
 
-void Solver::updateDetachment() {
+bool Solver::updateDetachment() {
     bool detachCondition = false;
 
     switch (m_detachType) {
     case DetachType::BurningFinished:
-        detachCondition = THIS_ROCKET_SPEC.engine.isFinishBurning(m_combustionTime);
+        detachCondition = THIS_ROCKET_SPEC.engine.didCombustion(THIS_BODY.elapsedTime);
         break;
     case DetachType::Time:
-        detachCondition = m_rocket.elapsedTime >= m_detachTime;
+        detachCondition = THIS_BODY.elapsedTime >= m_detachTime;
         break;
     case DetachType::SyncPara:
-        detachCondition = m_rocket.parachuteOpened == true;
+        detachCondition = THIS_BODY.parachuteOpened == true;
         break;
     case DetachType::DoNotDeatch:
-        return;
-        break;
+        return false;
     }
 
-    if (detachCondition && m_rocketAtDetached.size() < 1) {  // if need rocket4, 5, 6... , this code should be changed
-        // thrust poewr
-        double sumThrust = 0;
-        for (double t = 0; t <= 0.2; t += m_dt) {
-            sumThrust += THIS_ROCKET_SPEC.engine.thrustAt(t) * (0.2 - t) / 0.2;
+    if (detachCondition && m_detachCount < 1) {  // if need rocket4, 5, 6... , this code should be changed
+        // initialize separated bodies
+        {
+            Body detach;
+            detach.ix       = 0.02;
+            detach.pos      = THIS_BODY.pos;
+            detach.velocity = THIS_BODY.velocity;
+            detach.omega_b  = Vector3D();
+            detach.quat     = THIS_BODY.quat;
+
+            Body& nextBody1      = m_rocket.bodies[m_currentBodyIndex + 1];
+            nextBody1            = detach;
+            nextBody1.mass       = m_rocketSpec.rocketParam[m_currentBodyIndex + 1].massInitial;
+            nextBody1.reflLength = m_rocketSpec.rocketParam[m_currentBodyIndex + 1].CGLengthInitial;
+            nextBody1.iyz        = m_rocketSpec.rocketParam[m_currentBodyIndex + 1].rollingMomentInertiaInitial;
+            // receive power from the engine of the upper body for 0.2 seconds
+            /*double sumThrust = 0;
+            for (double t = 0; t <= 0.2; t += m_dt) {
+                sumThrust += m_rocketSpec.rocketParam[m_currentBodyIndex + 2].engine.thrustAt(t) * (0.2 - t) / 0.2;
+            }
+            nextBody1.velocity -= Vector3D((sumThrust / nextBody1.mass) * m_dt, 0, 0).applyQuaternion(nextBody1.quat);*/
+
+            Body& nextBody2      = m_rocket.bodies[m_currentBodyIndex + 2];
+            nextBody2            = detach;
+            nextBody2.mass       = m_rocketSpec.rocketParam[m_currentBodyIndex + 2].massInitial;
+            nextBody2.reflLength = m_rocketSpec.rocketParam[m_currentBodyIndex + 2].CGLengthInitial;
+            nextBody2.iyz        = m_rocketSpec.rocketParam[m_currentBodyIndex + 2].rollingMomentInertiaInitial;
         }
 
-        // next rocket status
-        Rocket detach;
-        detach.mass       = m_rocketSpec.rocketParam[m_targetRocketIndex + 2].massInitial;
-        detach.reflLength = m_rocketSpec.rocketParam[m_targetRocketIndex + 2].CGLengthInitial;
-        detach.iyz        = m_rocketSpec.rocketParam[m_targetRocketIndex + 2].rollingMomentInertiaInitial;
-        detach.ix         = 0.02;
-        detach.pos        = m_rocket.pos;
-        detach.omega_b    = Vector3D();
-        detach.quat       = m_rocket.quat;
-        detach.velocity   = m_rocket.velocity;
-        m_rocketAtDetached.push_back(detach);
+        m_detachCount++;
 
-        // update this rocket
-        m_rocket.mass       = m_rocketSpec.rocketParam[m_targetRocketIndex + 1].massInitial;
-        m_rocket.reflLength = m_rocketSpec.rocketParam[m_targetRocketIndex + 1].CGLengthInitial;
-        m_rocket.iyz        = m_rocketSpec.rocketParam[m_targetRocketIndex + 1].rollingMomentInertiaInitial;
-        m_rocket.velocity -= Vector3D((sumThrust / m_rocket.mass) * m_dt, 0, 0).applyQuaternion(m_rocket.quat);
-
-        // next part
-        nextRocket();
+        return true;
     }
+
+    return false;
 }
 
 void Solver::updateAerodynamicParameters() {
-    if ((m_rocket.velocity - m_windModel->wind()).length() != 0) {
-        m_rocket.airSpeed_b = (m_rocket.velocity - m_windModel->wind()).applyQuaternion(m_rocket.quat.conjugated());
+    if ((THIS_BODY.velocity - m_windModel->wind()).length() != 0) {
+        THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).applyQuaternion(THIS_BODY.quat.conjugated());
     } else {
-        m_rocket.airSpeed_b = Vector3D();
+        THIS_BODY.airSpeed_b = Vector3D();
     }
 
-    m_rocket.attackAngle =
-        atan(sqrt(m_rocket.airSpeed_b.y * m_rocket.airSpeed_b.y + m_rocket.airSpeed_b.z * m_rocket.airSpeed_b.z)
-             / (m_rocket.airSpeed_b.x + 1e-16));
+    THIS_BODY.attackAngle =
+        atan(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z)
+             / (THIS_BODY.airSpeed_b.x + 1e-16));
 
-    m_rocket.aeroCoef = THIS_ROCKET_SPEC.aeroCoefStorage.valuesIn(
-        m_rocket.airSpeed_b.length(), m_rocket.attackAngle, THIS_ROCKET_SPEC.engine.isFinishBurning(m_combustionTime));
+    THIS_BODY.aeroCoef =
+        THIS_ROCKET_SPEC.aeroCoefStorage.valuesIn(THIS_BODY.airSpeed_b.length(),
+                                                  THIS_BODY.attackAngle,
+                                                  THIS_ROCKET_SPEC.engine.didCombustion(THIS_BODY.elapsedTime));
 
-    const double alpha = atan(m_rocket.airSpeed_b.z / (m_rocket.airSpeed_b.x + 1e-16));
-    const double beta  = atan(m_rocket.airSpeed_b.y / (m_rocket.airSpeed_b.x + 1e-16));
+    const double alpha = atan(THIS_BODY.airSpeed_b.z / (THIS_BODY.airSpeed_b.x + 1e-16));
+    const double beta  = atan(THIS_BODY.airSpeed_b.y / (THIS_BODY.airSpeed_b.x + 1e-16));
 
-    m_rocket.Cnp = m_rocket.aeroCoef.Cna * alpha;
-    m_rocket.Cny = m_rocket.aeroCoef.Cna * beta;
+    THIS_BODY.Cnp = THIS_BODY.aeroCoef.Cna * alpha;
+    THIS_BODY.Cny = THIS_BODY.aeroCoef.Cna * beta;
 
-    m_rocket.Cmqp = THIS_ROCKET_SPEC.Cmq;
-    m_rocket.Cmqy = THIS_ROCKET_SPEC.Cmq;
+    THIS_BODY.Cmqp = THIS_ROCKET_SPEC.Cmq;
+    THIS_BODY.Cmqy = THIS_ROCKET_SPEC.Cmq;
 }
 
 void Solver::updateRocketProperties() {
-    if (m_combustionTime <= THIS_ROCKET_SPEC.engine.combustionTime()) {
-        m_rocketDelta.mass =
+    if (THIS_ROCKET_SPEC.engine.isCombusting(THIS_BODY.elapsedTime)) {
+        m_bodyDelta.mass =
             (THIS_ROCKET_SPEC.massFinal - THIS_ROCKET_SPEC.massInitial) / THIS_ROCKET_SPEC.engine.combustionTime();
-        m_rocketDelta.reflLength = (THIS_ROCKET_SPEC.CGLengthFinal - THIS_ROCKET_SPEC.CGLengthInitial)
-                                   / THIS_ROCKET_SPEC.engine.combustionTime();
-        m_rocketDelta.iyz = (THIS_ROCKET_SPEC.rollingMomentInertiaFinal - THIS_ROCKET_SPEC.rollingMomentInertiaInitial)
-                            / THIS_ROCKET_SPEC.engine.combustionTime();
-        m_rocketDelta.ix = (0.02 - 0.01) / 3;
+        m_bodyDelta.reflLength = (THIS_ROCKET_SPEC.CGLengthFinal - THIS_ROCKET_SPEC.CGLengthInitial)
+                                 / THIS_ROCKET_SPEC.engine.combustionTime();
+        m_bodyDelta.iyz = (THIS_ROCKET_SPEC.rollingMomentInertiaFinal - THIS_ROCKET_SPEC.rollingMomentInertiaInitial)
+                          / THIS_ROCKET_SPEC.engine.combustionTime();
+        m_bodyDelta.ix = (0.02 - 0.01) / 3;
     } else {
-        m_rocketDelta.mass       = 0;
-        m_rocketDelta.reflLength = 0;
-        m_rocketDelta.iyz        = 0;
-        m_rocketDelta.ix         = 0;
+        m_bodyDelta.mass       = 0;
+        m_bodyDelta.reflLength = 0;
+        m_bodyDelta.iyz        = 0;
+        m_bodyDelta.ix         = 0;
     }
 }
 
@@ -235,124 +237,125 @@ void Solver::updateExternalForce() {
     m_moment_b = Vector3D(0, 0, 0);
 
     // Thrust
-    m_force_b.x += THIS_ROCKET_SPEC.engine.thrustAt(m_combustionTime);
+    m_force_b.x += THIS_ROCKET_SPEC.engine.thrustAt(THIS_BODY.elapsedTime);
 
-    if (!m_rocket.parachuteOpened) {
+    if (!THIS_BODY.parachuteOpened) {
         // Aero
-        const double preForceCalc = 0.5 * m_windModel->density() * m_rocket.airSpeed_b.length()
-                                    * m_rocket.airSpeed_b.length() * THIS_ROCKET_SPEC.bottomArea;
-        m_force_b.x -= m_rocket.aeroCoef.Cd * preForceCalc * cos(m_rocket.attackAngle);
-        m_force_b.y -= m_rocket.Cny * preForceCalc;
-        m_force_b.z -= m_rocket.Cnp * preForceCalc;
+        const double preForceCalc = 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
+                                    * THIS_BODY.airSpeed_b.length() * THIS_ROCKET_SPEC.bottomArea;
+        m_force_b.x -= THIS_BODY.aeroCoef.Cd * preForceCalc * cos(THIS_BODY.attackAngle);
+        m_force_b.y -= THIS_BODY.Cny * preForceCalc;
+        m_force_b.z -= THIS_BODY.Cnp * preForceCalc;
 
         // Moment
-        const double preMomentCalc = 0.25 * m_windModel->density() * m_rocket.airSpeed_b.length()
+        const double preMomentCalc = 0.25 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
                                      * THIS_ROCKET_SPEC.length * THIS_ROCKET_SPEC.length * THIS_ROCKET_SPEC.bottomArea;
         m_moment_b.x = 0;
-        m_moment_b.y = preMomentCalc * m_rocket.Cmqp * m_rocket.omega_b.y;
-        m_moment_b.z = preMomentCalc * m_rocket.Cmqy * m_rocket.omega_b.z;
+        m_moment_b.y = preMomentCalc * THIS_BODY.Cmqp * THIS_BODY.omega_b.y;
+        m_moment_b.z = preMomentCalc * THIS_BODY.Cmqy * THIS_BODY.omega_b.z;
 
-        m_moment_b.y += m_force_b.z * (m_rocket.aeroCoef.Cp - m_rocket.reflLength);
-        m_moment_b.z -= m_force_b.y * (m_rocket.aeroCoef.Cp - m_rocket.reflLength);
+        m_moment_b.y += m_force_b.z * (THIS_BODY.aeroCoef.Cp - THIS_BODY.reflLength);
+        m_moment_b.z -= m_force_b.y * (THIS_BODY.aeroCoef.Cp - THIS_BODY.reflLength);
 
         // Gravity
         m_force_b +=
-            Vector3D(0, 0, -m_windModel->gravity()).applyQuaternion(m_rocket.quat.conjugated()) * m_rocket.mass;
+            Vector3D(0, 0, -m_windModel->gravity()).applyQuaternion(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
     }
 }
 
 void Solver::updateRocketDelta() {
-    if (m_rocket.pos.length() <= m_environment.railLength && m_rocket.velocity.z >= 0.0) {  // launch
+    if (THIS_BODY.pos.length() <= m_environment.railLength && THIS_BODY.velocity.z >= 0.0) {  // launch
         if (m_force_b.x < 0) {
-            m_rocketDelta.pos      = Vector3D();
-            m_rocketDelta.velocity = Vector3D();
-            m_rocketDelta.omega_b  = Vector3D();
-            m_rocketDelta.quat     = Quaternion();
+            m_bodyDelta.pos      = Vector3D();
+            m_bodyDelta.velocity = Vector3D();
+            m_bodyDelta.omega_b  = Vector3D();
+            m_bodyDelta.quat     = Quaternion();
         } else {
-            m_force_b.y       = 0;
-            m_force_b.z       = 0;
-            m_rocketDelta.pos = m_rocket.velocity;
+            m_force_b.y     = 0;
+            m_force_b.z     = 0;
+            m_bodyDelta.pos = THIS_BODY.velocity;
 
-            m_rocketDelta.velocity = m_force_b.applyQuaternion(m_rocket.quat) / m_rocket.mass;
+            m_bodyDelta.velocity = m_force_b.applyQuaternion(THIS_BODY.quat) / THIS_BODY.mass;
 
-            m_rocketDelta.omega_b = Vector3D();
-            m_rocketDelta.quat    = Quaternion();
+            m_bodyDelta.omega_b = Vector3D();
+            m_bodyDelta.quat    = Quaternion();
         }
-    } else if (m_rocket.parachuteOpened) {  // parachute opened
-        const Vector3D paraSpeed = m_rocket.velocity;
+    } else if (THIS_BODY.parachuteOpened) {  // parachute opened
+        const Vector3D paraSpeed = THIS_BODY.velocity;
         const double drag        = 0.5 * m_windModel->density() * paraSpeed.z * paraSpeed.z * 1.0
-                            * THIS_ROCKET_SPEC.parachute[m_rocket.parachuteIndex].Cd;
+                            * THIS_ROCKET_SPEC.parachute[THIS_BODY.parachuteIndex].Cd;
 
-        m_rocketDelta.velocity.z = drag / m_rocket.mass - m_windModel->gravity();
-        m_rocketDelta.velocity.x = 0;
-        m_rocketDelta.velocity.y = 0;
+        m_bodyDelta.velocity.z = drag / THIS_BODY.mass - m_windModel->gravity();
+        m_bodyDelta.velocity.x = 0;
+        m_bodyDelta.velocity.y = 0;
 
-        m_rocket.velocity.x = m_windModel->wind().x;
-        m_rocket.velocity.y = m_windModel->wind().y;
+        THIS_BODY.velocity.x = m_windModel->wind().x;
+        THIS_BODY.velocity.y = m_windModel->wind().y;
 
-        m_rocketDelta.pos = m_rocket.velocity;
+        m_bodyDelta.pos = THIS_BODY.velocity;
 
-        m_rocketDelta.omega_b = Vector3D();
-        m_rocketDelta.quat    = Quaternion();
-    } else if (m_rocket.pos.z < -10) {  // stop simulation
-        m_rocketDelta.velocity = Vector3D();
+        m_bodyDelta.omega_b = Vector3D();
+        m_bodyDelta.quat    = Quaternion();
+    } else if (THIS_BODY.pos.z < -10) {  // stop simulation
+        m_bodyDelta.velocity = Vector3D();
     } else {  // flight
-        if (!m_launchClear) {
-            m_result.launchClearVelocity = m_rocket.velocity.length();
-            m_launchClear                = true;
+        if (!m_rocket.launchClear) {
+            m_result.launchClearVelocity = THIS_BODY.velocity.length();
+            m_rocket.launchClear         = true;
         }
 
-        m_rocketDelta.pos      = m_rocket.velocity;
-        m_rocketDelta.velocity = m_force_b.applyQuaternion(m_rocket.quat) / m_rocket.mass;
+        m_bodyDelta.pos      = THIS_BODY.velocity;
+        m_bodyDelta.velocity = m_force_b.applyQuaternion(THIS_BODY.quat) / THIS_BODY.mass;
 
-        m_rocketDelta.omega_b.x = m_moment_b.x / m_rocket.ix;
-        m_rocketDelta.omega_b.y = m_moment_b.y / m_rocket.iyz;
-        m_rocketDelta.omega_b.z = m_moment_b.z / m_rocket.iyz;
+        m_bodyDelta.omega_b.x = m_moment_b.x / THIS_BODY.ix;
+        m_bodyDelta.omega_b.y = m_moment_b.y / THIS_BODY.iyz;
+        m_bodyDelta.omega_b.z = m_moment_b.z / THIS_BODY.iyz;
 
-        m_rocketDelta.quat = m_rocket.quat.angularVelocityApplied(m_rocketDelta.omega_b);
+        m_bodyDelta.quat = THIS_BODY.quat.angularVelocityApplied(m_bodyDelta.omega_b);
     }
 }
 
 void Solver::applyDelta() {
     // Update rocket
-    m_rocket.mass += m_rocketDelta.mass * m_dt;
-    m_rocket.reflLength += m_rocketDelta.reflLength * m_dt;
-    m_rocket.iyz += m_rocketDelta.iyz * m_dt;
-    m_rocket.ix += m_rocketDelta.ix * m_dt;
-    m_rocket.pos += m_rocketDelta.pos * m_dt;
-    m_rocket.velocity += m_rocketDelta.velocity * m_dt;
-    m_rocket.omega_b += m_rocketDelta.omega_b * m_dt;
-    m_rocket.quat += m_rocketDelta.quat * m_dt;
+    THIS_BODY.mass += m_bodyDelta.mass * m_dt;
+    THIS_BODY.reflLength += m_bodyDelta.reflLength * m_dt;
+    THIS_BODY.iyz += m_bodyDelta.iyz * m_dt;
+    THIS_BODY.ix += m_bodyDelta.ix * m_dt;
+    THIS_BODY.pos += m_bodyDelta.pos * m_dt;
+    THIS_BODY.velocity += m_bodyDelta.velocity * m_dt;
+    THIS_BODY.omega_b += m_bodyDelta.omega_b * m_dt;
+    THIS_BODY.quat += m_bodyDelta.quat * m_dt;
 
-    m_rocket.quat = m_rocket.quat.normalized();
+    THIS_BODY.quat = THIS_BODY.quat.normalized();
 
-    m_rocket.elapsedTime += m_dt;
+    THIS_BODY.elapsedTime += m_dt;
+    m_rocket.timeFromLaunch += m_dt;
 }
 
 void Solver::organizeResult() {
-    THIS_ROCKET_RESULT.flightData.push_back(m_rocket);
+    THIS_ROCKET_RESULT.flightData.push_back(THIS_BODY);
 
-    const bool rising = m_rocket.velocity.z > 0;
+    const bool rising = THIS_BODY.velocity.z > 0;
 
     // height
-    if (THIS_ROCKET_RESULT.maxHeight < m_rocket.pos.z) {
-        THIS_ROCKET_RESULT.maxHeight      = m_rocket.pos.z;
-        THIS_ROCKET_RESULT.detectPeakTime = m_rocket.elapsedTime;
+    if (THIS_ROCKET_RESULT.maxHeight < THIS_BODY.pos.z) {
+        THIS_ROCKET_RESULT.maxHeight      = THIS_BODY.pos.z;
+        THIS_ROCKET_RESULT.detectPeakTime = THIS_BODY.elapsedTime;
     }
 
     // velocity
-    if (THIS_ROCKET_RESULT.maxVelocity < m_rocket.velocity.length()) {
-        THIS_ROCKET_RESULT.maxVelocity = m_rocket.velocity.length();
+    if (THIS_ROCKET_RESULT.maxVelocity < THIS_BODY.velocity.length()) {
+        THIS_ROCKET_RESULT.maxVelocity = THIS_BODY.velocity.length();
     }
 
     // terminal velocity
-    THIS_ROCKET_RESULT.terminalVelocity = m_rocket.velocity.length();
+    THIS_ROCKET_RESULT.terminalVelocity = THIS_BODY.velocity.length();
 
     // terminal time
-    THIS_ROCKET_RESULT.terminalTime = m_rocket.elapsedTime;
+    THIS_ROCKET_RESULT.terminalTime = THIS_BODY.elapsedTime;
 
     // attack angle
-    const double atkang = m_launchClear && rising ? m_rocket.attackAngle * 180 / Constant::PI : 0.0;
+    const double atkang = m_rocket.launchClear && rising ? THIS_BODY.attackAngle * 180 / Constant::PI : 0.0;
     if (THIS_ROCKET_RESULT.maxAttackAngle < atkang) {
         THIS_ROCKET_RESULT.maxAttackAngle = atkang;
     }
@@ -365,7 +368,7 @@ void Solver::organizeResult() {
 }
 
 void Solver::nextRocket() {
-    m_targetRocketIndex++;
+    m_currentBodyIndex++;
 
-    m_result.rocket.push_back({});
+    m_result.rockets.push_back({});
 }

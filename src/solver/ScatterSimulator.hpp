@@ -14,9 +14,7 @@ public:
 
     void saveResult() override;
 
-    void plotToGnuplot() override {
-        Gnuplot::Plot(m_result);
-    }
+    void plotToGnuplot() override;
 
 private:
     void solve(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error);

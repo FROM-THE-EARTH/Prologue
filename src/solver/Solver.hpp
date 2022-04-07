@@ -14,7 +14,7 @@ enum class DetachType : int { BurningFinished = 1, Time, SyncPara, DoNotDeatch }
 
 struct ResultOfEachRocket {
     // all flight data
-    std::vector<Rocket> flightData;
+    std::vector<Body> flightData;
 
     // max, min values
     double maxHeight      = 0.0;
@@ -41,7 +41,7 @@ struct ResultOfEachRocket {
 };
 
 struct SolvedResult {
-    std::vector<ResultOfEachRocket> rocket = std::vector<ResultOfEachRocket>(1);
+    std::vector<ResultOfEachRocket> rockets = std::vector<ResultOfEachRocket>(1);
 
     // special values
     double windSpeed           = 0.0;
@@ -49,13 +49,14 @@ struct SolvedResult {
     double launchClearVelocity = 0.0;
 
     void organize(MapData map) {
-        for (auto& r : rocket) {
-            if (r.flightData[r.flightData.size() - 1].pos.z < 0) {
-                r.flightData[r.flightData.size() - 1].pos.z = 0.0;  // landing point
+        for (auto& rocket : rockets) {
+            auto& lastBody = rocket.flightData[rocket.flightData.size() - 1];
+            if (lastBody.pos.z < 0) {
+                lastBody.pos.z = 0.0;  // landing point
             }
-            r.lenFromLaunchPoint = r.flightData[r.flightData.size() - 1].pos.length();
-            r.latitude           = map.coordinate.latitudeAt(r.flightData[r.flightData.size() - 1].pos.y);
-            r.longitude          = map.coordinate.longitudeAt(r.flightData[r.flightData.size() - 1].pos.x);
+            rocket.lenFromLaunchPoint = lastBody.pos.length();
+            rocket.latitude           = map.coordinate.latitudeAt(lastBody.pos.y);
+            rocket.longitude          = map.coordinate.longitudeAt(lastBody.pos.x);
         }
     }
 };
@@ -72,8 +73,8 @@ class Solver {
     const RocketSpec m_rocketSpec;
 
     // rocket
-    Rocket m_rocket, m_rocketDelta;
-    std::vector<Rocket> m_rocketAtDetached;
+    Rocket m_rocket;
+    Body m_bodyDelta;
 
     // dynamics
     WindModel* m_windModel = nullptr;
@@ -85,9 +86,8 @@ class Solver {
     MapData m_mapData;
 
     // stastus
-    bool m_launchClear         = false;
-    double m_combustionTime    = 0.0;
-    size_t m_targetRocketIndex = 0;
+    size_t m_currentBodyIndex = 0;  // index of the body being solved
+    size_t m_detachCount      = 0;
 
     // result
     SolvedResult m_result;
@@ -108,7 +108,9 @@ public:
         m_detachTime(detachTime),
         m_rocketSpec(spec),
         m_environment(env),
-        m_mapData(mapData) {}
+        m_mapData(mapData) {
+        m_rocket.bodies.resize(m_rocketSpec.rocketParam.size());
+    }
 
     ~Solver() {
         delete m_windModel;
@@ -127,7 +129,7 @@ private:
 
     void updateParachute();
 
-    void updateDetachment();
+    bool updateDetachment();
 
     void updateAerodynamicParameters();
 

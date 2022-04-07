@@ -149,22 +149,26 @@ namespace Gnuplot {
 
         void CalcRange(const SolvedResult& result, bool init, bool end) {
             if (init) {
-                range = {result.rocket[0].flightData[0].pos.x,
-                         result.rocket[0].flightData[0].pos.x,
-                         result.rocket[0].flightData[0].pos.y,
-                         result.rocket[0].flightData[0].pos.y};
+                range = {result.rockets[0].flightData[0].pos.x,
+                         result.rockets[0].flightData[0].pos.x,
+                         result.rockets[0].flightData[0].pos.y,
+                         result.rockets[0].flightData[0].pos.y};
             }
 
-            for (const auto& r : result.rocket) {
-                for (const auto& f : r.flightData) {
-                    if (range.xMin > f.pos.x)
-                        range.xMin = f.pos.x;
-                    if (range.xMax < f.pos.x)
-                        range.xMax = f.pos.x;
-                    if (range.yMin > f.pos.y)
-                        range.yMin = f.pos.y;
-                    if (range.yMax < f.pos.y)
-                        range.yMax = f.pos.y;
+            for (const auto& rocket : result.rockets) {
+                for (const auto& body : rocket.flightData) {
+                    if (range.xMin > body.pos.x) {
+                        range.xMin = body.pos.x;
+                    }
+                    if (range.xMax < body.pos.x) {
+                        range.xMax = body.pos.x;
+                    }
+                    if (range.yMin > body.pos.y) {
+                        range.yMin = body.pos.y;
+                    }
+                    if (range.yMax < body.pos.y) {
+                        range.yMax = body.pos.y;
+                    }
                 }
             }
 
@@ -218,13 +222,13 @@ namespace Gnuplot {
     void Plot(const SolvedResult& result) {
         Internal::PlotLaunchPoint();
 
-        plotCount = result.rocket.size();
+        plotCount = result.rockets.size();
 
         for (size_t i = 0; i < plotCount; i++) {
             const std::string fname = "result/" + dirname + "/data/result" + std::to_string(i) + ".txt";
             std::ofstream file(fname.c_str());
-            for (const auto& f : result.rocket[i].flightData) {
-                file << f.pos.x << " " << f.pos.y << " " << f.pos.z << std::endl;
+            for (const auto& body : result.rockets[i].flightData) {
+                file << body.pos.x << " " << body.pos.y << " " << body.pos.z << std::endl;
             }
             file.close();
         }
@@ -238,7 +242,7 @@ namespace Gnuplot {
     void Plot(const std::vector<SolvedResult>& result) {
         Internal::PlotLaunchPoint();
 
-        rocketCount = result[0].rocket.size();
+        rocketCount = result[0].rockets.size();
 
         for (size_t i = 0; i < result.size(); i++) {
             if (result[i].windDirection == 0.0) {
@@ -259,13 +263,13 @@ namespace Gnuplot {
 
                 for (size_t k = 0; k < directions; k++) {  // directions
                     const size_t n     = directions * i + k;
-                    const Vector3D pos = result[n].rocket[j].flightData[0].pos;
+                    const Vector3D pos = result[n].rockets[j].flightData[0].pos;
                     file << pos.x << " " << pos.y << std::endl;
                 }
 
                 // add initial point to be circle
                 const size_t ini = directions * i;
-                file << result[ini].rocket[j].flightData[0].pos.x << " " << result[ini].rocket[j].flightData[0].pos.y
+                file << result[ini].rockets[j].flightData[0].pos.x << " " << result[ini].rockets[j].flightData[0].pos.y
                      << std::endl;
 
                 file.close();

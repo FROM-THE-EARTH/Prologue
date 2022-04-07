@@ -6,7 +6,7 @@
 
 // Parameters of the part under simulation
 // subscript "_b" represent the variable is based on body coordinate
-struct Rocket {
+struct Body {
     /*========================delta exists=========================*/
     double mass;        // mass [kg]
     double reflLength;  // length from nose to center of mass[m]
@@ -33,4 +33,12 @@ struct Rocket {
     // calculated
     Vector3D airSpeed_b;  // [m/s]
     double attackAngle;   // [rad]
+};
+
+struct Rocket {
+    // rocket1, rocket2, rocket3, ...
+    std::vector<Body> bodies;
+
+    double timeFromLaunch = 0.0;  // [s]
+    bool launchClear      = false;
 };

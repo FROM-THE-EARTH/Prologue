@@ -21,10 +21,6 @@ bool ScatterSimulator::simulate() {
         return false;
     }
 
-    for (auto& r : m_result) {
-        eraseNotLandingPoint(&r);
-    }
-
     return true;
 }
 
@@ -128,23 +124,30 @@ void ScatterSimulator::saveResult() {
     ResultSaver::SaveScatter(dir, m_result);
 }
 
+void ScatterSimulator::plotToGnuplot() {
+    auto resultForPlot = m_result;
+    for (auto& r : resultForPlot) {
+        eraseNotLandingPoint(&r);
+    }
+    Gnuplot::Plot(resultForPlot);
+}
+
 SolvedResult ScatterSimulator::formatResultForScatter(const SolvedResult& result) {
     SolvedResult res = result;
 
-    for (auto& r : res.rocket) {
-        Rocket landing = r.flightData[r.flightData.size() - 1];
-        const auto v   = std::vector<Rocket>(1, landing);
-        r.flightData   = v;
+    for (auto& rocket : res.rockets) {
+        const Body landedBody = rocket.flightData[rocket.flightData.size() - 1];
+        rocket.flightData     = std::vector<Body>(1, landedBody);
     }
 
     return res;
 }
 
 void ScatterSimulator::eraseNotLandingPoint(SolvedResult* result) {
-    const int size = static_cast<int>(result->rocket.size());
+    const int size = static_cast<int>(result->rockets.size());
     for (int i = size - 1; i >= 0; i--) {
-        if (result->rocket[i].flightData[0].pos.z != 0.0) {
-            result->rocket.erase(result->rocket.begin() + i);
+        if (result->rockets[i].flightData[0].pos.z != 0.0) {
+            result->rockets.erase(result->rockets.begin() + i);
         }
     }
 }
