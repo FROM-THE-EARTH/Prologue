@@ -24,7 +24,8 @@ bool ScatterSimulator::simulate() {
     return true;
 }
 
-void ScatterSimulator::solve(double windSpeed, double windDir, ResultRocket* result, bool* finish, bool* error) {
+void ScatterSimulator::solve(
+    double windSpeed, double windDir, std::shared_ptr<SimuResult>& result, bool* finish, bool* error) {
     Solver solver(
         m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
@@ -32,9 +33,8 @@ void ScatterSimulator::solve(double windSpeed, double windDir, ResultRocket* res
         return;
     }
 
-    *result = solver.getResult();
-    result->organize(m_mapData);
-    *result = formatResultForScatter(*result);
+    result = solver.getResult();
+    result->organize();
     *finish = true;
 }
 
@@ -48,10 +48,7 @@ bool ScatterSimulator::singleThreadSimulation() {
         }
 
         auto result = solver.getResult();
-        result.organize(m_mapData);
-
-        result = formatResultForScatter(result);
-        m_result.push_back(result);
+        result->organize();
 
         if (!updateWindCondition()) {
             break;
@@ -69,15 +66,20 @@ bool ScatterSimulator::multiThreadSimulation() {
     while (!finish) {
         bool e = false;
 
-        ResultRocket results[threadCount];
+        std::shared_ptr<SimuResult> results[threadCount];
         std::thread threads[threadCount];
         bool finished[threadCount] = {false};
         bool error[threadCount]    = {false};
 
         simulated = 1;
 
-        threads[0] = std::thread(
-            &ScatterSimulator::solve, this, m_windSpeed, m_windDirection, &results[0], &finished[0], &error[0]);
+        threads[0] = std::thread(&ScatterSimulator::solve,
+                                 this,
+                                 m_windSpeed,
+                                 m_windDirection,
+                                 std::ref(results[0]),
+                                 &finished[0],
+                                 &error[0]);
         threads[0].detach();
         for (size_t i = 1; i < threadCount; i++) {
             finish = !updateWindCondition();
@@ -85,8 +87,13 @@ bool ScatterSimulator::multiThreadSimulation() {
                 break;
             }
 
-            threads[i] = std::thread(
-                &ScatterSimulator::solve, this, m_windSpeed, m_windDirection, &results[i], &finished[i], &error[i]);
+            threads[i] = std::thread(&ScatterSimulator::solve,
+                                     this,
+                                     m_windSpeed,
+                                     m_windDirection,
+                                     std::ref(results[i]),
+                                     &finished[i],
+                                     &error[i]);
             threads[i].detach();
             simulated++;
         }
@@ -110,7 +117,7 @@ bool ScatterSimulator::multiThreadSimulation() {
         }
 
         for (size_t i = 0; i < simulated; i++) {
-            m_result.push_back(results[i]);
+            m_result.push_back(std::shared_ptr<SimuResult>(results[i]));
         }
 
         finish = !updateWindCondition();
@@ -127,27 +134,22 @@ void ScatterSimulator::saveResult() {
 void ScatterSimulator::plotToGnuplot() {
     auto resultForPlot = m_result;
     for (auto& r : resultForPlot) {
-        eraseNotLandingPoint(&r);
+        formatResultForScatter(r);
+        eraseNotLandingPoint(r);
     }
     Gnuplot::Plot(resultForPlot);
 }
 
-ResultRocket ScatterSimulator::formatResultForScatter(const ResultRocket& result) {
-    ResultRocket res = result;
-
-    for (auto& body : res.bodies) {
-        const Body landedBody = body.timeSeriesBodies[body.timeSeriesBodies.size() - 1];
-        body.timeSeriesBodies = std::vector<Body>(1, landedBody);
-    }
-
-    return res;
+void ScatterSimulator::formatResultForScatter(std::shared_ptr<SimuResult>& result) {
+    const Rocket lastRocket   = result->timeSeriesRockets[result->timeSeriesRockets.size() - 1];
+    result->timeSeriesRockets = std::vector<Rocket>(1, lastRocket);
 }
 
-void ScatterSimulator::eraseNotLandingPoint(ResultRocket* result) {
-    const int size = static_cast<int>(result->bodies.size());
+void ScatterSimulator::eraseNotLandingPoint(std::shared_ptr<SimuResult>& result) {
+    const int size = static_cast<int>(result->timeSeriesRockets[0].bodies.size());
     for (int i = size - 1; i >= 0; i--) {
-        if (result->bodies[i].timeSeriesBodies[0].pos.z != 0.0) {
-            result->bodies.erase(result->bodies.begin() + i);
+        if (result->timeSeriesRockets[0].bodies[i].pos.z != 0.0) {
+            result->timeSeriesRockets[0].bodies.erase(result->timeSeriesRockets[0].bodies.begin() + i);
         }
     }
 }

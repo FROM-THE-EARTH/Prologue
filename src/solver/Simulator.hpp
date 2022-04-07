@@ -31,7 +31,6 @@ protected:
 
     // result
     std::string m_outputDirName;
-    ResultRocket m_detailResult;
 
 public:
     virtual ~Simulator() {}

@@ -1,16 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
-struct ResultRocket;
+struct SimuResult;
 
 namespace ResultSaver {
-    void SaveScatter(const std::string& dir, const std::vector<ResultRocket>& result);
+    void SaveScatter(const std::string& dir, const std::vector<std::shared_ptr<SimuResult>>& result);
 
-    void SaveScatterAll(const std::string& dir, const std::vector<ResultRocket>& result);
-
-    void SaveDetail(const std::string& dir, const ResultRocket& result);
-
-    void SaveDetailAll(const std::string& dir, const ResultRocket& result);
+    void SaveDetail(const std::string& dir, const std::shared_ptr<SimuResult>& result);
 }

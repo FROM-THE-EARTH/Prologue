@@ -11,7 +11,7 @@ bool DetailSimulator::simulate() {
     }
 
     m_result = solver.getResult();
-    m_result.organize(m_mapData);
+    m_result->organize();
 
     return true;
 }
@@ -19,5 +19,4 @@ bool DetailSimulator::simulate() {
 void DetailSimulator::saveResult() {
     const std::string dir = "result/" + m_outputDirName + "/";
     ResultSaver::SaveDetail(dir, m_result);
-    ResultSaver::SaveDetailAll(dir, m_result);
 }

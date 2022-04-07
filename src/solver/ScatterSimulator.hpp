@@ -5,7 +5,7 @@
 
 class ScatterSimulator : public Simulator {
 private:
-    std::vector<ResultRocket> m_result;
+    std::vector<std::shared_ptr<SimuResult>> m_result;
 
 public:
     ScatterSimulator(const std::string& jsonFile, double dt) : Simulator(jsonFile, SimulationMode::Scatter, dt) {}
@@ -17,15 +17,15 @@ public:
     void plotToGnuplot() override;
 
 private:
-    void solve(double windSpeed, double windDir, ResultRocket* result, bool* finish, bool* error);
+    void solve(double windSpeed, double windDir, std::shared_ptr<SimuResult>& result, bool* finish, bool* error);
 
     bool singleThreadSimulation();
 
     bool multiThreadSimulation();
 
-    ResultRocket formatResultForScatter(const ResultRocket& result);
+    void formatResultForScatter(std::shared_ptr<SimuResult>& result);
 
-    void eraseNotLandingPoint(ResultRocket* result);
+    void eraseNotLandingPoint(std::shared_ptr<SimuResult>& result);
 
     bool updateWindCondition();
 };

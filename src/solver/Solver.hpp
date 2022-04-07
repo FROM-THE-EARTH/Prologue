@@ -12,51 +12,45 @@ enum class RocketType : int { Single = 1, Multi };
 
 enum class DetachType : int { BurningFinished = 1, Time, SyncPara, DoNotDeatch };
 
-struct ResultBody {
-    // all flight data
-    std::vector<Body> timeSeriesBodies;
+struct SimuResult {
+    // condition
+    const double windSpeed     = 0.0;
+    const double windDirection = 0.0;
 
-    // max, min values
+    // spec
+    const RocketSpec rocketSpec;
+
+    // data
+    std::vector<Rocket> timeSeriesRockets;
+
+    // min, max values
     double maxHeight      = 0.0;
     double maxVelocity    = 0.0;
     double maxAttackAngle = 0.0;
     double maxNormalForce = 0.0;
 
     // special values
-    double detectPeakTime     = 0.0;
-    double timeAtParaOpened   = 0.0;
-    double heightAtParaOpened = 0.0;
-    double airVelAtParaOpened = 0.0;
-    double terminalVelocity   = 0.0;
-    double terminalTime       = 0.0;
-
-    // pos
-    double lenFromLaunchPoint = 0.0;
-    double latitude           = 0.0;
-    double longitude          = 0.0;
-
-    ResultBody() {
-        timeSeriesBodies.reserve(80000);
-    }
-};
-
-struct ResultRocket {
-    std::vector<ResultBody> bodies = std::vector<ResultBody>(1);
-
-    // special values
-    double windSpeed           = 0.0;
-    double windDirection       = 0.0;
     double launchClearVelocity = 0.0;
+    double detectPeakTime      = 0.0;
+    double timeAtParaOpened    = 0.0;
+    double heightAtParaOpened  = 0.0;
+    double airVelAtParaOpened  = 0.0;
+    double terminalVelocity    = 0.0;
+    double terminalTime        = 0.0;
 
-    void organize(MapData map) {
-        for (auto& body : bodies) {
-            auto& lastBody = body.timeSeriesBodies[body.timeSeriesBodies.size() - 1];
-            if (lastBody.pos.z < 0) {
-                lastBody.pos.z = 0.0;  // landing point
+    SimuResult(double _windSpeed, double _windDirection, const RocketSpec& _rocketSpec) :
+        windSpeed(_windSpeed), windDirection(_windDirection), rocketSpec(_rocketSpec) {
+        timeSeriesRockets.reserve(80000);
+    }
+
+    void organize() {
+        for (auto& rocket : timeSeriesRockets) {
+            for (auto& body : rocket.bodies) {
+                // fix z
+                if (body.pos.z < 0) {
+                    body.pos.z = 0.0;
+                }
             }
-            body.lenFromLaunchPoint = lastBody.pos.length();
-            body.latitude           = map.coordinate.latitudeAt(lastBody.pos.y);
-            body.longitude          = map.coordinate.longitudeAt(lastBody.pos.x);
         }
     }
 };
@@ -90,7 +84,7 @@ class Solver {
     size_t m_detachCount      = 0;
 
     // result
-    ResultRocket m_result;
+    std::shared_ptr<SimuResult> m_result = nullptr;
 
 public:
     Solver(double dt,
@@ -118,7 +112,7 @@ public:
 
     bool run(double windSpeed, double windDirection);
 
-    ResultRocket getResult() const {
+    std::shared_ptr<SimuResult> getResult() const {
         return m_result;
     }
 

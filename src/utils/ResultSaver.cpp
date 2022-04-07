@@ -14,29 +14,9 @@
 #endif
 
 namespace ResultSaver {
-
-    std::ofstream f;
-    const char comma            = ',';
-    const std::string headers[] = {"wind_speed",
-                                   "wind_dir",
-                                   "launch_vel",
-                                   "max_height",
-                                   "max_height_time",
-                                   "max_vel",
-                                   "time_paraopen",
-                                   "height_paraopen",
-                                   "airspeed_paraopen",
-                                   "terminal_vel",
-                                   "terminal_time",
-                                   "max_attack_angle",
-                                   "max_normal_force",
-                                   "distance_from_launch",
-                                   "latitude longitude"};
-    const int headerNum         = sizeof(headers) / sizeof(*headers);
-    const int dataStartingRow   = 6;
+    const char comma = ',';
 
     namespace Internal {
-
         std::string DoubleToString(double d, int precision) {
             std::stringstream stream;
             stream << std::fixed << std::setprecision(precision) << d;
@@ -55,166 +35,130 @@ namespace ResultSaver {
             return str + comma;
         }
 
-        void OpenFile(const std::string& filepath, size_t rows) {
-            f.open(filepath);
-
-            if (!f) {
-                const std::string s = "Failed to open : " + std::string(filepath);
-                CommandLine::PrintInfo(PrintInfoType::Error, s.c_str());
-                return;
-            }
-
-            // unit description
-            f << "length=[m] | velocity=[m/s] | angle=[deg]\n";
-
-            // header
-            f << comma;
-            for (auto& h : headers) {
-                f << h << comma;
-            }
-            f << '\n';
-
-            // min
-            f << "min" << comma;
-            char column = 'B';
-            for (size_t i = 0; i < headerNum; i++) {
-                char range[16];
-                SPRINTF(range,
-                        16,
-                        "%c%d:%c%d",
-                        column,
-                        dataStartingRow,
-                        column,
-                        static_cast<int>(rows + dataStartingRow - 1));
-                char min[32] = "";
-                SPRINTF(min, 32, "=MIN(%s)", range);
-
-                column++;
-                f << min << comma;
-            }
-            f << '\n';
-
-            // max
-            f << "max" << comma;
-            column = 'B';
-            for (size_t i = 0; i < headerNum; i++) {
-                char range[16];
-                SPRINTF(range,
-                        16,
-                        "%c%d:%c%d",
-                        column,
-                        dataStartingRow,
-                        column,
-                        static_cast<int>(rows + dataStartingRow - 1));
-                char max[32] = "";
-                SPRINTF(max, 32, "=MAX(%s)", range);
-
-                column++;
-                f << max << comma;
-            }
-            f << '\n';
-
-            // empty row
-            f << '\n';
+        std::string BoolStr(bool b) {
+            return b ? "true" : "false";
         }
 
-        void WriteLine(const ResultRocket& result, size_t bodyIndex) {
-            const std::string latitude_longitude = Internal::DoubleToString(result.bodies[bodyIndex].latitude, 8) + "N "
-                                                   + Internal::DoubleToString(result.bodies[bodyIndex].longitude, 8)
-                                                   + "E";
+        void WriteTimeSeries(std::vector<std::ofstream>& files, const SimuResult& result) {
+            const size_t bodyCount                 = files.size();
+            const std::vector<std::string> headers = {"time_from_launch[s]",
+                                                      "elapsed_time[s]",
+                                                      "launch_clear?",
+                                                      "detect_peak?",
+                                                      "parachute_open?",
+                                                      "height[m]",
+                                                      "velocity[m/s]",
+                                                      "airspeed[m/s]",
+                                                      "attack_angle[deg]",
+                                                      "distance_from_launch_point[m]",
+                                                      "latitude",
+                                                      "longitude",
+                                                      "mass[kg]",
+                                                      "body length[m]",
+                                                      "Cp_from_nose[m]",
+                                                      "Cd",
+                                                      "Cna"};
 
-            f << comma << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
-              << Internal::WithComma(result.launchClearVelocity)
-              << Internal::WithComma(result.bodies[bodyIndex].maxHeight)
-              << Internal::WithComma(result.bodies[bodyIndex].detectPeakTime)
-              << Internal::WithComma(result.bodies[bodyIndex].maxVelocity)
-              << Internal::WithComma(result.bodies[bodyIndex].timeAtParaOpened)
-              << Internal::WithComma(result.bodies[bodyIndex].heightAtParaOpened)
-              << Internal::WithComma(result.bodies[bodyIndex].airVelAtParaOpened)
-              << Internal::WithComma(result.bodies[bodyIndex].terminalVelocity)
-              << Internal::WithComma(result.bodies[bodyIndex].terminalTime)
-              << Internal::WithComma(result.bodies[bodyIndex].maxAttackAngle)
-              << Internal::WithComma(result.bodies[bodyIndex].maxNormalForce)
-              << Internal::WithComma(result.bodies[bodyIndex].lenFromLaunchPoint) << latitude_longitude;
-            f << '\n';
-        }
-
-        void Close() {
-            f.close();
-        }
-
-        void WriteAll(const std::string& filepath, const std::vector<Body>& timeSeriesBodies) {
-            std::ofstream file(filepath);
-
-            file << Internal::WithComma("Time[s]") << Internal::WithComma("Height[m]")
-                 << Internal::WithComma("Velocity[m/s]") << Internal::WithComma("AirSpeed[m/s]")
-                 << Internal::WithComma("AttackAngle[deg]");
-            file << '\n';
-
-            for (const auto& body : timeSeriesBodies) {
-                file << Internal::WithComma(body.elapsedTime) << Internal::WithComma(body.pos.z)
-                     << Internal::WithComma(body.velocity.length()) << Internal::WithComma(body.airSpeed_b.length())
-                     << Internal::WithComma(body.attackAngle * 180. / Constant::PI);
-                file << '\n';
+            for (auto& file : files) {
+                for (const auto& head : headers) {
+                    file << Internal::WithComma(head);
+                }
+                file << "\n";
             }
+
+            for (const auto& rocket : result.timeSeriesRockets) {
+                for (size_t i = 0; i < bodyCount; i++) {
+                    auto& body = rocket.bodies[i];
+                    files[i] << Internal::WithComma(rocket.timeFromLaunch) << Internal::WithComma(body.elapsedTime);
+
+                    // status
+                    files[i] << Internal::WithComma(Internal::BoolStr(rocket.launchClear))
+                             << Internal::WithComma(Internal::BoolStr(body.detectPeak))
+                             << Internal::WithComma(Internal::BoolStr(body.parachuteOpened));
+
+                    // important values
+                    files[i] << Internal::WithComma(body.pos.z) << Internal::WithComma(body.velocity.length())
+                             << Internal::WithComma(body.airSpeed_b.length()) << Internal::WithComma(body.attackAngle)
+                             << Internal::WithComma(body.lenFromLaunchPoint) << Internal::WithComma(body.latitude)
+                             << Internal::WithComma(body.longitude);
+
+                    // param
+                    files[i] << Internal::WithComma(body.mass) << Internal::WithComma(body.reflLength);
+
+                    // aero
+                    files[i] << Internal::WithComma(body.aeroCoef.Cp) << Internal::WithComma(body.aeroCoef.Cd)
+                             << Internal::WithComma(body.aeroCoef.Cna);
+
+                    files[i] << "\n";
+                }
+            }
+        }
+    }
+
+    void SaveScatter(const std::string& dir, const std::vector<std::shared_ptr<SimuResult>>& result) {
+        const std::vector<std::string> headers = {
+            "wind_speed[m/s]",
+            "wind_dir[deg]",
+            "launch_vel[m/s]",
+            "max_height[m]",
+            "max_height_time[s]",
+            "max_vel[m/s]",
+            "paraopen_time[s]",
+            "paraopen_height[m]",
+            "paraopen_airspeed[m/s]",
+            "terminal_vel[m/s]",
+            "terminal_time[s]",
+            "max_attack_angle[rad]",
+            "max_normal_force[N]",
+        };
+
+        std::ofstream file(dir + "summary.csv");
+        for (const auto& head : headers) {
+            file << Internal::WithComma(head);
+        }
+        file << "\n";
+
+        for (const auto& r : result) {
+            file << Internal::WithComma(r->windSpeed) << Internal::WithComma(r->windDirection)
+                 << Internal::WithComma(r->launchClearVelocity) << Internal::WithComma(r->maxHeight)
+                 << Internal::WithComma(r->detectPeakTime) << Internal::WithComma(r->maxVelocity)
+                 << Internal::WithComma(r->timeAtParaOpened) << Internal::WithComma(r->heightAtParaOpened)
+                 << Internal::WithComma(r->airVelAtParaOpened) << Internal::WithComma(r->terminalVelocity)
+                 << Internal::WithComma(r->maxAttackAngle) << Internal::WithComma(r->maxNormalForce);
+            file << "\n";
+        }
+
+        file.close();
+    }
+
+    void SaveDetail(const std::string& dir, const std::shared_ptr<SimuResult>& result) {
+        // write rocket spec and contidions(wind speed, wind direction)
+        {
+            std::ofstream file(dir + "contidion.csv");
+
+            file << Internal::WithComma("wind_speed[m/s]") << Internal::DoubleToString(result->windSpeed, 2) << "\n";
+            file << Internal::WithComma("wind_direction[deg]") << Internal::DoubleToString(result->windDirection, 2)
+                 << "\n";
 
             file.close();
         }
-    }
 
-    void SaveScatter(const std::string& dir, const std::vector<ResultRocket>& result) {
-        // Write special values
-        for (size_t i = 0; i < result[0].bodies.size(); i++) {
-            const std::string fileName = "summary_rocket" + std::to_string(i + 1);
-            const std::string path     = dir + fileName + ".csv";
+        // write time-series data of all bodies
+        {
+            const size_t bodyCount = result->timeSeriesRockets[result->timeSeriesRockets.size() - 1].bodies.size();
 
-            Internal::OpenFile(path, result.size());
-
-            for (auto& res : result) {
-                Internal::WriteLine(res, i);
-            }
-
-            Internal::Close();
-        }
-    }
-
-    void SaveDetail(const std::string& dir, const ResultRocket& result) {
-        // Write special values
-        for (size_t i = 0; i < result.bodies.size(); i++) {
-            const std::string fileName = "summary_rocket" + std::to_string(i + 1);
-            const std::string path     = dir + fileName + ".csv";
-
-            Internal::OpenFile(path, 1);
-
-            Internal::WriteLine(result, i);
-
-            Internal::Close();
-        }
-    }
-
-    void SaveScatterAll(const std::string& dir, const std::vector<ResultRocket>& result) {
-        for (const auto& r : result) {
-            const std::string windCondition =
-                "_" + Internal::DoubleToString(r.windSpeed, 1) + "-" + Internal::DoubleToString(r.windDirection, 1);
-
-            for (size_t i = 0; i < r.bodies.size(); i++) {
-                const std::string fileName = "detail_rocket" + std::to_string(i + 1) + windCondition;
+            std::vector<std::ofstream> files(bodyCount);
+            for (size_t i = 0; i < bodyCount; i++) {
+                const std::string fileName = "detail_body" + std::to_string(i + 1);
                 const std::string path     = dir + fileName + ".csv";
-
-                Internal::WriteAll(path, r.bodies[i].timeSeriesBodies);
+                files[i].open(path);
             }
-        }
-    }
 
-    void SaveDetailAll(const std::string& dir, const ResultRocket& result) {
-        const std::string windCondition = "[" + Internal::DoubleToString(result.windSpeed, 1) + "-"
-                                          + Internal::DoubleToString(result.windDirection, 1) + "]";
+            Internal::WriteTimeSeries(files, *result);
 
-        for (size_t i = 0; i < result.bodies.size(); i++) {
-            const std::string fileName = "detail_rocket" + std::to_string(i + 1) + windCondition;
-            const std::string path     = dir + fileName + ".csv";
-
-            Internal::WriteAll(path, result.bodies[i].timeSeriesBodies);
+            for (auto& file : files) {
+                file.close();
+            }
         }
     }
 }

@@ -147,27 +147,27 @@ namespace Gnuplot {
             fprintf(p, "%s", command.c_str());
         }
 
-        void CalcRange(const ResultRocket& result, bool init, bool end) {
+        void CalcRange(const SimuResult& result, bool init, bool end) {
             if (init) {
-                range = {result.bodies[0].timeSeriesBodies[0].pos.x,
-                         result.bodies[0].timeSeriesBodies[0].pos.x,
-                         result.bodies[0].timeSeriesBodies[0].pos.y,
-                         result.bodies[0].timeSeriesBodies[0].pos.y};
+                range = {result.timeSeriesRockets[0].bodies[0].pos.x,
+                         result.timeSeriesRockets[0].bodies[0].pos.x,
+                         result.timeSeriesRockets[0].bodies[0].pos.y,
+                         result.timeSeriesRockets[0].bodies[0].pos.y};
             }
 
-            for (const auto& body : result.bodies) {
-                for (const auto& b : body.timeSeriesBodies) {
-                    if (range.xMin > b.pos.x) {
-                        range.xMin = b.pos.x;
+            for (const auto& rocket : result.timeSeriesRockets) {
+                for (const auto& body : rocket.bodies) {
+                    if (range.xMin > body.pos.x) {
+                        range.xMin = body.pos.x;
                     }
-                    if (range.xMax < b.pos.x) {
-                        range.xMax = b.pos.x;
+                    if (range.xMax < body.pos.x) {
+                        range.xMax = body.pos.x;
                     }
-                    if (range.yMin > b.pos.y) {
-                        range.yMin = b.pos.y;
+                    if (range.yMin > body.pos.y) {
+                        range.yMin = body.pos.y;
                     }
-                    if (range.yMax < b.pos.y) {
-                        range.yMax = b.pos.y;
+                    if (range.yMax < body.pos.y) {
+                        range.yMax = body.pos.y;
                     }
                 }
             }
@@ -219,36 +219,46 @@ namespace Gnuplot {
         }
     }
 
-    void Plot(const ResultRocket& result) {
+    void Plot(const std::shared_ptr<SimuResult>& result) {
         Internal::PlotLaunchPoint();
 
-        plotCount = result.bodies.size();
+        plotCount = result->timeSeriesRockets[result->timeSeriesRockets.size() - 1].bodies.size();
 
+        // open output file
+        std::vector<std::ofstream> files(plotCount);
         for (size_t i = 0; i < plotCount; i++) {
-            const std::string fname = "result/" + dirname + "/data/result" + std::to_string(i) + ".txt";
-            std::ofstream file(fname.c_str());
-            for (const auto& body : result.bodies[i].timeSeriesBodies) {
-                file << body.pos.x << " " << body.pos.y << " " << body.pos.z << std::endl;
+            files[i].open("result/" + dirname + "/data/result" + std::to_string(i) + ".txt");
+        }
+
+        // write
+        for (const auto& rocket : result->timeSeriesRockets) {
+            for (size_t i = 0; i < plotCount; i++) {
+                files[i] << rocket.bodies[i].pos.x << " " << rocket.bodies[i].pos.y << " " << rocket.bodies[i].pos.z
+                         << std::endl;
             }
+        }
+
+        // close files
+        for (auto& file : files) {
             file.close();
         }
 
-        windSpeed     = result.windSpeed;
-        windDirection = result.windDirection;
+        windSpeed     = result->windSpeed;
+        windDirection = result->windDirection;
 
         dimension = PlotDimension::Dimension3D;
     }
 
-    void Plot(const std::vector<ResultRocket>& result) {
+    void Plot(const std::vector<std::shared_ptr<SimuResult>>& result) {
         Internal::PlotLaunchPoint();
 
-        bodyCount = result[0].bodies.size();
+        bodyCount = result[0]->timeSeriesRockets[result[0]->timeSeriesRockets.size() - 1].bodies.size();
 
         for (size_t i = 0; i < result.size(); i++) {
-            if (result[i].windDirection == 0.0) {
+            if (result[i]->windDirection == 0.0) {
                 plotCount++;
             }
-            Internal::CalcRange(result[i], i == 0, i == result.size() - 1);
+            Internal::CalcRange(*result[i], i == 0, i == result.size() - 1);
         }
 
         const size_t directions = result.size() / plotCount;
@@ -263,14 +273,14 @@ namespace Gnuplot {
 
                 for (size_t k = 0; k < directions; k++) {  // directions
                     const size_t n     = directions * i + k;
-                    const Vector3D pos = result[n].bodies[j].timeSeriesBodies[0].pos;
+                    const Vector3D pos = result[n]->timeSeriesRockets[0].bodies[j].pos;
                     file << pos.x << " " << pos.y << std::endl;
                 }
 
                 // add initial point to be circle
                 const size_t ini = directions * i;
-                file << result[ini].bodies[j].timeSeriesBodies[0].pos.x << " "
-                     << result[ini].bodies[j].timeSeriesBodies[0].pos.y << std::endl;
+                file << result[ini]->timeSeriesRockets[0].bodies[j].pos.x << " "
+                     << result[ini]->timeSeriesRockets[0].bodies[j].pos.y << std::endl;
 
                 file.close();
             }

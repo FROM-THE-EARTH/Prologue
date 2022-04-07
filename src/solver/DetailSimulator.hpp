@@ -5,7 +5,7 @@
 
 class DetailSimulator : public Simulator {
 private:
-    ResultRocket m_result;
+    std::shared_ptr<SimuResult> m_result;
 
 public:
     DetailSimulator(const std::string& jsonFile, double dt) : Simulator(jsonFile, SimulationMode::Detail, dt) {}
