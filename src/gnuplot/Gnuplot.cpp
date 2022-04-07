@@ -41,8 +41,8 @@ namespace Gnuplot {
     MapData mapData;
     PlotDimension dimension;
     GnuplotRange range;
-    size_t rocketCount = 0;
-    size_t plotCount   = 0;  // plot group
+    size_t bodyCount = 0;
+    size_t plotCount = 0;  // plot group
     double windSpeed = 0.0, windDirection = 0.0;
 
     namespace Internal {
@@ -99,9 +99,9 @@ namespace Gnuplot {
 
             for (size_t i = 0; i < plotCount; i++) {
                 command += "\"data/result" + std::to_string(i) + ".txt\" ";
-                size_t k = i / rocketCount;
+                size_t k = i / bodyCount;
                 if (k == 0) {
-                    command += "title \"Rocket No." + std::to_string(i % rocketCount + 1) + "\" ";
+                    command += "title \"Body No." + std::to_string(i % bodyCount + 1) + "\" ";
                 } else {
                     command += "notitle ";
                 }
@@ -109,7 +109,7 @@ namespace Gnuplot {
                 command += "lines ";
                 command += "lw 2 ";
 
-                if (i % rocketCount == 0) {
+                if (i % bodyCount == 0) {
                     command += "lc rgb \"red\"";
                 } else {
                     command += "lc rgb \"blue\"";
@@ -134,7 +134,7 @@ namespace Gnuplot {
 
             for (size_t i = 0; i < plotCount; i++) {
                 command += "\"data/result" + std::to_string(i) + ".txt\" ";
-                command += "title \"Rocket No." + std::to_string(i + 1) + "\" ";
+                command += "title \"Body No." + std::to_string(i + 1) + "\" ";
                 command += "with ";
                 command += "lines ";
                 command += "lw 2";
@@ -147,27 +147,27 @@ namespace Gnuplot {
             fprintf(p, "%s", command.c_str());
         }
 
-        void CalcRange(const SolvedResult& result, bool init, bool end) {
+        void CalcRange(const ResultRocket& result, bool init, bool end) {
             if (init) {
-                range = {result.rockets[0].flightData[0].pos.x,
-                         result.rockets[0].flightData[0].pos.x,
-                         result.rockets[0].flightData[0].pos.y,
-                         result.rockets[0].flightData[0].pos.y};
+                range = {result.bodies[0].timeSeriesBodies[0].pos.x,
+                         result.bodies[0].timeSeriesBodies[0].pos.x,
+                         result.bodies[0].timeSeriesBodies[0].pos.y,
+                         result.bodies[0].timeSeriesBodies[0].pos.y};
             }
 
-            for (const auto& rocket : result.rockets) {
-                for (const auto& body : rocket.flightData) {
-                    if (range.xMin > body.pos.x) {
-                        range.xMin = body.pos.x;
+            for (const auto& body : result.bodies) {
+                for (const auto& b : body.timeSeriesBodies) {
+                    if (range.xMin > b.pos.x) {
+                        range.xMin = b.pos.x;
                     }
-                    if (range.xMax < body.pos.x) {
-                        range.xMax = body.pos.x;
+                    if (range.xMax < b.pos.x) {
+                        range.xMax = b.pos.x;
                     }
-                    if (range.yMin > body.pos.y) {
-                        range.yMin = body.pos.y;
+                    if (range.yMin > b.pos.y) {
+                        range.yMin = b.pos.y;
                     }
-                    if (range.yMax < body.pos.y) {
-                        range.yMax = body.pos.y;
+                    if (range.yMax < b.pos.y) {
+                        range.yMax = b.pos.y;
                     }
                 }
             }
@@ -219,15 +219,15 @@ namespace Gnuplot {
         }
     }
 
-    void Plot(const SolvedResult& result) {
+    void Plot(const ResultRocket& result) {
         Internal::PlotLaunchPoint();
 
-        plotCount = result.rockets.size();
+        plotCount = result.bodies.size();
 
         for (size_t i = 0; i < plotCount; i++) {
             const std::string fname = "result/" + dirname + "/data/result" + std::to_string(i) + ".txt";
             std::ofstream file(fname.c_str());
-            for (const auto& body : result.rockets[i].flightData) {
+            for (const auto& body : result.bodies[i].timeSeriesBodies) {
                 file << body.pos.x << " " << body.pos.y << " " << body.pos.z << std::endl;
             }
             file.close();
@@ -239,10 +239,10 @@ namespace Gnuplot {
         dimension = PlotDimension::Dimension3D;
     }
 
-    void Plot(const std::vector<SolvedResult>& result) {
+    void Plot(const std::vector<ResultRocket>& result) {
         Internal::PlotLaunchPoint();
 
-        rocketCount = result[0].rockets.size();
+        bodyCount = result[0].bodies.size();
 
         for (size_t i = 0; i < result.size(); i++) {
             if (result[i].windDirection == 0.0) {
@@ -253,24 +253,24 @@ namespace Gnuplot {
 
         const size_t directions = result.size() / plotCount;
         const size_t winds      = plotCount;
-        plotCount *= rocketCount;
+        plotCount *= bodyCount;
 
-        for (size_t i = 0; i < winds; i++) {            // winds
-            for (size_t j = 0; j < rocketCount; j++) {  // rockets
+        for (size_t i = 0; i < winds; i++) {          // winds
+            for (size_t j = 0; j < bodyCount; j++) {  // bodies
                 const std::string fname =
-                    "result/" + dirname + "/data/result" + std::to_string(i * rocketCount + j) + ".txt";
+                    "result/" + dirname + "/data/result" + std::to_string(i * bodyCount + j) + ".txt";
                 std::ofstream file(fname.c_str());
 
                 for (size_t k = 0; k < directions; k++) {  // directions
                     const size_t n     = directions * i + k;
-                    const Vector3D pos = result[n].rockets[j].flightData[0].pos;
+                    const Vector3D pos = result[n].bodies[j].timeSeriesBodies[0].pos;
                     file << pos.x << " " << pos.y << std::endl;
                 }
 
                 // add initial point to be circle
                 const size_t ini = directions * i;
-                file << result[ini].rockets[j].flightData[0].pos.x << " " << result[ini].rockets[j].flightData[0].pos.y
-                     << std::endl;
+                file << result[ini].bodies[j].timeSeriesBodies[0].pos.x << " "
+                     << result[ini].bodies[j].timeSeriesBodies[0].pos.y << std::endl;
 
                 file.close();
             }

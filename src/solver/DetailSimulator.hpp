@@ -5,7 +5,7 @@
 
 class DetailSimulator : public Simulator {
 private:
-    SolvedResult m_result;
+    ResultRocket m_result;
 
 public:
     DetailSimulator(const std::string& jsonFile, double dt) : Simulator(jsonFile, SimulationMode::Detail, dt) {}

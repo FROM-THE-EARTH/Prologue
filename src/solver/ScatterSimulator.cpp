@@ -24,7 +24,7 @@ bool ScatterSimulator::simulate() {
     return true;
 }
 
-void ScatterSimulator::solve(double windSpeed, double windDir, SolvedResult* result, bool* finish, bool* error) {
+void ScatterSimulator::solve(double windSpeed, double windDir, ResultRocket* result, bool* finish, bool* error) {
     Solver solver(
         m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
@@ -69,7 +69,7 @@ bool ScatterSimulator::multiThreadSimulation() {
     while (!finish) {
         bool e = false;
 
-        SolvedResult results[threadCount];
+        ResultRocket results[threadCount];
         std::thread threads[threadCount];
         bool finished[threadCount] = {false};
         bool error[threadCount]    = {false};
@@ -132,22 +132,22 @@ void ScatterSimulator::plotToGnuplot() {
     Gnuplot::Plot(resultForPlot);
 }
 
-SolvedResult ScatterSimulator::formatResultForScatter(const SolvedResult& result) {
-    SolvedResult res = result;
+ResultRocket ScatterSimulator::formatResultForScatter(const ResultRocket& result) {
+    ResultRocket res = result;
 
-    for (auto& rocket : res.rockets) {
-        const Body landedBody = rocket.flightData[rocket.flightData.size() - 1];
-        rocket.flightData     = std::vector<Body>(1, landedBody);
+    for (auto& body : res.bodies) {
+        const Body landedBody = body.timeSeriesBodies[body.timeSeriesBodies.size() - 1];
+        body.timeSeriesBodies = std::vector<Body>(1, landedBody);
     }
 
     return res;
 }
 
-void ScatterSimulator::eraseNotLandingPoint(SolvedResult* result) {
-    const int size = static_cast<int>(result->rockets.size());
+void ScatterSimulator::eraseNotLandingPoint(ResultRocket* result) {
+    const int size = static_cast<int>(result->bodies.size());
     for (int i = size - 1; i >= 0; i--) {
-        if (result->rockets[i].flightData[0].pos.z != 0.0) {
-            result->rockets.erase(result->rockets.begin() + i);
+        if (result->bodies[i].timeSeriesBodies[0].pos.z != 0.0) {
+            result->bodies.erase(result->bodies.begin() + i);
         }
     }
 }

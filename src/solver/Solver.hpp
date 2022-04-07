@@ -12,9 +12,9 @@ enum class RocketType : int { Single = 1, Multi };
 
 enum class DetachType : int { BurningFinished = 1, Time, SyncPara, DoNotDeatch };
 
-struct ResultOfEachRocket {
+struct ResultBody {
     // all flight data
-    std::vector<Body> flightData;
+    std::vector<Body> timeSeriesBodies;
 
     // max, min values
     double maxHeight      = 0.0;
@@ -35,13 +35,13 @@ struct ResultOfEachRocket {
     double latitude           = 0.0;
     double longitude          = 0.0;
 
-    ResultOfEachRocket() {
-        flightData.reserve(80000);
+    ResultBody() {
+        timeSeriesBodies.reserve(80000);
     }
 };
 
-struct SolvedResult {
-    std::vector<ResultOfEachRocket> rockets = std::vector<ResultOfEachRocket>(1);
+struct ResultRocket {
+    std::vector<ResultBody> bodies = std::vector<ResultBody>(1);
 
     // special values
     double windSpeed           = 0.0;
@@ -49,14 +49,14 @@ struct SolvedResult {
     double launchClearVelocity = 0.0;
 
     void organize(MapData map) {
-        for (auto& rocket : rockets) {
-            auto& lastBody = rocket.flightData[rocket.flightData.size() - 1];
+        for (auto& body : bodies) {
+            auto& lastBody = body.timeSeriesBodies[body.timeSeriesBodies.size() - 1];
             if (lastBody.pos.z < 0) {
                 lastBody.pos.z = 0.0;  // landing point
             }
-            rocket.lenFromLaunchPoint = lastBody.pos.length();
-            rocket.latitude           = map.coordinate.latitudeAt(lastBody.pos.y);
-            rocket.longitude          = map.coordinate.longitudeAt(lastBody.pos.x);
+            body.lenFromLaunchPoint = lastBody.pos.length();
+            body.latitude           = map.coordinate.latitudeAt(lastBody.pos.y);
+            body.longitude          = map.coordinate.longitudeAt(lastBody.pos.x);
         }
     }
 };
@@ -90,7 +90,7 @@ class Solver {
     size_t m_detachCount      = 0;
 
     // result
-    SolvedResult m_result;
+    ResultRocket m_result;
 
 public:
     Solver(double dt,
@@ -118,7 +118,7 @@ public:
 
     bool run(double windSpeed, double windDirection);
 
-    SolvedResult getResult() const {
+    ResultRocket getResult() const {
         return m_result;
     }
 

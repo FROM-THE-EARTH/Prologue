@@ -4,14 +4,14 @@
 #include <vector>
 
 struct MapData;
-struct SolvedResult;
+struct ResultRocket;
 
 namespace Gnuplot {
     void Initialize(const char* dirname, MapData mapData);
 
-    void Plot(const SolvedResult& result);
+    void Plot(const ResultRocket& result);
 
-    void Plot(const std::vector<SolvedResult>& result);
+    void Plot(const std::vector<ResultRocket>& result);
 
     void Show();
 

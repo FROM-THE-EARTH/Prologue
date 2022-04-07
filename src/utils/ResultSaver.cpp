@@ -118,24 +118,24 @@ namespace ResultSaver {
             f << '\n';
         }
 
-        void WriteLine(const SolvedResult& result, size_t rocketIndex) {
-            const std::string latitude_longitude =
-                Internal::DoubleToString(result.rockets[rocketIndex].latitude, 8) + "N "
-                + Internal::DoubleToString(result.rockets[rocketIndex].longitude, 8) + "E";
+        void WriteLine(const ResultRocket& result, size_t bodyIndex) {
+            const std::string latitude_longitude = Internal::DoubleToString(result.bodies[bodyIndex].latitude, 8) + "N "
+                                                   + Internal::DoubleToString(result.bodies[bodyIndex].longitude, 8)
+                                                   + "E";
 
             f << comma << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
               << Internal::WithComma(result.launchClearVelocity)
-              << Internal::WithComma(result.rockets[rocketIndex].maxHeight)
-              << Internal::WithComma(result.rockets[rocketIndex].detectPeakTime)
-              << Internal::WithComma(result.rockets[rocketIndex].maxVelocity)
-              << Internal::WithComma(result.rockets[rocketIndex].timeAtParaOpened)
-              << Internal::WithComma(result.rockets[rocketIndex].heightAtParaOpened)
-              << Internal::WithComma(result.rockets[rocketIndex].airVelAtParaOpened)
-              << Internal::WithComma(result.rockets[rocketIndex].terminalVelocity)
-              << Internal::WithComma(result.rockets[rocketIndex].terminalTime)
-              << Internal::WithComma(result.rockets[rocketIndex].maxAttackAngle)
-              << Internal::WithComma(result.rockets[rocketIndex].maxNormalForce)
-              << Internal::WithComma(result.rockets[rocketIndex].lenFromLaunchPoint) << latitude_longitude;
+              << Internal::WithComma(result.bodies[bodyIndex].maxHeight)
+              << Internal::WithComma(result.bodies[bodyIndex].detectPeakTime)
+              << Internal::WithComma(result.bodies[bodyIndex].maxVelocity)
+              << Internal::WithComma(result.bodies[bodyIndex].timeAtParaOpened)
+              << Internal::WithComma(result.bodies[bodyIndex].heightAtParaOpened)
+              << Internal::WithComma(result.bodies[bodyIndex].airVelAtParaOpened)
+              << Internal::WithComma(result.bodies[bodyIndex].terminalVelocity)
+              << Internal::WithComma(result.bodies[bodyIndex].terminalTime)
+              << Internal::WithComma(result.bodies[bodyIndex].maxAttackAngle)
+              << Internal::WithComma(result.bodies[bodyIndex].maxNormalForce)
+              << Internal::WithComma(result.bodies[bodyIndex].lenFromLaunchPoint) << latitude_longitude;
             f << '\n';
         }
 
@@ -143,7 +143,7 @@ namespace ResultSaver {
             f.close();
         }
 
-        void WriteAll(const std::string& filepath, const std::vector<Body>& flightData) {
+        void WriteAll(const std::string& filepath, const std::vector<Body>& timeSeriesBodies) {
             std::ofstream file(filepath);
 
             file << Internal::WithComma("Time[s]") << Internal::WithComma("Height[m]")
@@ -151,7 +151,7 @@ namespace ResultSaver {
                  << Internal::WithComma("AttackAngle[deg]");
             file << '\n';
 
-            for (const auto& body : flightData) {
+            for (const auto& body : timeSeriesBodies) {
                 file << Internal::WithComma(body.elapsedTime) << Internal::WithComma(body.pos.z)
                      << Internal::WithComma(body.velocity.length()) << Internal::WithComma(body.airSpeed_b.length())
                      << Internal::WithComma(body.attackAngle * 180. / Constant::PI);
@@ -162,9 +162,9 @@ namespace ResultSaver {
         }
     }
 
-    void SaveScatter(const std::string& dir, const std::vector<SolvedResult>& result) {
+    void SaveScatter(const std::string& dir, const std::vector<ResultRocket>& result) {
         // Write special values
-        for (size_t i = 0; i < result[0].rockets.size(); i++) {
+        for (size_t i = 0; i < result[0].bodies.size(); i++) {
             const std::string fileName = "summary_rocket" + std::to_string(i + 1);
             const std::string path     = dir + fileName + ".csv";
 
@@ -178,9 +178,9 @@ namespace ResultSaver {
         }
     }
 
-    void SaveDetail(const std::string& dir, const SolvedResult& result) {
+    void SaveDetail(const std::string& dir, const ResultRocket& result) {
         // Write special values
-        for (size_t i = 0; i < result.rockets.size(); i++) {
+        for (size_t i = 0; i < result.bodies.size(); i++) {
             const std::string fileName = "summary_rocket" + std::to_string(i + 1);
             const std::string path     = dir + fileName + ".csv";
 
@@ -192,29 +192,29 @@ namespace ResultSaver {
         }
     }
 
-    void SaveScatterAll(const std::string& dir, const std::vector<SolvedResult>& result) {
+    void SaveScatterAll(const std::string& dir, const std::vector<ResultRocket>& result) {
         for (const auto& r : result) {
             const std::string windCondition =
                 "_" + Internal::DoubleToString(r.windSpeed, 1) + "-" + Internal::DoubleToString(r.windDirection, 1);
 
-            for (size_t i = 0; i < r.rockets.size(); i++) {
+            for (size_t i = 0; i < r.bodies.size(); i++) {
                 const std::string fileName = "detail_rocket" + std::to_string(i + 1) + windCondition;
                 const std::string path     = dir + fileName + ".csv";
 
-                Internal::WriteAll(path, r.rockets[i].flightData);
+                Internal::WriteAll(path, r.bodies[i].timeSeriesBodies);
             }
         }
     }
 
-    void SaveDetailAll(const std::string& dir, const SolvedResult& result) {
+    void SaveDetailAll(const std::string& dir, const ResultRocket& result) {
         const std::string windCondition = "[" + Internal::DoubleToString(result.windSpeed, 1) + "-"
                                           + Internal::DoubleToString(result.windDirection, 1) + "]";
 
-        for (size_t i = 0; i < result.rockets.size(); i++) {
+        for (size_t i = 0; i < result.bodies.size(); i++) {
             const std::string fileName = "detail_rocket" + std::to_string(i + 1) + windCondition;
             const std::string path     = dir + fileName + ".csv";
 
-            Internal::WriteAll(path, result.rockets[i].flightData);
+            Internal::WriteAll(path, result.bodies[i].timeSeriesBodies);
         }
     }
 }
