@@ -96,6 +96,13 @@ bool Simulator::initialize() {
 
     m_outputDirName += "]";
 
+    if (m_simulationMode == SimulationMode::Detail) {
+        std::ostringstream out;
+        out.precision(2);
+        out << std::fixed << m_windSpeed << "ms, " << m_windDirection << "deg";
+        m_outputDirName += "[" + out.str() + "]";
+    }
+
     return true;
 }
 
