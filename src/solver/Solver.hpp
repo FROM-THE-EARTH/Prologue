@@ -23,21 +23,6 @@ struct SimuResult {
     // data
     std::vector<Rocket> timeSeriesRockets;
 
-    // min, max values
-    double maxHeight      = 0.0;
-    double maxVelocity    = 0.0;
-    double maxAttackAngle = 0.0;
-    double maxNormalForce = 0.0;
-
-    // special values
-    double launchClearVelocity = 0.0;
-    double detectPeakTime      = 0.0;
-    double timeAtParaOpened    = 0.0;
-    double heightAtParaOpened  = 0.0;
-    double airVelAtParaOpened  = 0.0;
-    double terminalVelocity    = 0.0;
-    double terminalTime        = 0.0;
-
     SimuResult(double _windSpeed, double _windDirection, const RocketSpec& _rocketSpec) :
         windSpeed(_windSpeed), windDirection(_windDirection), rocketSpec(_rocketSpec) {
         timeSeriesRockets.reserve(80000);
@@ -70,18 +55,18 @@ class Solver {
     Rocket m_rocket;
     Body m_bodyDelta;
 
-    // dynamics
-    WindModel* m_windModel = nullptr;
-    Vector3D m_force_b;
-    Vector3D m_moment_b;
-
     // env
+    std::unique_ptr<WindModel> m_windModel;
     Environment m_environment;
     MapData m_mapData;
 
     // stastus
     size_t m_currentBodyIndex = 0;  // index of the body being solved
     size_t m_detachCount      = 0;
+
+    // calc
+    double m_maxHeight      = 0;
+    double m_detectPeakTime = 0;
 
     // result
     std::shared_ptr<SimuResult> m_result = nullptr;
@@ -104,10 +89,6 @@ public:
         m_environment(env),
         m_mapData(mapData) {
         m_rocket.bodies.resize(m_rocketSpec.rocketParam.size());
-    }
-
-    ~Solver() {
-        delete m_windModel;
     }
 
     bool run(double windSpeed, double windDirection);

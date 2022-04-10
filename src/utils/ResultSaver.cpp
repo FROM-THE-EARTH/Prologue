@@ -119,13 +119,13 @@ namespace ResultSaver {
         file << "\n";
 
         for (const auto& r : result) {
-            file << Internal::WithComma(r->windSpeed) << Internal::WithComma(r->windDirection)
+            /*file << Internal::WithComma(r->windSpeed) << Internal::WithComma(r->windDirection)
                  << Internal::WithComma(r->launchClearVelocity) << Internal::WithComma(r->maxHeight)
                  << Internal::WithComma(r->detectPeakTime) << Internal::WithComma(r->maxVelocity)
                  << Internal::WithComma(r->timeAtParaOpened) << Internal::WithComma(r->heightAtParaOpened)
                  << Internal::WithComma(r->airVelAtParaOpened) << Internal::WithComma(r->terminalVelocity)
                  << Internal::WithComma(r->maxAttackAngle) << Internal::WithComma(r->maxNormalForce);
-            file << "\n";
+            file << "\n";*/
         }
 
         file.close();

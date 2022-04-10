@@ -22,6 +22,8 @@ struct Body {
     AeroCoefficient aeroCoef;
     double Cnp, Cny;
     double Cmqp, Cmqy;
+    Vector3D force_b;
+    Vector3D moment_b;
 
     // status
     double elapsedTime    = 0.0;  // [s]
