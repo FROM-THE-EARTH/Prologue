@@ -91,11 +91,7 @@ public:
         m_rocket.bodies.resize(m_rocketSpec.rocketParam.size());
     }
 
-    bool run(double windSpeed, double windDirection);
-
-    std::shared_ptr<SimuResult> getResult() const {
-        return m_result;
-    }
+    std::shared_ptr<SimuResult> solve(double windSpeed, double windDirection);
 
 private:
     void initializeRocket();

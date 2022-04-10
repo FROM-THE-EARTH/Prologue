@@ -7,7 +7,7 @@
 #define THIS_BODY m_rocket.bodies[m_currentBodyIndex]
 #define THIS_BODY_SPEC m_rocketSpec.rocketParam[m_currentBodyIndex]
 
-bool Solver::run(double windSpeed, double windDirection) {
+std::shared_ptr<SimuResult> Solver::solve(double windSpeed, double windDirection) {
     switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
         m_windModel = std::make_unique<WindModel>(m_mapData.magneticDeclination);
@@ -20,7 +20,7 @@ bool Solver::run(double windSpeed, double windDirection) {
 
     if (!m_windModel->initialized()) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Cannot create wind model");
-        return false;
+        return nullptr;
     }
 
     // initialize result
@@ -62,7 +62,7 @@ bool Solver::run(double windSpeed, double windDirection) {
 
     } while (solvedBodyCount < 2 * m_detachCount + 1);
 
-    return true;
+    return m_result;
 }
 
 void Solver::initializeRocket() {

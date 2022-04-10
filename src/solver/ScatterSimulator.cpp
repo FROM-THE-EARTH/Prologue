@@ -29,12 +29,13 @@ void ScatterSimulator::solve(
     Solver solver(
         m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
-    if (*error = !solver.run(windSpeed, windDir); *error) {
-        return;
+    if (result = solver.solve(windSpeed, windDir); result) {
+        result->organize();
+        *error = false;
+    } else {
+        *error = true;
     }
 
-    result = solver.getResult();
-    result->organize();
     *finish = true;
 }
 
@@ -43,12 +44,12 @@ bool ScatterSimulator::singleThreadSimulation() {
         Solver solver(
             m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
-        if (!solver.run(m_windSpeed, m_windDirection)) {
+        if (const auto result = solver.solve(m_windSpeed, m_windDirection); result) {
+            result->organize();
+            m_result.push_back(result);
+        } else {
             return false;
         }
-
-        auto result = solver.getResult();
-        result->organize();
 
         if (!updateWindCondition()) {
             break;
