@@ -42,6 +42,8 @@ set(SOURCE_FILES
 	"src/math/Quaternion.cpp"
 	"src/math/Vector3D.cpp"
 
+	"src/result/SimuResult.cpp"
+
 	"src/rocket/AeroCoefficient.cpp"
 	"src/rocket/Engine.cpp"
 	"src/rocket/RocketSpec.cpp"
