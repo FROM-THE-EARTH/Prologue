@@ -7,7 +7,7 @@
 #define THIS_BODY m_rocket.bodies[m_currentBodyIndex]
 #define THIS_BODY_SPEC m_rocketSpec.rocketParam[m_currentBodyIndex]
 
-std::shared_ptr<SimuResult> Solver::solve(double windSpeed, double windDirection) {
+std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDirection) {
     switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
         m_windModel = std::make_unique<WindModel>(m_mapData.magneticDeclination);
@@ -24,7 +24,8 @@ std::shared_ptr<SimuResult> Solver::solve(double windSpeed, double windDirection
     }
 
     // initialize result
-    m_result = std::make_shared<SimuResult>(windSpeed, windDirection, m_rocketSpec);
+    m_resultLogger = std::make_shared<SimuResultLogger>(m_mapData, windSpeed, windDirection);
+    m_resultLogger->pushBody();
 
     // loop until all rockets are solved
     // single rocket: solve once
@@ -62,7 +63,7 @@ std::shared_ptr<SimuResult> Solver::solve(double windSpeed, double windDirection
 
     } while (solvedBodyCount < 2 * m_detachCount + 1);
 
-    return m_result;
+    return m_resultLogger;
 }
 
 void Solver::initializeRocket() {
@@ -297,8 +298,8 @@ void Solver::updateRocketDelta() {
         m_bodyDelta.velocity = Vector3D();
     } else {  // flight
         if (!m_rocket.launchClear) {
-            // m_result->launchClearVelocity = THIS_BODY.velocity.length();
             m_rocket.launchClear = true;
+            m_resultLogger->setLaunchClear(THIS_BODY);
         }
 
         m_bodyDelta.pos      = THIS_BODY.velocity;
@@ -330,13 +331,7 @@ void Solver::applyDelta() {
 }
 
 void Solver::organizeResult() {
-    // calc pos
-    THIS_BODY.lenFromLaunchPoint = THIS_BODY.pos.length();
-    THIS_BODY.latitude           = m_mapData.coordinate.latitudeAt(THIS_BODY.pos.y);
-    THIS_BODY.longitude          = m_mapData.coordinate.longitudeAt(THIS_BODY.pos.x);
-
-    // push to result
-    m_result->timeSeriesRockets.push_back(m_rocket);
+    m_resultLogger->update(m_currentBodyIndex, m_rocket, THIS_BODY, *m_windModel.get());
 
     if (m_maxHeight < THIS_BODY.pos.z) {
         m_maxHeight      = THIS_BODY.pos.z;
@@ -377,4 +372,5 @@ void Solver::organizeResult() {
 
 void Solver::nextRocket() {
     m_currentBodyIndex++;
+    m_resultLogger->pushBody();
 }

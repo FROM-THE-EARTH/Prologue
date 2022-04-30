@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-struct SimuResult;
+struct SimuResultSummary;
 
 namespace ResultSaver {
-    void SaveScatter(const std::string& dir, const std::vector<std::shared_ptr<SimuResult>>& result);
+    void SaveScatter(const std::string& dir, const std::vector<SimuResultSummary>& result);
 
-    void SaveDetail(const std::string& dir, const std::shared_ptr<SimuResult>& result);
+    void SaveDetail(const std::string& dir, const SimuResultSummary& result);
 }

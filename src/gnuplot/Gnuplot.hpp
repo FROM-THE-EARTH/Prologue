@@ -5,14 +5,14 @@
 #include <vector>
 
 struct MapData;
-struct SimuResult;
+struct SimuResultSummary;
 
 namespace Gnuplot {
     void Initialize(const char* dirname, MapData mapData);
 
-    void Plot(const std::shared_ptr<SimuResult>& result);
+    void Plot(const SimuResultSummary& result);
 
-    void Plot(const std::vector<std::shared_ptr<SimuResult>>& result);
+    void Plot(const std::vector<SimuResultSummary>& results);
 
     void Show();
 

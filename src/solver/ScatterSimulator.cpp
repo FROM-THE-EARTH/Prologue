@@ -25,12 +25,12 @@ bool ScatterSimulator::simulate() {
 }
 
 void ScatterSimulator::solve(
-    double windSpeed, double windDir, std::shared_ptr<SimuResult>& result, bool* finish, bool* error) {
+    double windSpeed, double windDir, std::shared_ptr<SimuResultLogger>& resultLogger, bool* finish, bool* error) {
     Solver solver(
         m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
-    if (result = solver.solve(windSpeed, windDir); result) {
-        result->organize();
+    if (resultLogger = solver.solve(windSpeed, windDir); resultLogger) {
+        resultLogger->organize();
         *error = false;
     } else {
         *error = true;
@@ -46,7 +46,7 @@ bool ScatterSimulator::singleThreadSimulation() {
 
         if (const auto result = solver.solve(m_windSpeed, m_windDirection); result) {
             result->organize();
-            m_result.push_back(result);
+            m_result.push_back(result->getResultScatterFormat());
         } else {
             return false;
         }
@@ -67,7 +67,7 @@ bool ScatterSimulator::multiThreadSimulation() {
     while (!finish) {
         bool e = false;
 
-        std::shared_ptr<SimuResult> results[threadCount];
+        std::shared_ptr<SimuResultLogger> results[threadCount];
         std::thread threads[threadCount];
         bool finished[threadCount] = {false};
         bool error[threadCount]    = {false};
@@ -118,7 +118,7 @@ bool ScatterSimulator::multiThreadSimulation() {
         }
 
         for (size_t i = 0; i < simulated; i++) {
-            m_result.push_back(std::shared_ptr<SimuResult>(results[i]));
+            m_result.emplace_back(results[i]->getResultScatterFormat());
         }
 
         finish = !updateWindCondition();
@@ -133,26 +133,7 @@ void ScatterSimulator::saveResult() {
 }
 
 void ScatterSimulator::plotToGnuplot() {
-    auto resultForPlot = m_result;
-    for (auto& r : resultForPlot) {
-        formatResultForScatter(r);
-        eraseNotLandingPoint(r);
-    }
-    Gnuplot::Plot(resultForPlot);
-}
-
-void ScatterSimulator::formatResultForScatter(std::shared_ptr<SimuResult>& result) {
-    const Rocket lastRocket   = result->timeSeriesRockets[result->timeSeriesRockets.size() - 1];
-    result->timeSeriesRockets = std::vector<Rocket>(1, lastRocket);
-}
-
-void ScatterSimulator::eraseNotLandingPoint(std::shared_ptr<SimuResult>& result) {
-    const int size = static_cast<int>(result->timeSeriesRockets[0].bodies.size());
-    for (int i = size - 1; i >= 0; i--) {
-        if (result->timeSeriesRockets[0].bodies[i].pos.z != 0.0) {
-            result->timeSeriesRockets[0].bodies.erase(result->timeSeriesRockets[0].bodies.begin() + i);
-        }
-    }
+    Gnuplot::Plot(m_result);
 }
 
 bool ScatterSimulator::updateWindCondition() {

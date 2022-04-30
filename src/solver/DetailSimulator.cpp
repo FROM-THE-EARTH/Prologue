@@ -6,8 +6,9 @@ bool DetailSimulator::simulate() {
     Solver solver(
         m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
-    if (m_result = solver.solve(m_windSpeed, m_windDirection); m_result) {
-        m_result->organize();
+    if (auto resultLogger = solver.solve(m_windSpeed, m_windDirection); resultLogger) {
+        resultLogger->organize();
+        m_result = resultLogger->getResult();
         return true;
     } else {
         return false;

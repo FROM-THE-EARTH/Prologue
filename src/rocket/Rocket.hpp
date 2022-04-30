@@ -35,11 +35,6 @@ struct Body {
     // calculated
     Vector3D airSpeed_b;  // [m/s]
     double attackAngle;   // [rad]
-
-    /*===========================result===========================*/
-    double lenFromLaunchPoint = 0.0;
-    double latitude           = 0.0;
-    double longitude          = 0.0;
 };
 
 struct Rocket {
