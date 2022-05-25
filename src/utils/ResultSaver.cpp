@@ -56,7 +56,7 @@ namespace ResultSaver {
                                                       "height[m]",
                                                       "velocity[m/s]",
                                                       "airspeed[m/s]",
-                                                      "force[N]",
+                                                      "normal_force[N]",
                                                       "Cnp",
                                                       "Cny",
                                                       "Cmqp",
@@ -88,8 +88,9 @@ namespace ResultSaver {
                      << Internal::WithComma(step.rocket_attackAngle) << Internal::WithComma(step.rocket_pos.z)
                      << Internal::WithComma(step.rocket_velocity.length())
                      << Internal::WithComma(step.rocket_airspeed_b.length())
-                     << Internal::WithComma(step.rocket_force_b.length()) << Internal::WithComma(step.Cnp)
-                     << Internal::WithComma(step.Cny) << Internal::WithComma(step.Cmqp)
+                     << Internal::WithComma(sqrt(step.rocket_force_b.y * step.rocket_force_b.y
+                                                 + step.rocket_force_b.z * step.rocket_force_b.z))
+                     << Internal::WithComma(step.Cnp) << Internal::WithComma(step.Cny) << Internal::WithComma(step.Cmqp)
                      << Internal::WithComma(step.Cmqy) << Internal::WithComma(step.Cp) << Internal::WithComma(step.Cd)
                      << Internal::WithComma(step.Cna);
 
@@ -136,7 +137,7 @@ namespace ResultSaver {
             WriteSummaryHeader(file);
 
             for (const auto& result : results) {
-                WriteSummary(result);
+                WriteSummary(file, result);
             }
 
             file.close();
@@ -147,7 +148,7 @@ namespace ResultSaver {
 
             WriteSummaryHeader(file);
 
-            WriteSummary(result);
+            WriteSummary(file, result);
 
             file.close();
         }
