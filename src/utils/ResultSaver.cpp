@@ -40,20 +40,34 @@ namespace ResultSaver {
         }
 
         void WriteBodyResult(std::ofstream& file, const std::vector<SimuResultStep>& stepResult) {
-            const std::vector<std::string> headers = {"time_from_launch[s]",
+            const std::vector<std::string> headers = {// general
+                                                      "time_from_launch[s]",
                                                       "elapsed_time[s]",
+                                                      // air
+                                                      "air_dencity[kg/m3]",
+                                                      "gravity[m/s2]",
+                                                      "wind_speed[m/s]",
+                                                      // body
+                                                      "mass[kg]",
+                                                      "Cg_from_nose[m]",
+                                                      "inertia moment pitch & yaw[kg*m2]",
+                                                      "inertia moment roll[kg*m2]",
+                                                      "attack angle[deg]",
                                                       "height[m]",
                                                       "velocity[m/s]",
                                                       "airspeed[m/s]",
-                                                      "attack_angle[deg]",
-                                                      "distance_from_launch_point[m]",
-                                                      "latitude",
-                                                      "longitude",
-                                                      "mass[kg]",
-                                                      "Cg_from_nose[m]",
+                                                      "force[N]",
+                                                      "Cnp",
+                                                      "Cny",
+                                                      "Cmqp",
+                                                      "Cmqy",
                                                       "Cp_from_nose[m]",
                                                       "Cd",
-                                                      "Cna"};
+                                                      "Cna",
+                                                      // position
+                                                      "latitude",
+                                                      "longitude",
+                                                      "length_from_launch_point[m]"};
 
             for (const auto& head : headers) {
                 file << Internal::WithComma(head);
@@ -61,19 +75,27 @@ namespace ResultSaver {
             file << "\n";
 
             for (const auto& step : stepResult) {
+                // general
                 file << Internal::WithComma(step.gen_timeFromLaunch) << Internal::WithComma(step.gen_elapsedTime);
 
-                // important values
-                file << Internal::WithComma(step.rocket_pos.z) << Internal::WithComma(step.rocket_velocity.length())
+                // air
+                file << Internal::WithComma(step.air_dencity) << Internal::WithComma(step.air_gravity)
+                     << Internal::WithComma(step.air_wind.length());
+
+                // body
+                file << Internal::WithComma(step.rocket_mass) << Internal::WithComma(step.rocket_cgLength)
+                     << Internal::WithComma(step.rocket_iyz) << Internal::WithComma(step.rocket_ix)
+                     << Internal::WithComma(step.rocket_attackAngle) << Internal::WithComma(step.rocket_pos.z)
+                     << Internal::WithComma(step.rocket_velocity.length())
                      << Internal::WithComma(step.rocket_airspeed_b.length())
-                     << Internal::WithComma(step.rocket_attackAngle) << Internal::WithComma(step.lenFromLaunchPoint)
-                     << Internal::WithComma(step.latitude) << Internal::WithComma(step.longitude);
+                     << Internal::WithComma(step.rocket_force_b.length()) << Internal::WithComma(step.Cnp)
+                     << Internal::WithComma(step.Cny) << Internal::WithComma(step.Cmqp)
+                     << Internal::WithComma(step.Cmqy) << Internal::WithComma(step.Cp) << Internal::WithComma(step.Cd)
+                     << Internal::WithComma(step.Cna);
 
-                // param
-                file << Internal::WithComma(step.rocket_mass) << Internal::WithComma(step.rocket_cgLength);
-
-                // aero
-                file << Internal::WithComma(step.Cp) << Internal::WithComma(step.Cd) << Internal::WithComma(step.Cna);
+                // position
+                file << Internal::WithComma(step.latitude) << Internal::WithComma(step.longitude)
+                     << Internal::WithComma(step.lenFromLaunchPoint);
 
                 file << "\n";
             }
