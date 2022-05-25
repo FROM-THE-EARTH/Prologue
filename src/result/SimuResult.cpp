@@ -51,9 +51,11 @@ void SimuResultLogger::update(
     step.parachuteOpened = body.parachuteOpened;
 
     // Air
-    step.air_dencity = windModel.density();
-    step.air_gravity = windModel.gravity();
-    step.air_wind    = windModel.wind();
+    step.air_density     = windModel.density();
+    step.air_gravity     = windModel.gravity();
+    step.air_pressure    = windModel.pressure();
+    step.air_temperature = windModel.temperature();
+    step.air_wind        = windModel.wind();
 
     // Body
     step.rocket_mass        = body.mass;

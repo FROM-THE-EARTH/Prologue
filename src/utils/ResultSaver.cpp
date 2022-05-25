@@ -52,8 +52,10 @@ namespace ResultSaver {
                                                       "combusting?",
                                                       "para_opened?",
                                                       // air
-                                                      "air_dencity[kg/m3]",
+                                                      "air_density[kg/m3]",
                                                       "gravity[m/s2]",
+                                                      "pressure[Pa]",
+                                                      "temperature[C]",
                                                       "wind_speed[m/s]",
                                                       // body
                                                       "mass[kg]",
@@ -91,7 +93,8 @@ namespace ResultSaver {
                      << Internal::WithComma(step.parachuteOpened);
 
                 // air
-                file << Internal::WithComma(step.air_dencity) << Internal::WithComma(step.air_gravity)
+                file << Internal::WithComma(step.air_density) << Internal::WithComma(step.air_gravity)
+                     << Internal::WithComma(step.air_pressure) << Internal::WithComma(step.air_temperature)
                      << Internal::WithComma(step.air_wind.length());
 
                 // body

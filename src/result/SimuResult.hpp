@@ -14,11 +14,11 @@ struct SimuResultStep {
     double gen_elapsedTime    = 0;
 
     // Air
-    Vector3D air_wind  = Vector3D();
-    double air_dencity = 0;
-    double air_gravity = 0;
-    // double air_pressure    = 0;
-    // double air_temperature = 0;
+    double air_density     = 0;
+    double air_gravity     = 0;
+    double air_pressure    = 0;
+    double air_temperature = 0;
+    Vector3D air_wind      = Vector3D();
 
     // Boolean
     bool launchClear     = false;
