@@ -25,9 +25,11 @@ namespace CommandLine {
         void ShowHelp();
 
         void OpenExplorer() {
-            const std::filesystem::path p = std::filesystem::current_path();
-            const std::string c           = "explorer " + p.string() + "\\result\\" + OutputDir;
-            system(c.c_str());
+            const std::filesystem::path path = std::filesystem::current_path().append("result").append(OutputDir);
+            const std::string comamnd        = "explorer " + path.string();
+            if (system(comamnd.c_str()) != 0) {
+                PrintInfo(PrintInfoType::Error, "Could not open the folder.", path.string().c_str());
+            }
         }
 
         void ExitApplication() {
