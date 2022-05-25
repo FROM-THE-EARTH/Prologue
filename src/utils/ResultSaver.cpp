@@ -123,16 +123,20 @@ namespace ResultSaver {
             file << "\n";
         }
 
+        void WriteSummary(std::ofstream& file, const SimuResultSummary& result) {
+            file << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
+                 << Internal::WithComma(result.launchClearTime)
+                 << Internal::WithComma(result.launchClearVelocity.length());
+            file << "\n";
+        }
+
         void WriteSummaryScatter(const std::string& dir, const std::vector<SimuResultSummary>& results) {
             std::ofstream file(dir + "summary.csv");
 
             WriteSummaryHeader(file);
 
             for (const auto& result : results) {
-                file << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
-                     << Internal::WithComma(result.launchClearTime)
-                     << Internal::WithComma(result.launchClearVelocity.length());
-                file << "\n";
+                WriteSummary(result);
             }
 
             file.close();
@@ -143,10 +147,7 @@ namespace ResultSaver {
 
             WriteSummaryHeader(file);
 
-            file << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
-                 << Internal::WithComma(result.launchClearTime)
-                 << Internal::WithComma(result.launchClearVelocity.length());
-            file << "\n";
+            WriteSummary(result);
 
             file.close();
         }
@@ -164,18 +165,6 @@ namespace ResultSaver {
         Internal::WriteSummaryDetail(dir, result);
 
         // Save detail
-
-        // write rocket spec and contidions(wind speed, wind direction)
-        /*{
-            std::ofstream file(dir + "contidion.csv");
-
-            file << Internal::WithComma("wind_speed[m/s]") << Internal::DoubleToString(result->windSpeed, 2) << "\n";
-            file << Internal::WithComma("wind_direction[deg]") << Internal::DoubleToString(result->windDirection, 2)
-                 << "\n";
-
-            file.close();
-        }*/
-
         // write time-series data of all bodies
         {
             const auto bodyCount = result.bodyResults.size();
