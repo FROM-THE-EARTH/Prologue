@@ -15,7 +15,7 @@ int main() {
 
     ShowSettingInfo();
 
-    const std::unique_ptr<Simulator> simulator(Simulator::New(AppSetting::Simulation::dt));
+    const auto simulator = Simulator::New(AppSetting::Simulation::dt);
 
     if (!simulator) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Failed to initialize simulator");
