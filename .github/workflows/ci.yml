@@ -11,27 +11,13 @@ on:
       - main
 
 jobs:
-  windows:
-    name: CI for Windows
-    runs-on: windows-2022
-    steps:
-      - uses: actions/checkout@v2
+  build:
+    strategy:
+      matrix:
+        os: [windows-2022, macos-latest, ubuntu-20.04]
 
-      - name: Configure
-        run: |
-          mkdir build
-          cd build
-          cmake -DCMAKE_BUILD_TYPE=Debug ..
-
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-
-      - name: Build
-        run: msbuild "build\Prologue.vcxproj" /p:Configuration=Debug /p:Platform=x64
-
-  macOS:
-    name: CI for macOS
-    runs-on: macos-latest
+    name: CI for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
 
@@ -44,21 +30,4 @@ jobs:
       - name: Build
         run: |
           cd build
-          make
-
-  linux:
-    name: CI for Linux
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Configure
-        run: |
-          mkdir build
-          cd build
-          cmake -DCMAKE_BUILD_TYPE=Debug ..
-
-      - name: Build
-        run: |
-          cd build
-          make
+          cmake --build . --config Debug
