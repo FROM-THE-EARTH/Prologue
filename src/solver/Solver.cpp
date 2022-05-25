@@ -111,9 +111,6 @@ void Solver::updateParachute() {
 
     if ((detectpeak && detectpeakConditon) || (fixedtime && fixedtimeCondition)) {
         THIS_BODY.parachuteOpened = true;
-        // m_result->timeAtParaOpened   = THIS_BODY.elapsedTime;
-        // m_result->airVelAtParaOpened = THIS_BODY.airSpeed_b.length();
-        // m_result->heightAtParaOpened = THIS_BODY.pos.z;
     }
 
     const bool time_from_detect_peakCondition =
@@ -125,9 +122,6 @@ void Solver::updateParachute() {
         }
         if (THIS_BODY.waitForOpenPara && time_from_detect_peakCondition) {
             THIS_BODY.parachuteOpened = true;
-            // m_result->timeAtParaOpened   = THIS_BODY.elapsedTime;
-            // m_result->airVelAtParaOpened = THIS_BODY.airSpeed_b.length();
-            // m_result->heightAtParaOpened = THIS_BODY.pos.z;
             THIS_BODY.waitForOpenPara = false;
         }
     }
@@ -341,37 +335,6 @@ void Solver::organizeResult() {
         m_maxHeight      = THIS_BODY.pos.z;
         m_detectPeakTime = THIS_BODY.elapsedTime;
     }
-
-    /*const bool rising = THIS_BODY.velocity.z > 0;
-
-    // height
-    if (m_result->maxHeight < THIS_BODY.pos.z) {
-        m_result->maxHeight      = THIS_BODY.pos.z;
-        m_result->detectPeakTime = THIS_BODY.elapsedTime;
-    }
-
-    // velocity
-    if (m_result->maxVelocity < THIS_BODY.velocity.length()) {
-        m_result->maxVelocity = THIS_BODY.velocity.length();
-    }
-
-    // terminal velocity
-    m_result->terminalVelocity = THIS_BODY.velocity.length();
-
-    // terminal time
-    m_result->terminalTime = THIS_BODY.elapsedTime;
-
-    // attack angle
-    const double atkang = m_rocket.launchClear && rising ? THIS_BODY.attackAngle * 180 / Constant::PI : 0.0;
-    if (m_result->maxAttackAngle < atkang) {
-        m_result->maxAttackAngle = atkang;
-    }
-
-    // normal force
-    const double nForce = rising ? sqrt(m_force_b.z * m_force_b.z + m_force_b.y * m_force_b.y) : 0.0;
-    if (m_result->maxNormalForce < nForce) {
-        m_result->maxNormalForce = nForce;
-    }*/
 }
 
 void Solver::nextRocket() {

@@ -167,8 +167,6 @@ namespace ResultSaver {
     void SaveScatter(const std::string& dir, const std::vector<SimuResultSummary>& result) {
         // Save summary
         Internal::WriteSummaryScatter(dir, result);
-
-        // Save detail
     }
 
     void SaveDetail(const std::string& dir, const SimuResultSummary& result) {
