@@ -20,6 +20,10 @@ struct SimuResultStep {
     // double air_pressure    = 0;
     // double air_temperature = 0;
 
+    // Boolean
+    bool launchClear = false;
+    bool combusting  = false;
+
     // Body
     double rocket_mass         = 0;
     double rocket_cgLength     = 0;
@@ -74,7 +78,7 @@ public:
 
     void setLaunchClear(const Body& body);
 
-    void update(size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel);
+    void update(size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel, bool combusting);
 
     void organize();
 };

@@ -14,13 +14,21 @@
 #endif
 
 namespace ResultSaver {
-    const char comma = ',';
+    constexpr char comma = ',';
 
     namespace Internal {
         std::string DoubleToString(double d, int precision) {
             std::stringstream stream;
             stream << std::fixed << std::setprecision(precision) << d;
             return stream.str();
+        }
+
+        std::string BoolToString(bool b) {
+            return b ? "true" : "false";
+        }
+
+        std::string WithComma(bool b) {
+            return BoolToString(b) + comma;
         }
 
         std::string WithComma(int i) {
@@ -31,18 +39,17 @@ namespace ResultSaver {
             return DoubleToString(d, precision) + comma;
         }
 
-        std::string WithComma(const std::string str) {
+        std::string WithComma(const std::string& str) {
             return str + comma;
-        }
-
-        std::string BoolStr(bool b) {
-            return b ? "true" : "false";
         }
 
         void WriteBodyResult(std::ofstream& file, const std::vector<SimuResultStep>& stepResult) {
             const std::vector<std::string> headers = {// general
                                                       "time_from_launch[s]",
                                                       "elapsed_time[s]",
+                                                      // boolean
+                                                      "launch_clear?",
+                                                      "combusting?",
                                                       // air
                                                       "air_dencity[kg/m3]",
                                                       "gravity[m/s2]",
@@ -77,6 +84,9 @@ namespace ResultSaver {
             for (const auto& step : stepResult) {
                 // general
                 file << Internal::WithComma(step.gen_timeFromLaunch) << Internal::WithComma(step.gen_elapsedTime);
+
+                // boolean
+                file << Internal::WithComma(step.launchClear) << Internal::WithComma(step.combusting);
 
                 // air
                 file << Internal::WithComma(step.air_dencity) << Internal::WithComma(step.air_gravity)

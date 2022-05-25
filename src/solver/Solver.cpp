@@ -331,7 +331,11 @@ void Solver::applyDelta() {
 }
 
 void Solver::organizeResult() {
-    m_resultLogger->update(m_currentBodyIndex, m_rocket, THIS_BODY, *m_windModel.get());
+    m_resultLogger->update(m_currentBodyIndex,
+                           m_rocket,
+                           THIS_BODY,
+                           *m_windModel.get(),
+                           THIS_BODY_SPEC.engine.isCombusting(THIS_BODY.elapsedTime));
 
     if (m_maxHeight < THIS_BODY.pos.z) {
         m_maxHeight      = THIS_BODY.pos.z;

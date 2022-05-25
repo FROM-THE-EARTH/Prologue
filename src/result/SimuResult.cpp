@@ -37,12 +37,17 @@ void SimuResultLogger::setLaunchClear(const Body& body) {
     m_result.launchClearVelocity = body.velocity;
 }
 
-void SimuResultLogger::update(size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel) {
+void SimuResultLogger::update(
+    size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel, bool combusting) {
     SimuResultStep step;
 
     // General
     step.gen_timeFromLaunch = rocket.timeFromLaunch;
     step.gen_elapsedTime    = body.elapsedTime;
+
+    // Boolean
+    step.launchClear = rocket.launchClear;
+    step.combusting  = combusting;
 
     // Air
     step.air_dencity = windModel.density();
