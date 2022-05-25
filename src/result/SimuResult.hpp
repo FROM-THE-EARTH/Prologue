@@ -21,8 +21,9 @@ struct SimuResultStep {
     // double air_temperature = 0;
 
     // Boolean
-    bool launchClear = false;
-    bool combusting  = false;
+    bool launchClear     = false;
+    bool combusting      = false;
+    bool parachuteOpened = false;
 
     // Body
     double rocket_mass         = 0;
@@ -60,6 +61,12 @@ struct SimuResultSummary {
     // launch clear
     double launchClearTime       = 0;
     Vector3D launchClearVelocity = Vector3D();
+
+    // max
+    double maxHeight = 0, detectPeakTime = 0;
+    double maxVelocity                = 0;
+    double maxAirspeed                = 0;
+    double maxNormalForceDuringRising = 0;
 };
 
 class SimuResultLogger {

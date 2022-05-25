@@ -46,8 +46,9 @@ void SimuResultLogger::update(
     step.gen_elapsedTime    = body.elapsedTime;
 
     // Boolean
-    step.launchClear = rocket.launchClear;
-    step.combusting  = combusting;
+    step.launchClear     = rocket.launchClear;
+    step.combusting      = combusting;
+    step.parachuteOpened = body.parachuteOpened;
 
     // Air
     step.air_dencity = windModel.density();
@@ -77,6 +78,23 @@ void SimuResultLogger::update(
     step.lenFromLaunchPoint = body.pos.length();
 
     m_result.bodyResults[bodyIndex].steps.emplace_back(step);
+
+    // update max
+    const bool rising = body.velocity.z > 0;
+    if (m_result.maxHeight < body.pos.z) {
+        m_result.maxHeight      = body.pos.z;
+        m_result.detectPeakTime = body.elapsedTime;
+    }
+    if (m_result.maxVelocity < body.velocity.length()) {
+        m_result.maxVelocity = body.velocity.length();
+    }
+    if (m_result.maxAirspeed < body.airSpeed_b.length()) {
+        m_result.maxAirspeed = body.airSpeed_b.length();
+    }
+    if (const double force = rising ? sqrt(body.force_b.z * body.force_b.z + body.force_b.y * body.force_b.y) : 0.0;
+        m_result.maxNormalForceDuringRising < force) {
+        m_result.maxNormalForceDuringRising = force;
+    }
 }
 
 void SimuResultLogger::organize() {

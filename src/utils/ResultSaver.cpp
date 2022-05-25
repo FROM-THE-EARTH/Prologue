@@ -50,6 +50,7 @@ namespace ResultSaver {
                                                       // boolean
                                                       "launch_clear?",
                                                       "combusting?",
+                                                      "para_opened?",
                                                       // air
                                                       "air_dencity[kg/m3]",
                                                       "gravity[m/s2]",
@@ -86,7 +87,8 @@ namespace ResultSaver {
                 file << Internal::WithComma(step.gen_timeFromLaunch) << Internal::WithComma(step.gen_elapsedTime);
 
                 // boolean
-                file << Internal::WithComma(step.launchClear) << Internal::WithComma(step.combusting);
+                file << Internal::WithComma(step.launchClear) << Internal::WithComma(step.combusting)
+                     << Internal::WithComma(step.parachuteOpened);
 
                 // air
                 file << Internal::WithComma(step.air_dencity) << Internal::WithComma(step.air_gravity)
@@ -113,19 +115,15 @@ namespace ResultSaver {
         }
 
         void WriteSummaryHeader(std::ofstream& file) {
-            const std::vector<std::string> headers = {
-                "wind_speed[m/s]", "wind_dir[deg]", "launch_clear_time[s]", "launch_clear_vel[m/s]",
-                /*"max_height_time[s]",
-                "max_height[m]",
-                "max_vel[m/s]",
-                "paraopen_time[s]",
-                "paraopen_height[m]",
-                "paraopen_airspeed[m/s]",
-                "terminal_vel[m/s]",
-                "terminal_time[s]",
-                "max_attack_angle[rad]",
-                "max_normal_force[N]",*/
-            };
+            const std::vector<std::string> headers = {"wind_speed[m/s]",
+                                                      "wind_dir[deg]",
+                                                      "launch_clear_time[s]",
+                                                      "launch_clear_vel[m/s]",
+                                                      "max_height[m]",
+                                                      "max_height_time[s]",
+                                                      "max_velocity[m/s]",
+                                                      "max_airspeed[m/s]",
+                                                      "max_normal_force_rising[N]"};
 
             // write header
             for (const auto& head : headers) {
@@ -137,7 +135,9 @@ namespace ResultSaver {
         void WriteSummary(std::ofstream& file, const SimuResultSummary& result) {
             file << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
                  << Internal::WithComma(result.launchClearTime)
-                 << Internal::WithComma(result.launchClearVelocity.length());
+                 << Internal::WithComma(result.launchClearVelocity.length()) << Internal::WithComma(result.maxHeight)
+                 << Internal::WithComma(result.detectPeakTime) << Internal::WithComma(result.maxVelocity)
+                 << Internal::WithComma(result.maxAirspeed) << Internal::WithComma(result.maxNormalForceDuringRising);
             file << "\n";
         }
 
