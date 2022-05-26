@@ -29,9 +29,9 @@ MSVC, GCC, Clang などのコンパイラが入っていない場合はインス
 
 **基本のバージョン表記は x.y.z です。**
 
-- x は大幅な仕様変更があった場合にインクリメントします。(以前のバージョンとの互換性が無くなるくらい)
+- x はプログラムまるごと書き換えるレベルで更新した際にインクリメントします。
 
-- y は互換性はあるが、仕様にそれなりの変更があった場合にインクリメントします。
+- y は仕様にそれなりの変更があった場合や機能追加時にインクリメントします。
 
 - z はバグ修正や軽微なアップデートなどを行った場合にインクリメントします。
 
@@ -46,8 +46,8 @@ MSVC, GCC, Clang などのコンパイラが入っていない場合はインス
 3. [`README.md`](https://github.com/FROM-THE-EARTH/Prologue/blob/main/README.md)のバージョン・日付・更新履歴を修正する
 4. 上記作業が終了したコミットに`vX.X.X`とタグをつけ、リモートにプッシュする（例 `v1.2.3`）
    タグを付けたコミットに不具合があり、バージョンを変更せずにリリース作業をやり直す場合、不具合を修正したコミットに`vX.X.X.X`とタグを付けリモートにプッシュする（例 `v1.2.3.1`, `v1.2.3.2`）
-5. [Actions] タグに反応して[`release.yml`](https://github.com/FROM-THE-EARTH/Prologue/blob/main/.github/workflows/release.yml)のワークフローが実行される
-6. [Releases](https://github.com/FROM-THE-EARTH/Prologue/releases) に`vX.X.X`を名前として Windows, macOS, Linux 向けの実行ファイル・設定ファイル・入力ファイルを同包した zip ファイルが登録される
+5. [**Actions**] タグに反応して[`release.yml`](https://github.com/FROM-THE-EARTH/Prologue/blob/main/.github/workflows/release.yml)のワークフローが実行される
+6. [**Actions**] [Releases](https://github.com/FROM-THE-EARTH/Prologue/releases) に`vX.X.X`を名前として Windows, macOS, Linux 向けの実行ファイル・設定ファイル・入力ファイルを同包した zip ファイルが登録される
 
 ## CI
 
