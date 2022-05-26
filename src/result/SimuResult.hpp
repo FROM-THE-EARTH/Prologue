@@ -14,17 +14,17 @@ struct SimuResultStep {
     double gen_timeFromLaunch = 0;
     double gen_elapsedTime    = 0;
 
+    // Boolean
+    bool launchClear     = false;
+    bool combusting      = false;
+    bool parachuteOpened = false;
+
     // Air
     double air_density     = 0;
     double air_gravity     = 0;
     double air_pressure    = 0;
     double air_temperature = 0;
     Vector3D air_wind      = Vector3D();
-
-    // Boolean
-    bool launchClear     = false;
-    bool combusting      = false;
-    bool parachuteOpened = false;
 
     // Body
     double rocket_mass         = 0;
@@ -42,10 +42,12 @@ struct SimuResultStep {
     double Cd  = 0;
     double Cna = 0;
 
+    // Position
     double latitude           = 0;
     double longitude          = 0;
     double lenFromLaunchPoint = 0;
 
+    // Calculated
     double Fst             = 0;
     double dynamicPressure = 0;
 };
