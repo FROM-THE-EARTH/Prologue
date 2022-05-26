@@ -82,7 +82,10 @@ namespace ResultSaver {
                                                       // position
                                                       "latitude",
                                                       "longitude",
-                                                      "length_from_launch_point[m]"};
+                                                      "length_from_launch_point[m]",
+                                                      // calculated
+                                                      "Fst[%]",
+                                                      "dynamic_pressure[Pa]"};
 
             for (const auto& head : headers) {
                 file << Internal::WithComma(head);
@@ -117,6 +120,9 @@ namespace ResultSaver {
                 // position
                 file << Internal::WithComma(step.latitude) << Internal::WithComma(step.longitude)
                      << Internal::WithComma(step.lenFromLaunchPoint);
+
+                // calculated
+                file << Internal::WithComma(step.Fst) << Internal::WithComma(step.dynamicPressure);
 
                 file << "\n";
             }

@@ -6,6 +6,7 @@
 #include "env/Map.hpp"
 #include "math/Vector3D.hpp"
 #include "rocket/Rocket.hpp"
+#include "rocket/RocketSpec.hpp"
 
 // result of each steps
 struct SimuResultStep {
@@ -44,6 +45,9 @@ struct SimuResultStep {
     double latitude           = 0;
     double longitude          = 0;
     double lenFromLaunchPoint = 0;
+
+    double Fst             = 0;
+    double dynamicPressure = 0;
 };
 
 // result of rocket1, rocket2 or rocket3
@@ -71,11 +75,12 @@ struct SimuResultSummary {
 
 class SimuResultLogger {
 private:
-    MapData m_map;
+    const RocketSpec m_rocketSpec;
+    const MapData m_map;
     SimuResultSummary m_result;
 
 public:
-    SimuResultLogger(const MapData& map, double windSpeed, double windDirection);
+    SimuResultLogger(const RocketSpec& spec, const MapData& map, double windSpeed, double windDirection);
 
     SimuResultSummary getResult() const;
 

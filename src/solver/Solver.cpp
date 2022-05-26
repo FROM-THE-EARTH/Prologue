@@ -24,7 +24,7 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
     }
 
     // initialize result
-    m_resultLogger = std::make_shared<SimuResultLogger>(m_mapData, windSpeed, windDirection);
+    m_resultLogger = std::make_shared<SimuResultLogger>(m_rocketSpec, m_mapData, windSpeed, windDirection);
     m_resultLogger->pushBody();
 
     // loop until all rockets are solved

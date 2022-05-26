@@ -1,6 +1,7 @@
 #include "SimuResult.hpp"
 
-SimuResultLogger::SimuResultLogger(const MapData& map, double windSpeed, double windDirection) : m_map(map) {
+SimuResultLogger::SimuResultLogger(const RocketSpec& spec, const MapData& map, double windSpeed, double windDirection) :
+    m_rocketSpec(spec), m_map(map) {
     m_result.windSpeed     = windSpeed;
     m_result.windDirection = windDirection;
 }
@@ -39,6 +40,7 @@ void SimuResultLogger::setLaunchClear(const Body& body) {
 
 void SimuResultLogger::update(
     size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel, bool combusting) {
+    const auto& spec = m_rocketSpec.rocketParam[bodyIndex];
     SimuResultStep step;
 
     // General
@@ -78,6 +80,12 @@ void SimuResultLogger::update(
     step.latitude           = m_map.coordinate.latitudeAt(body.pos.y);
     step.longitude          = m_map.coordinate.longitudeAt(body.pos.x);
     step.lenFromLaunchPoint = body.pos.length();
+
+    step.Fst = 100 * (step.Cp - step.rocket_cgLength) / spec.length;
+    {
+        const auto airspeed  = step.rocket_airspeed_b.length();
+        step.dynamicPressure = 0.5 * step.air_density * airspeed * airspeed;
+    }
 
     m_result.bodyResults[bodyIndex].steps.emplace_back(step);
 
