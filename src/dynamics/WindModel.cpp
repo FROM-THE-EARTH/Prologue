@@ -100,7 +100,7 @@ double WindModel::getTemperature() {
                    + Constant::AbsoluteZero;
     }
 
-    CommandLine::PrintInfo(PrintInfoType::Error, "Not defined above 32000m");
+    CommandLine::PrintInfo(PrintInfoType::Error, "Wind model is not defined above 32000m");
 
     return 0;
 }
@@ -120,7 +120,7 @@ double WindModel::getPressure() {
         }
     }
 
-    CommandLine::PrintInfo(PrintInfoType::Error, "Not defined above 32000m");
+    CommandLine::PrintInfo(PrintInfoType::Error, "Wind model is not defined above 32000m");
 
     return 0;
 }

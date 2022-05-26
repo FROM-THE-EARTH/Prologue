@@ -4,9 +4,9 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "gnuplot/Gnuplot.hpp"
-#include "solver/Simulator.hpp"
+#include "simulator/Simulator.hpp"
 
-const auto VERSION = "1.5.0";
+const auto VERSION = "1.6.0";
 
 void ShowSettingInfo();
 
@@ -15,7 +15,7 @@ int main() {
 
     ShowSettingInfo();
 
-    const std::unique_ptr<Simulator> simulator(Simulator::New(AppSetting::Simulation::dt));
+    const auto simulator = Simulator::New(AppSetting::Simulation::dt);
 
     if (!simulator) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Failed to initialize simulator");

@@ -5,6 +5,7 @@
 #include <fast-cpp-csv-parser/csv.h>
 #pragma warning(pop)
 
+#include "app/CommandLine.hpp"
 #include "math/Algorithm.hpp"
 
 size_t search(const std::vector<AeroCoefficient>& vs, double airspeed, size_t begin, size_t end) {
@@ -34,6 +35,10 @@ size_t getLowerIndex(const std::vector<AeroCoefficient>& vs, double airspeed) {
 }
 
 void AeroCoefficientStorage::init(const std::string& filename) {
+    if (filename.empty()) {
+        return;
+    }
+
     try {
         io::CSVReader<6> csv("input/aero_coef/" + filename);
         csv.read_header(
@@ -46,8 +51,8 @@ void AeroCoefficientStorage::init(const std::string& filename) {
         }
 
         m_exist = true;
-    } catch (...) {
-        return;
+    } catch (const std::exception& e) {
+        CommandLine::PrintInfo(PrintInfoType::Error, "While reading aero coefficient file.", e.what());
     }
 }
 

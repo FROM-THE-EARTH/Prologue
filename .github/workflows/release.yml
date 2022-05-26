@@ -19,11 +19,10 @@ jobs:
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release ..
 
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-
       - name: Build
-        run: msbuild "build\Prologue.vcxproj" /p:Configuration=Release /p:Platform=x64
+        run: |
+          cd build
+          cmake --build . --config Release
 
       - name: Packaging
         run: |
@@ -54,9 +53,7 @@ jobs:
       - name: Build
         run: |
           cd build
-          make
-          cd ../application/
-          ls
+          cmake --build . --config Release
 
       - name: Packaging
         run: |
@@ -87,9 +84,7 @@ jobs:
       - name: Build
         run: |
           cd build
-          make
-          cd ../application/
-          ls
+          cmake --build . --config Release
 
       - name: Packaging
         run: |

@@ -24,10 +24,10 @@ class WindModel {
 
     double m_height             = 0.0;
     double m_geopotentialHeight = 0.0;
-    double m_gravity            = 0.0;
-    double m_temperature        = 0.0;
-    double m_pressure           = 0.0;
     double m_airDensity         = 0.0;
+    double m_gravity            = 0.0;
+    double m_pressure           = 0.0;
+    double m_temperature        = 0.0;
     Vector3D m_wind;
 
     bool m_initialized = false;
@@ -51,6 +51,14 @@ public:
 
     double gravity() const {
         return m_gravity;
+    }
+
+    double pressure() const {
+        return m_pressure;
+    }
+
+    double temperature() const {
+        return m_temperature;
     }
 
     bool initialized() const {

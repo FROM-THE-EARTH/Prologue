@@ -42,17 +42,20 @@ set(SOURCE_FILES
 	"src/math/Quaternion.cpp"
 	"src/math/Vector3D.cpp"
 
+	"src/result/ResultSaver.cpp"
+	"src/result/SimuResult.cpp"
+
 	"src/rocket/AeroCoefficient.cpp"
 	"src/rocket/Engine.cpp"
 	"src/rocket/RocketSpec.cpp"
 
-	"src/solver/DetailSimulator.cpp"
-	"src/solver/ScatterSimulator.cpp"
-	"src/solver/Simulator.cpp"
+	"src/simulator/DetailSimulator.cpp"
+	"src/simulator/ScatterSimulator.cpp"
+	"src/simulator/Simulator.cpp"
+
 	"src/solver/Solver.cpp"
 
 	"src/utils/JsonUtils.cpp"
-	"src/utils/ResultSaver.cpp"
 
 	"src/main.cpp"
 )
