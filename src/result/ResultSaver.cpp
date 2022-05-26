@@ -16,6 +16,55 @@
 namespace ResultSaver {
     constexpr char comma = ',';
 
+    const std::vector<std::string> headerDetail = {
+        // general
+        "time_from_launch[s]",
+        "elapsed_time[s]",
+        // boolean
+        "launch_clear?",
+        "combusting?",
+        "para_opened?",
+        // air
+        "air_density[kg/m3]",
+        "gravity[m/s2]",
+        "pressure[Pa]",
+        "temperature[C]",
+        "wind[m/s]",
+        // body
+        "mass[kg]",
+        "Cg_from_nose[m]",
+        "inertia moment pitch & yaw[kg*m2]",
+        "inertia moment roll[kg*m2]",
+        "attack angle[deg]",
+        "height[m]",
+        "velocity[m/s]",
+        "airspeed[m/s]",
+        "normal_force[N]",
+        "Cnp",
+        "Cny",
+        "Cmqp",
+        "Cmqy",
+        "Cp_from_nose[m]",
+        "Cd",
+        "Cna",
+        // position
+        "latitude",
+        "longitude",
+        "length_from_launch_point[m]",
+        // calculated
+        "Fst[%]",
+        "dynamic_pressure[Pa]"};
+
+    const std::vector<std::string> headerSummary = {"wind_speed[m/s]",
+                                                    "wind_dir[deg]",
+                                                    "launch_clear_time[s]",
+                                                    "launch_clear_vel[m/s]",
+                                                    "max_height[m]",
+                                                    "max_height_time[s]",
+                                                    "max_velocity[m/s]",
+                                                    "max_airspeed[m/s]",
+                                                    "max_normal_force_rising[N]"};
+
     namespace Internal {
         std::string DoubleToString(double d, int precision) {
             std::stringstream stream;
@@ -49,45 +98,7 @@ namespace ResultSaver {
         }
 
         void WriteBodyResult(std::ofstream& file, const std::vector<SimuResultStep>& stepResult) {
-            const std::vector<std::string> headers = {// general
-                                                      "time_from_launch[s]",
-                                                      "elapsed_time[s]",
-                                                      // boolean
-                                                      "launch_clear?",
-                                                      "combusting?",
-                                                      "para_opened?",
-                                                      // air
-                                                      "air_density[kg/m3]",
-                                                      "gravity[m/s2]",
-                                                      "pressure[Pa]",
-                                                      "temperature[C]",
-                                                      "wind[m/s]",
-                                                      // body
-                                                      "mass[kg]",
-                                                      "Cg_from_nose[m]",
-                                                      "inertia moment pitch & yaw[kg*m2]",
-                                                      "inertia moment roll[kg*m2]",
-                                                      "attack angle[deg]",
-                                                      "height[m]",
-                                                      "velocity[m/s]",
-                                                      "airspeed[m/s]",
-                                                      "normal_force[N]",
-                                                      "Cnp",
-                                                      "Cny",
-                                                      "Cmqp",
-                                                      "Cmqy",
-                                                      "Cp_from_nose[m]",
-                                                      "Cd",
-                                                      "Cna",
-                                                      // position
-                                                      "latitude",
-                                                      "longitude",
-                                                      "length_from_launch_point[m]",
-                                                      // calculated
-                                                      "Fst[%]",
-                                                      "dynamic_pressure[Pa]"};
-
-            for (const auto& head : headers) {
+            for (const auto& head : headerDetail) {
                 file << Internal::WithComma(head);
             }
             file << "\n";
@@ -129,18 +140,8 @@ namespace ResultSaver {
         }
 
         void WriteSummaryHeader(std::ofstream& file) {
-            const std::vector<std::string> headers = {"wind_speed[m/s]",
-                                                      "wind_dir[deg]",
-                                                      "launch_clear_time[s]",
-                                                      "launch_clear_vel[m/s]",
-                                                      "max_height[m]",
-                                                      "max_height_time[s]",
-                                                      "max_velocity[m/s]",
-                                                      "max_airspeed[m/s]",
-                                                      "max_normal_force_rising[N]"};
-
             // write header
-            for (const auto& head : headers) {
+            for (const auto& head : headerSummary) {
                 file << Internal::WithComma(head);
             }
             file << "\n";
