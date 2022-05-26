@@ -2,10 +2,10 @@
 #include <string>
 #include <vector>
 
-#include "Solver.hpp"
 #include "env/Environment.hpp"
 #include "gnuplot/Gnuplot.hpp"
 #include "rocket/RocketSpec.hpp"
+#include "solver/Solver.hpp"
 
 enum class SimulationMode : int { Scatter = 1, Detail };
 

@@ -4,7 +4,7 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "gnuplot/Gnuplot.hpp"
-#include "solver/Simulator.hpp"
+#include "simulator/Simulator.hpp"
 
 const auto VERSION = "1.5.0";
 
