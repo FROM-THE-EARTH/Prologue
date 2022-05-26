@@ -42,6 +42,7 @@ set(SOURCE_FILES
 	"src/math/Quaternion.cpp"
 	"src/math/Vector3D.cpp"
 
+	"src/result/ResultSaver.cpp"
 	"src/result/SimuResult.cpp"
 
 	"src/rocket/AeroCoefficient.cpp"
@@ -54,7 +55,6 @@ set(SOURCE_FILES
 	"src/solver/Solver.cpp"
 
 	"src/utils/JsonUtils.cpp"
-	"src/utils/ResultSaver.cpp"
 
 	"src/main.cpp"
 )

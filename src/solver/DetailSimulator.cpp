@@ -1,6 +1,6 @@
 #include "DetailSimulator.hpp"
 
-#include "utils/ResultSaver.hpp"
+#include "result/ResultSaver.hpp"
 
 bool DetailSimulator::simulate() {
     Solver solver(

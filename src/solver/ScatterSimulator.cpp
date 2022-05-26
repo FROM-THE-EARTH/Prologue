@@ -3,7 +3,7 @@
 #include <thread>
 
 #include "app/AppSetting.hpp"
-#include "utils/ResultSaver.hpp"
+#include "result/ResultSaver.hpp"
 
 bool ScatterSimulator::simulate() {
     m_windSpeed     = AppSetting::Simulation::windSpeedMin;
