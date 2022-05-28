@@ -4,7 +4,6 @@ application/result/*
 application/input/aero_coef/*
 application/input/json/*
 application/input/thrust/*
-application/input/time_series/*
 application/input/wind/*
 build/
 !application/prologue.settings.json
