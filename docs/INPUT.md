@@ -6,7 +6,7 @@
 - 機体諸元
 - エンジン
 - 風向風速
-- 機体速度 vs Cp, Cp_a, Cd, Cd_a2, Cna
+- 機体速度 vs Cp, Cp_a, Cd_i,Cd_f, Cd_a2, Cna
 
 ## シミュレータの設定
 
@@ -111,14 +111,13 @@
 **拡張子**: `csv`<br>
 **形式**: 1 行目をヘッダとし、2 行目から値を入力する。
 
-```
-geopotential_height,wind_speed[m/s],wind_direction[deg](North:0, East:90)
-100,4,100
-200,6,150
-500,6,180
-```
+| geopotential_height | wind_speed[m/s] | wind_direction[deg](North:0, East:90) |
+| ------------------- | --------------- | ------------------------------------- |
+| 100                 | 4               | 100                                   |
+| 200                 | 6               | 150                                   |
+| 500                 | 6               | 180                                   |
 
-## 機体速度 vs Cp, Cp_a, Cd, Cd_a2, Cna
+## 機体速度 vs Cp, Cp_a, Cd_i, Cd_f, Cd_a2, Cna
 
 機体速度に応じたパラメータを使用する場合、このファイルを作成し指定します。<br>
 ファイルが存在しない、または指定されていない場合は機体諸元で指定された値を使用します。<br>
@@ -126,9 +125,8 @@ geopotential_height,wind_speed[m/s],wind_direction[deg](North:0, East:90)
 **拡張子**: `csv`<br>
 **形式**: 1 行目をヘッダとし、2 行目から値を入力する。
 
-```
-air_speed[m/s],Cp_from_nose[m],Cp_a[m/rad],Cd,Cd_a2[/rad^2],Cna
-0,1,1,1,1,1
-100,2,2,2,2,2
-200,3,3,3,3,3
-```
+| air_speed[m/s] | Cp_from_nose[m] | Cp_a[m/rad] | Cd_i | Cd_f | Cd_a2[/rad^2] | Cna  |
+| -------------- | --------------- | ----------- | ---- | ---- | ------------- | ---- |
+| 0              | 1               | 0           | 0.5  | 0.1  | 0             | 11   |
+| 20             | 1.1             | 0           | 0.5  | 0.1  | 0             | 11.5 |
+| 40             | 1.2             | 0           | 0.5  | 0.1  | 0             | 12   |
