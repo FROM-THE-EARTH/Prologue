@@ -40,13 +40,24 @@ void AeroCoefficientStorage::init(const std::string& filename) {
     }
 
     try {
-        io::CSVReader<6> csv("input/aero_coef/" + filename);
-        csv.read_header(
-            io::ignore_extra_column, "air_speed[m/s]", "Cp_from_nose[m]", "Cp_a[m/rad]", "Cd", "Cd_a2[/rad^2]", "Cna");
+        io::CSVReader<7> csv("input/aero_coef/" + filename);
+        csv.read_header(io::ignore_extra_column,
+                        "air_speed[m/s]",
+                        "Cp_from_nose[m]",
+                        "Cp_a[m/rad]",
+                        "Cd_i",
+                        "Cd_f",
+                        "Cd_a2[/rad^2]",
+                        "Cna");
 
         AeroCoefficient coef;
-        while (csv.read_row(
-            coef.internalVars.airspeed, coef.Cp, coef.internalVars.Cp_a, coef.Cd, coef.internalVars.Cd_a2, coef.Cna)) {
+        while (csv.read_row(coef.internalVars.airspeed,
+                            coef.Cp,
+                            coef.internalVars.Cp_a,
+                            coef.internalVars.Cd_i,
+                            coef.internalVars.Cd_f,
+                            coef.internalVars.Cd_a2,
+                            coef.Cna)) {
             m_aeroCoefs.push_back(coef);
         }
 
@@ -80,7 +91,7 @@ AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackA
         // lower than minimum airspeed
         if (airspeed < airspeed1) {
             aeroCoef = {m_aeroCoefs[i].Cp,
-                        m_aeroCoefs[i].Cd,
+                        combustionEnded ? m_aeroCoefs[i].internalVars.Cd_f : m_aeroCoefs[i].internalVars.Cd_i,
                         m_aeroCoefs[i].Cna,
                         {
                             airspeed,
@@ -93,7 +104,7 @@ AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackA
         // higher than maximum airspeed
         else if (airspeed > airspeed2) {
             aeroCoef = {m_aeroCoefs[i + 1].Cp,
-                        m_aeroCoefs[i + 1].Cd,
+                        combustionEnded ? m_aeroCoefs[i + 1].internalVars.Cd_f : m_aeroCoefs[i + 1].internalVars.Cd_i,
                         m_aeroCoefs[i + 1].Cna,
                         {
                             airspeed,
@@ -105,8 +116,11 @@ AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackA
         }
         // lerp
         else {
+            const auto cd1 = combustionEnded ? m_aeroCoefs[i].internalVars.Cd_f : m_aeroCoefs[i].internalVars.Cd_i;
+            const auto cd2 =
+                combustionEnded ? m_aeroCoefs[i + 1].internalVars.Cd_f : m_aeroCoefs[i + 1].internalVars.Cd_i;
             aeroCoef = {Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cp, m_aeroCoefs[i + 1].Cp),
-                        Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cd, m_aeroCoefs[i + 1].Cd),
+                        Algorithm::Lerp(airspeed, airspeed1, airspeed2, cd1, cd2),
                         Algorithm::Lerp(airspeed, airspeed1, airspeed2, m_aeroCoefs[i].Cna, m_aeroCoefs[i + 1].Cna),
                         {
                             airspeed,
