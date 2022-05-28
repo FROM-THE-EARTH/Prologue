@@ -2,11 +2,11 @@
 
 シミュレーションを行う際に設定する以下の項目について、ファイルの形式を示します。
 
-- シミュレータの設定
-- 機体諸元
-- エンジン
-- 風向風速
-- 機体速度 vs Cp, Cp_a, Cd_i,Cd_f, Cd_a2, Cna
+- シミュレータの設定 [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/prologue.settings.json)
+- 機体諸元 [単段サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/json/spec_single.json) [多段サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/json/spec_multi.json)
+- エンジン [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/thrust/Sample_G40-4W.txt)
+- 風向風速 [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/wind/wind_data_template.csv)
+- 機体速度 vs Cp, Cp_a, Cd_i,Cd_f, Cd_a2, Cna [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/aero_coef/sample.csv)
 
 ## シミュレータの設定
 
