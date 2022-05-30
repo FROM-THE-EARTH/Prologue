@@ -8,30 +8,13 @@
 #include "app/CommandLine.hpp"
 #include "math/Algorithm.hpp"
 
-size_t search(const std::vector<Internal::AeroCoefSpec>& vs, double airspeed, size_t begin, size_t end) {
-    if (begin == end || begin == end - 1) {
-        return begin;
-    }
-
-    size_t mid = begin + (end - begin) / 2;
-    if (vs[mid].airspeed == airspeed) {
-        return mid;
-    } else if (vs[mid].airspeed > airspeed) {
-        return search(vs, airspeed, begin, mid);
-    } else {
-        return search(vs, airspeed, mid, end - 1);
-    }
-}
-
-size_t getLowerIndex(const std::vector<Internal::AeroCoefSpec>& vs, double airspeed) {
-    size_t index = vs.size() / 2;
-    if (vs[index].airspeed == airspeed) {
-        return index;
-    } else if (vs[index].airspeed > airspeed) {
-        return search(vs, airspeed, 0, index);
-    } else {
-        return search(vs, airspeed, index, vs.size() - 1);
-    }
+size_t getLowerIndex(const std::vector<Internal::AeroCoefSpec>& spec, double airspeed) {
+    const auto it = std::lower_bound(
+        spec.begin() + 1,
+        spec.end() - 1,
+        Internal::AeroCoefSpec{.airspeed = airspeed},
+        [](const Internal::AeroCoefSpec& s1, const Internal::AeroCoefSpec& s2) { return s1.airspeed < s2.airspeed; });
+    return std::distance(spec.begin(), it) - 1;
 }
 
 void AeroCoefficientStorage::init(const std::string& filename) {
@@ -68,24 +51,24 @@ AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackA
     if (m_aeroCoefSpec.size() == 1) {
         spec = m_aeroCoefSpec[0];
     } else {
-        const size_t i = getLowerIndex(m_aeroCoefSpec, airspeed);
-
-        const auto& refSpec1 = m_aeroCoefSpec[i];
-        const auto& refSpec2 = m_aeroCoefSpec[i + 1];
-
-        const double airspeed1 = refSpec1.airspeed;
-        const double airspeed2 = refSpec2.airspeed;
-
         // lower than minimum airspeed
-        if (airspeed < airspeed1) {
-            spec = refSpec1;
+        if (const auto& minAeroCoef = m_aeroCoefSpec[0]; airspeed < minAeroCoef.airspeed) {
+            spec = minAeroCoef;
         }
         // higher than maximum airspeed
-        else if (airspeed > airspeed2) {
-            spec = refSpec2;
+        else if (const auto& maxAeroCoef = m_aeroCoefSpec[m_aeroCoefSpec.size() - 1]; airspeed > maxAeroCoef.airspeed) {
+            spec = maxAeroCoef;
         }
         // lerp
         else {
+            const size_t i = getLowerIndex(m_aeroCoefSpec, airspeed);
+
+            const auto& refSpec1 = m_aeroCoefSpec[i];
+            const auto& refSpec2 = m_aeroCoefSpec[i + 1];
+
+            const double airspeed1 = refSpec1.airspeed;
+            const double airspeed2 = refSpec2.airspeed;
+
             spec = {
                 .airspeed = airspeed,
                 .Cp       = Algorithm::Lerp(airspeed, airspeed1, airspeed2, refSpec1.Cp, refSpec2.Cp),
