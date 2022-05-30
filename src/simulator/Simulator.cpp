@@ -10,7 +10,6 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
-#include "rocket/RocketSpec.hpp"
 
 std::unique_ptr<Simulator> Simulator::New(double dt) {
     const auto jsonFile = SetJSONFile();

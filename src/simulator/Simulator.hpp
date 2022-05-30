@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "env/Environment.hpp"
-#include "gnuplot/Gnuplot.hpp"
+#include "env/Map.hpp"
 #include "rocket/RocketSpec.hpp"
 #include "solver/Solver.hpp"
 
