@@ -2,7 +2,7 @@
 
 #include <string>
 
-enum class WindModelType { Real, Original, OnlyPowerLow };
+enum class WindModelType { Real, Original, OnlyPowerLow, NoWind };
 
 namespace AppSetting {
     namespace Processing {

@@ -6,7 +6,7 @@
 #include "gnuplot/Gnuplot.hpp"
 #include "simulator/Simulator.hpp"
 
-const auto VERSION = "1.7.1";
+const auto VERSION = "1.7.2";
 
 void ShowSettingInfo();
 
@@ -50,6 +50,10 @@ void ShowSettingInfo() {
 
     case WindModelType::OnlyPowerLow:
         CommandLine::PrintInfo(PrintInfoType::Information, "Wind model: Only power low");
+        break;
+
+    case WindModelType::NoWind:
+        CommandLine::PrintInfo(PrintInfoType::Information, "Wind model: No wind");
         break;
     }
 }
