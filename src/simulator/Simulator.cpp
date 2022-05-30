@@ -12,25 +12,21 @@
 #include "env/Map.hpp"
 #include "rocket/RocketSpec.hpp"
 
-Simulator* Simulator::New(double dt) {
-    Simulator* simulator = nullptr;
-
+std::unique_ptr<Simulator> Simulator::New(double dt) {
     const auto jsonFile = SetJSONFile();
 
     if (AppSetting::WindModel::type == WindModelType::Real) {
-        simulator = new DetailSimulator(jsonFile, dt);
+        return std::make_unique<DetailSimulator>(jsonFile, dt);
     } else {
         switch (SetSimulationMode()) {
         case SimulationMode::Detail:
-            simulator = new DetailSimulator(jsonFile, dt);
-            break;
+            return std::make_unique<DetailSimulator>(jsonFile, dt);
         case SimulationMode::Scatter:
-            simulator = new ScatterSimulator(jsonFile, dt);
-            break;
+            return std::make_unique<ScatterSimulator>(jsonFile, dt);
         }
     }
 
-    return simulator;
+    return nullptr;
 }
 
 bool Simulator::initialize() {

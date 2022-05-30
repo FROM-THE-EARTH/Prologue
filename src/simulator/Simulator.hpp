@@ -1,4 +1,6 @@
 #pragma once
+
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -37,7 +39,7 @@ public:
 
     virtual void plotToGnuplot() = 0;
 
-    static Simulator* New(double dt);
+    static std::unique_ptr<Simulator> New(double dt);
 
     bool run();
 
@@ -50,11 +52,11 @@ protected:
     virtual void saveResult() = 0;
 
 private:
-    bool initialize();
-
     static std::string SetJSONFile();
 
     static SimulationMode SetSimulationMode();
+
+    bool initialize();
 
     void setTrajectoryMode();
 
