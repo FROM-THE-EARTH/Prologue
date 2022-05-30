@@ -25,11 +25,13 @@ namespace CommandLine {
         void ShowHelp();
 
         void OpenExplorer() {
+#if defined(_WIN32) || defined(WIN32)
             const std::filesystem::path path = std::filesystem::current_path().append("result").append(OutputDir);
             const std::string comamnd        = "explorer " + path.string();
-            if (system(comamnd.c_str()) != 0) {
-                PrintInfo(PrintInfoType::Error, "Could not open the folder.", path.string().c_str());
-            }
+            system(comamnd.c_str());
+#else
+            PrintInfo(PrintInfoType::Error, "This command is only available on windows");
+#endif
         }
 
         void ExitApplication() {
