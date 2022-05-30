@@ -3,39 +3,14 @@
 #include <fstream>
 #include <iostream>
 
-size_t search(const std::vector<ThrustData>& thrust, double time, size_t begin, size_t end) {
-    if (begin == end || begin == end - 1) {
-        return begin;
-    }
-
-    size_t mid = begin + (end - begin) / 2;
-    if (thrust[mid].time == time) {
-        return mid;
-    } else if (thrust[mid].time > time) {
-        return search(thrust, time, begin, mid);
-    } else {
-        return search(thrust, time, mid, end - 1);
-    }
-}
+#include "math/Algorithm.hpp"
 
 size_t getLowerIndex(const std::vector<ThrustData>& thrust, double time) {
-    /*size_t index = thrust.size() / 2;
-    if (thrust[index].time == time) {
-            return index;
-    }
-    else if (thrust[index].time > time) {
-            return search(thrust, time, 0, index);
-    }
-    else {
-            return search(thrust, time, index, thrust.size() - 1);
-    }*/
-    for (size_t i = 1; i < thrust.size() - 1; i++) {
-        if (thrust[i].time > time) {
-            return i - 1;
-        }
-    }
-
-    return thrust.size() - 2;
+    const auto it = std::lower_bound(
+        thrust.begin() + 1, thrust.end() - 1, ThrustData{.time = time}, [](const ThrustData& t1, const ThrustData& t2) {
+            return t1.time < t2.time;
+        });
+    return std::distance(thrust.begin(), it) - 1;
 }
 
 bool Engine::loadThrustData(const std::string& filename) {
@@ -76,7 +51,7 @@ bool Engine::loadThrustData(const std::string& filename) {
 }
 
 double Engine::thrustAt(double time) const {
-    if (!m_exist || time <= 0.0 || time > m_thrustData[m_thrustData.size() - 1].time) {
+    if (!m_exist || time < 0.0 || time > m_thrustData[m_thrustData.size() - 1].time) {
         return 0;
     }
 
@@ -87,9 +62,5 @@ double Engine::thrustAt(double time) const {
     const double thrust1 = m_thrustData[i].thrust;
     const double thrust2 = m_thrustData[i + 1].thrust;
 
-    const double grad = (thrust2 - thrust1) / (time2 - time1);
-
-    const double thrust = thrust1 + grad * (time - time1);
-
-    return thrust;
+    return Algorithm::Lerp(time, time1, time2, thrust1, thrust2);
 }
