@@ -31,12 +31,14 @@ namespace AppSetting {
                 return WindModelType::Original;
             } else if (windmodeltype == "only_powerlow") {
                 return WindModelType::OnlyPowerLow;
+            } else if (windmodeltype == "no_wind") {
+                return WindModelType::NoWind;
             } else {
                 CommandLine::PrintInfo(PrintInfoType::Error,
                                        "In prologue.settings.json",
                                        "wind_model.type",
                                        ("\"" + windmodeltype + "\" is invalid string.").c_str(),
-                                       "Set \"real\", \"original\" or \"only_powerlow\"");
+                                       "Set \"real\", \"original\", \"only_powerlow\" or \"no_wind\"");
                 throw 0;
             }
         }

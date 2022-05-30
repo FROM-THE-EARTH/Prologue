@@ -81,6 +81,9 @@ void WindModel::update(double height) {
     case WindModelType::OnlyPowerLow:
         m_wind = getWindOnlyPowerLow();
         break;
+    case WindModelType::NoWind:
+        m_wind = Vector3D(0, 0, 0);
+        break;
     }
 }
 

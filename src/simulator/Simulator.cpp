@@ -37,7 +37,8 @@ bool Simulator::initialize() {
     // settings on commandline
     setTrajectoryMode();
 
-    if (AppSetting::WindModel::type != WindModelType::Real && m_simulationMode == SimulationMode::Detail) {
+    if (m_simulationMode == SimulationMode::Detail && AppSetting::WindModel::type != WindModelType::Real
+        && AppSetting::WindModel::type != WindModelType::NoWind) {
         setWindCondition();
     }
 
@@ -75,6 +76,9 @@ bool Simulator::initialize() {
     case WindModelType::OnlyPowerLow:
         m_outputDirName += "powerlow";
         break;
+    case WindModelType::NoWind:
+        m_outputDirName += "nowind";
+        break;
     }
 
     if (AppSetting::WindModel::type != WindModelType::Real) {
@@ -99,7 +103,8 @@ bool Simulator::initialize() {
 
     m_outputDirName += "]";
 
-    if (AppSetting::WindModel::type != WindModelType::Real && m_simulationMode == SimulationMode::Detail) {
+    if (m_simulationMode == SimulationMode::Detail && AppSetting::WindModel::type != WindModelType::Real
+        && AppSetting::WindModel::type != WindModelType::NoWind) {
         std::ostringstream out;
         out.precision(2);
         out << std::fixed << m_windSpeed << "ms, " << m_windDirection << "deg";
