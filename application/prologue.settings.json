@@ -17,6 +17,6 @@
   "wind_model": {
     "power_constant": 6.0,
     "type": "original",
-    "realdata_filename": "wind_data_template.csv"
+    "realdata_filename": "sample.csv"
   }
 }
