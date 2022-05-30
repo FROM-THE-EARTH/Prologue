@@ -34,7 +34,7 @@
 
   "wind_model": {
     "power_constant": 7.0, //べき法則の係数
-    "type": "real", //使用する風モデル　real, original, only_powerlow
+    "type": "real", //使用する風モデル　real, original, only_powerlow, no_wind
     "realdata_filename": "wind_data_template.csv" //風向風速データのファイル名。typeがrealの場合のみ有効。
   }
 }

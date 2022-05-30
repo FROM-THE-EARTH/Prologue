@@ -51,5 +51,9 @@ void ShowSettingInfo() {
     case WindModelType::OnlyPowerLow:
         CommandLine::PrintInfo(PrintInfoType::Information, "Wind model: Only power low");
         break;
+
+    case WindModelType::NoWind:
+        CommandLine::PrintInfo(PrintInfoType::Information, "Wind model: No wind");
+        break;
     }
 }
