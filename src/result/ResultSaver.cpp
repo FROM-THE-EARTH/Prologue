@@ -1,8 +1,6 @@
 #include "ResultSaver.hpp"
 
 #include <fstream>
-#include <iomanip>
-#include <sstream>
 
 #include "app/CommandLine.hpp"
 #include "solver/Solver.hpp"
@@ -66,12 +64,6 @@ namespace ResultSaver {
                                                     "max_normal_force_rising[N]"};
 
     namespace Internal {
-        std::string DoubleToString(double d, int precision) {
-            std::stringstream stream;
-            stream << std::fixed << std::setprecision(precision) << d;
-            return stream.str();
-        }
-
         std::string BoolToString(bool b) {
             return b ? "true" : "false";
         }
@@ -84,8 +76,8 @@ namespace ResultSaver {
             return std::to_string(i) + comma;
         }
 
-        std::string WithComma(double d, int precision = 2) {
-            return DoubleToString(d, precision) + comma;
+        std::string WithComma(double d) {
+            return std::to_string(d) + comma;
         }
 
         std::string WithComma(const std::string& str) {
@@ -93,8 +85,7 @@ namespace ResultSaver {
         }
 
         std::string WithComma(const Vector3D& v) {
-            return "\"(" + DoubleToString(v.x, 2) + ',' + DoubleToString(v.y, 2) + ',' + DoubleToString(v.z, 2) + ")\""
-                   + comma;
+            return "\"(" + std::to_string(v.x) + ',' + std::to_string(v.y) + ',' + std::to_string(v.z) + ")\"" + comma;
         }
 
         void WriteBodyResult(std::ofstream& file, const std::vector<SimuResultStep>& stepResult) {
