@@ -63,10 +63,11 @@ bool Simulator::initialize() {
     m_outputDirName.erase(m_outputDirName.size() - 5, 5);
     m_outputDirName += "[";
 
-    const std::filesystem::path f = AppSetting::WindModel::realdataFilename;
+    const std::filesystem::path realWindFile = AppSetting::WindModel::realdataFilename;
+
     switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
-        m_outputDirName += "(" + f.stem().string() + ")";
+        m_outputDirName += "(" + realWindFile.stem().string() + ")";
         break;
     case WindModelType::Original:
         m_outputDirName += "original";
@@ -76,13 +77,15 @@ bool Simulator::initialize() {
         break;
     }
 
-    switch (m_simulationMode) {
-    case SimulationMode::Scatter:
-        m_outputDirName += "_scatter";
-        break;
-    case SimulationMode::Detail:
-        m_outputDirName += "_detail";
-        break;
+    if (AppSetting::WindModel::type != WindModelType::Real) {
+        switch (m_simulationMode) {
+        case SimulationMode::Scatter:
+            m_outputDirName += "_scatter";
+            break;
+        case SimulationMode::Detail:
+            m_outputDirName += "_detail";
+            break;
+        }
     }
 
     switch (m_trajectoryMode) {
@@ -96,7 +99,7 @@ bool Simulator::initialize() {
 
     m_outputDirName += "]";
 
-    if (m_simulationMode == SimulationMode::Detail) {
+    if (AppSetting::WindModel::type != WindModelType::Real && m_simulationMode == SimulationMode::Detail) {
         std::ostringstream out;
         out.precision(2);
         out << std::fixed << m_windSpeed << "ms, " << m_windDirection << "deg";
