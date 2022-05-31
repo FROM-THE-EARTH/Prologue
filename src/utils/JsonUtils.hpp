@@ -18,10 +18,19 @@ namespace JsonUtils {
 
     template <typename T>
     T GetValue(const boost::property_tree::ptree& pt, const std::string& key) {
-        if (boost::optional<T> value = pt.get_optional<T>(key)) {
+        if (const boost::optional<T> value = pt.get_optional<T>(key)) {
             return value.get();
         }
         return T();
+    }
+
+    template <typename T>
+    std::optional<T> GetOptional(const boost::property_tree::ptree& pt, const std::string& key) {
+        if (const auto result = pt.get_optional<T>(key); result.has_value()) {
+            return result.value();
+        } else {
+            return std::nullopt;
+        }
     }
 
     template <typename T>
