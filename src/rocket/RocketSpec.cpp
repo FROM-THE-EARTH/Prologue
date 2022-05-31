@@ -18,7 +18,7 @@ double CalcParachuteCd(double massFinal, double terminalVelocity) {
 void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t index) {
     const std::string key = RocketParamList[index];
 
-    rocketParam.push_back({});
+    rocketParam.emplace_back();
 
     RocketParam& param = rocketParam[index];
 
@@ -37,7 +37,7 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
 
     param.Cmq = JsonUtils::GetValueExc<double>(pt, key + ".Cmq");
 
-    param.parachute.push_back(Parachute());
+    param.parachute.emplace_back(Parachute());
     param.parachute[0].terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
     param.parachute[0].openingType      = static_cast<ParaOpenType>(JsonUtils::GetValue<int>(pt, key + ".op_type_1st"));
     param.parachute[0].openingTime      = JsonUtils::GetValue<double>(pt, key + ".op_time_1st");
