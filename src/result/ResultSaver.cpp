@@ -27,7 +27,9 @@ namespace ResultSaver {
         "gravity[m/s2]",
         "pressure[Pa]",
         "temperature[C]",
-        "wind[m/s]",
+        "wind_x[m/s]",
+        "wind_y[m/s]",
+        "wind_z[m/s]",
         // body
         "mass[kg]",
         "Cg_from_nose[m]",
@@ -84,10 +86,6 @@ namespace ResultSaver {
             return str + comma;
         }
 
-        std::string WithComma(const Vector3D& v) {
-            return "\"(" + std::to_string(v.x) + ',' + std::to_string(v.y) + ',' + std::to_string(v.z) + ")\"" + comma;
-        }
-
         void WriteBodyResult(std::ofstream& file, const std::vector<SimuResultStep>& stepResult) {
             for (const auto& head : headerDetail) {
                 file << Internal::WithComma(head);
@@ -105,7 +103,8 @@ namespace ResultSaver {
                 // air
                 file << Internal::WithComma(step.air_density) << Internal::WithComma(step.air_gravity)
                      << Internal::WithComma(step.air_pressure) << Internal::WithComma(step.air_temperature)
-                     << Internal::WithComma(step.air_wind);
+                     << Internal::WithComma(step.air_wind.x) << Internal::WithComma(step.air_wind.y)
+                     << Internal::WithComma(step.air_wind.z);
 
                 // body
                 file << Internal::WithComma(step.rocket_mass) << Internal::WithComma(step.rocket_cgLength)
