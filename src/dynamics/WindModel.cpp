@@ -5,6 +5,7 @@
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
+#include "math/Algorithm.hpp"
 #include "misc/Constant.hpp"
 
 // threshold
@@ -153,15 +154,13 @@ Vector3D WindModel::getWindFromData() {
         return Vector3D(0, 0, 0);
     }
 
-    const double windSpeed = m_windData[index - 1].speed
-                             + (m_windData[index].speed - m_windData[index - 1].speed)
-                                   / (m_windData[index].height - m_windData[index - 1].height)
-                                   * (m_height - m_windData[index - 1].height);
+    const auto& windData1 = m_windData[index - 1];
+    const auto& windData2 = m_windData[index];
 
-    const double direction = m_windData[index - 1].direction
-                             + (m_windData[index].direction - m_windData[index - 1].direction)
-                                   / (m_windData[index].height - m_windData[index - 1].height)
-                                   * (m_height - m_windData[index - 1].height);
+    const auto windSpeed =
+        Algorithm::Lerp(m_height, windData1.height, windData2.height, windData1.speed, windData2.speed);
+    const auto direction =
+        Algorithm::Lerp(m_height, windData1.height, windData2.height, windData1.direction, windData2.direction);
 
     const double rad = direction * Constant::PI / 180;
 
