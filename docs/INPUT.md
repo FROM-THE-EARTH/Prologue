@@ -85,6 +85,7 @@
 
 	"environment": {
 		"place": "マップ名称: nosiro_sea nosiro_land izu_sea izu_land",
+		"magnetic_declination": "磁気偏角[deg] nullまたは数値（nullの場合はマップごとのデフォルト値を使用 DYNAMICS.md参照）"
 		"rail_len": "ランチャレール長[m]",
 		"rail_azi": "ランチャ方位角[degree]　北から右回り",
 		"rail_elev": "ランチャ迎角[degree]"

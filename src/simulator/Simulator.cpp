@@ -119,16 +119,28 @@ bool Simulator::run() {
 
     // Set map
     {
-        auto place = m_environment.place;
+        // Get / Set place
+        std::string place = m_environment.place;
         std::transform(
             place.begin(), place.end(), place.begin(), [](int c) { return static_cast<char>(::tolower(c)); });
         if (const auto map = Map::GetMap(place); map.has_value()) {
             m_mapData = map.value();
-            Gnuplot::Initialize(m_outputDirName.c_str(), m_mapData);
         } else {
             CommandLine::PrintInfo(PrintInfoType::Error, "This map is invalid.");
             return false;
         }
+
+        // Set magnetic declination if need
+        if (m_environment.magneticDeclination.has_value()) {
+            CommandLine::PrintInfo(PrintInfoType::Information,
+                                   ("Magnetic declination is set to "
+                                    + std::to_string(m_environment.magneticDeclination.value()) + "[deg] by json")
+                                       .c_str());
+            m_mapData.magneticDeclination = m_environment.magneticDeclination.value();
+        }
+
+        // Initialize gnuplot by the map
+        Gnuplot::Initialize(m_outputDirName.c_str(), m_mapData);
     }
 
     // Simulate
