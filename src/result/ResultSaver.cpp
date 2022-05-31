@@ -34,7 +34,7 @@ namespace ResultSaver {
         "inertia moment pitch & yaw[kg*m2]",
         "inertia moment roll[kg*m2]",
         "attack angle[deg]",
-        "height[m]",
+        "altitude[m]",
         "velocity[m/s]",
         "airspeed[m/s]",
         "normal_force[N]",
@@ -48,7 +48,7 @@ namespace ResultSaver {
         // position
         "latitude",
         "longitude",
-        "length_from_launch_point[m]",
+        "downrange[m]",
         // calculated
         "Fst[%]",
         "dynamic_pressure[Pa]"};
@@ -57,8 +57,8 @@ namespace ResultSaver {
                                                     "wind_dir[deg]",
                                                     "launch_clear_time[s]",
                                                     "launch_clear_vel[m/s]",
-                                                    "max_height[m]",
-                                                    "max_height_time[s]",
+                                                    "max_altitude[m]",
+                                                    "max_altitude_time[s]",
                                                     "max_velocity[m/s]",
                                                     "max_airspeed[m/s]",
                                                     "max_normal_force_rising[N]"};
@@ -121,7 +121,7 @@ namespace ResultSaver {
 
                 // position
                 file << Internal::WithComma(step.latitude) << Internal::WithComma(step.longitude)
-                     << Internal::WithComma(step.lenFromLaunchPoint);
+                     << Internal::WithComma(step.downrange);
 
                 // calculated
                 file << Internal::WithComma(step.Fst) << Internal::WithComma(step.dynamicPressure);
@@ -141,7 +141,7 @@ namespace ResultSaver {
         void WriteSummary(std::ofstream& file, const SimuResultSummary& result) {
             file << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
                  << Internal::WithComma(result.launchClearTime)
-                 << Internal::WithComma(result.launchClearVelocity.length()) << Internal::WithComma(result.maxHeight)
+                 << Internal::WithComma(result.launchClearVelocity.length()) << Internal::WithComma(result.maxAltitude)
                  << Internal::WithComma(result.detectPeakTime) << Internal::WithComma(result.maxVelocity)
                  << Internal::WithComma(result.maxAirspeed) << Internal::WithComma(result.maxNormalForceDuringRising);
             file << "\n";

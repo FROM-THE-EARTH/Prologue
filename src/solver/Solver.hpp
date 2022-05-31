@@ -38,7 +38,7 @@ class Solver {
     size_t m_detachCount      = 0;
 
     // calc
-    double m_maxHeight      = 0;
+    double m_maxAltitude    = 0;
     double m_detectPeakTime = 0;
 
     // result
