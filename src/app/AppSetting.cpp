@@ -53,6 +53,7 @@ namespace AppSetting {
     const double Simulation::windDirInterval     = Internal::InitValue<double>("simulation.scatter.wind_dir_interval");
 
     const double WindModel::powerConstant         = Internal::InitValue<double>("wind_model.power_constant");
+    const double WindModel::powerLowBaseAltitude  = Internal::InitValue<double>("wind_model.power_low_base_alt");
     const WindModelType WindModel::type           = Internal::InitWindModelType();
     const std::string WindModel::realdataFilename = Internal::InitValue<std::string>("wind_model.realdata_filename");
 }

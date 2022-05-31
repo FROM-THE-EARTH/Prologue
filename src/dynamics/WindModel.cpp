@@ -17,17 +17,17 @@ constexpr double tempDecayRate[N] = {-6.5e-3, 0.0, 1e-3};                       
 constexpr double basePressure[N]  = {Constant::SeaPressure, 22632.064, 5474.9};  // [Pa]
 
 // wind calculation
-constexpr double geostrophicWind    = 15;    // [m/s]
-constexpr double surfaceLayerLimit  = 300;   // [m] Surface layer -300[m]
-constexpr double ekmanLayerLimit    = 1000;  // [m] Ekman layer 300-1000[m]
-constexpr double powerLowBaseHeight = 2;     // [m]
+constexpr double geostrophicWind   = 15;    // [m/s]
+constexpr double surfaceLayerLimit = 300;   // [m] Surface layer -300[m]
+constexpr double ekmanLayerLimit   = 1000;  // [m] Ekman layer 300-1000[m]
 
 double applyPowerLow(double windSpeed, double height) {
-    return windSpeed * pow(height / powerLowBaseHeight, 1.0 / AppSetting::WindModel::powerConstant);
+    return windSpeed
+           * pow(height / AppSetting::WindModel::powerLowBaseAltitude, 1.0 / AppSetting::WindModel::powerConstant);
 }
 
 Vector3D applyPowerLow(const Vector3D& wind, double height) {
-    return wind * pow(height / powerLowBaseHeight, 1.0 / AppSetting::WindModel::powerConstant);
+    return wind * pow(height / AppSetting::WindModel::powerLowBaseAltitude, 1.0 / AppSetting::WindModel::powerConstant);
 }
 
 WindModel::WindModel(double groundWindSpeed, double groundWindDirection, double magneticDeclination) :
