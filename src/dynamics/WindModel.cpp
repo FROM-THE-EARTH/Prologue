@@ -11,14 +11,23 @@
 constexpr size_t N                 = 3;
 constexpr double heightList[N + 1] = {0.0, 11000, 20000, 32000};  // height threshold[m]
 constexpr double baseTemperature[N]{
-    15 - Constant::AbsoluteZero, -56.5 - Constant::AbsoluteZero, -76.5 - Constant::AbsoluteZero};  //[kelvin]
+    15 - Constant::AbsoluteZero, -56.5 - Constant::AbsoluteZero, -76.5 - Constant::AbsoluteZero};  // [kelvin]
 constexpr double tempDecayRate[N] = {-6.5e-3, 0.0, 1e-3};                        // temperature decay rate
-constexpr double basePressure[N]  = {Constant::SeaPressure, 22632.064, 5474.9};  //[Pa]
+constexpr double basePressure[N]  = {Constant::SeaPressure, 22632.064, 5474.9};  // [Pa]
 
 // wind calculation
-constexpr double geostrophicWind   = 15;    //[m/s]
-constexpr double surfaceLayerLimit = 300;   //[m] Surface layer -300[m]
-constexpr double ekmanLayerLimit   = 1000;  //[m] Ekman layer 300-1000[m]
+constexpr double geostrophicWind    = 15;    // [m/s]
+constexpr double surfaceLayerLimit  = 300;   // [m] Surface layer -300[m]
+constexpr double ekmanLayerLimit    = 1000;  // [m] Ekman layer 300-1000[m]
+constexpr double powerLowBaseHeight = 2;     // [m]
+
+double applyPowerLow(double windSpeed, double height) {
+    return windSpeed * pow(height / powerLowBaseHeight, 1.0 / AppSetting::WindModel::powerConstant);
+}
+
+Vector3D applyPowerLow(const Vector3D& wind, double height) {
+    return wind * pow(height / powerLowBaseHeight, 1.0 / AppSetting::WindModel::powerConstant);
+}
 
 WindModel::WindModel(double groundWindSpeed, double groundWindDirection, double magneticDeclination) :
     m_groundWindSpeed(groundWindSpeed), m_groundWindDirection(groundWindDirection - magneticDeclination) {
@@ -172,13 +181,12 @@ Vector3D WindModel::getWindOriginalModel() {
         const double rad            = (m_groundWindDirection + deltaDirection) * Constant::PI / 180;
         const Vector3D wind         = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
-        return wind * pow(m_height * 0.5, 1.0 / AppSetting::WindModel::powerConstant);
+        return applyPowerLow(wind, m_height);
     } else if (m_height < ekmanLayerLimit) {  // Ekman layer
         const double deltaDirection = m_height / ekmanLayerLimit * m_directionInterval;
         const double rad            = (m_groundWindDirection + deltaDirection) * Constant::PI / 180;
 
-        const double borderWindSpeed =
-            m_groundWindSpeed * pow(m_height * 0.5, 1.0 / AppSetting::WindModel::powerConstant);
+        const double borderWindSpeed = applyPowerLow(m_groundWindSpeed, m_height);
 
         const double k = (m_height - surfaceLayerLimit) / (surfaceLayerLimit * sqrt(2));
         const double u = geostrophicWind * (1 - exp(-k) * cos(k));
@@ -201,6 +209,6 @@ Vector3D WindModel::getWindOnlyPowerLow() {
         const double rad    = m_groundWindDirection * Constant::PI / 180;
         const Vector3D wind = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
-        return wind * pow(m_height * 0.5, 1.0 / AppSetting::WindModel::powerConstant);
+        return applyPowerLow(wind, m_height);
     }
 }
