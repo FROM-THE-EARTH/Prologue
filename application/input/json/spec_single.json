@@ -22,6 +22,7 @@
 
   "environment": {
     "place": "nosiro_sea",
+    "magnetic_declination": null,
     "rail_len": 5.0,
     "rail_azi": -60.0,
     "rail_elev": 70
