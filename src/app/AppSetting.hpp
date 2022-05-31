@@ -21,6 +21,7 @@ namespace AppSetting {
 
     namespace WindModel {
         extern const double powerConstant;
+        extern const double powerLowBaseAltitude;
         extern const WindModelType type;
         extern const std::string realdataFilename;
     }
