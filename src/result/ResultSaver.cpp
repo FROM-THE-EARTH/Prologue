@@ -15,8 +15,6 @@
 #define WITH_COMMA(value) value << ','
 
 namespace ResultSaver {
-    constexpr char comma = ',';
-
     const std::vector<std::string> headerDetail = {
         // general
         "time_from_launch[s]",
