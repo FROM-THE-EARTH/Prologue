@@ -42,6 +42,16 @@ namespace AppSetting {
                 throw 0;
             }
         }
+
+        int InitResultPrecision() {
+            int precision = Internal::InitValue<int>("result.precision");
+            if (0 <= precision) {
+                return precision;
+            } else {
+                CommandLine::PrintInfo(PrintInfoType::Warning, "Result precision is set to the default value of 8.");
+                return 8;
+            }
+        }
     }
 
     const bool Processing::multiThread = Internal::InitValue<bool>("processing.multi_thread");
@@ -51,6 +61,8 @@ namespace AppSetting {
     const double Simulation::windSpeedMin        = Internal::InitValue<double>("simulation.scatter.wind_speed_min");
     const double Simulation::windSpeedMax        = Internal::InitValue<double>("simulation.scatter.wind_speed_max");
     const double Simulation::windDirInterval     = Internal::InitValue<double>("simulation.scatter.wind_dir_interval");
+
+    const int Result::precision = Internal::InitResultPrecision();
 
     const double WindModel::powerConstant         = Internal::InitValue<double>("wind_model.power_constant");
     const double WindModel::powerLowBaseAltitude  = Internal::InitValue<double>("wind_model.power_low_base_alt");

@@ -19,6 +19,10 @@ namespace AppSetting {
         extern const double windDirInterval;
     }
 
+    namespace Result {
+        extern const int precision;
+    }
+
     namespace WindModel {
         extern const double powerConstant;
         extern const double powerLowBaseAltitude;

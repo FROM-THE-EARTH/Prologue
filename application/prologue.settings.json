@@ -14,6 +14,10 @@
     }
   },
 
+  "result": {
+    "precision": 8
+  },
+
   "wind_model": {
     "power_constant": 6.0,
     "power_low_base_alt": 5.0,

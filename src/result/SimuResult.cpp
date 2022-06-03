@@ -31,11 +31,17 @@ SimuResultSummary SimuResultLogger::getResultScatterFormat() const {
 
 void SimuResultLogger::pushBody() {
     m_result.bodyResults.emplace_back();
+    m_result.bodyFinalPositions.emplace_back();
 }
 
 void SimuResultLogger::setLaunchClear(const Body& body) {
     m_result.launchClearTime     = body.elapsedTime;
     m_result.launchClearVelocity = body.velocity;
+}
+
+void SimuResultLogger::setBodyFinalPosition(size_t bodyIndex, const Vector3D& pos) {
+    m_result.bodyFinalPositions[bodyIndex] = {.latitude  = m_map.coordinate.latitudeAt(pos.y),
+                                              .longitude = m_map.coordinate.longitudeAt(pos.x)};
 }
 
 void SimuResultLogger::update(
@@ -82,7 +88,7 @@ void SimuResultLogger::update(
         // Position
         step.latitude  = m_map.coordinate.latitudeAt(body.pos.y);
         step.longitude = m_map.coordinate.longitudeAt(body.pos.x);
-        step.downrange = body.pos.length();
+        step.downrange = sqrt(body.pos.x * body.pos.x + body.pos.y * body.pos.y);
 
         // Calculated
         step.Fst = 100 * (step.Cp - step.rocket_cgLength) / spec.length;
