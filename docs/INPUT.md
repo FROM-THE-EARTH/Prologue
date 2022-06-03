@@ -18,25 +18,29 @@
 ```
 {
   "processing": {
-    "multi_thread": false //マルチスレッドによる処理の高速化。Scatterモードでのみ有効。
+    "multi_thread": false // マルチスレッドによる処理の高速化。Scatterモードでのみ有効。
   },
 
   "simulation": {
-    "dt": 0.001, //1ステップで経過する時間。小さければより精度が上がるが計算に時間がかかる。
-    "detect_peak_threshold": 15.0, //頂点検知によるパラシュート開傘時、最高高度から何m落下したら開傘するかどうか[m]
+    "dt": 0.001, // １ステップで経過する時間。小さければより精度が上がるが計算に時間がかかる。
+    "detect_peak_threshold": 15.0, // 頂点検知によるパラシュート開傘時、最高高度から何m落下したら開傘するかどうか[m]
 
     "scatter": {
-      "wind_speed_min": 0.0, //Scatterモード時、シミュレーション対象の風速の最小値[m]
-      "wind_speed_max": 7.0, //Scatterモード時、シミュレーション対象の風速の最大値[m]
-      "wind_dir_interval": 30.0 //Scatterモード時、風向を何度ずつ変更してシミュレーションするか[deg]
+      "wind_speed_min": 0.0, // Scatterモード時、シミュレーション対象の風速の最小値[m]
+      "wind_speed_max": 7.0, // Scatterモード時、シミュレーション対象の風速の最大値[m]
+      "wind_dir_interval": 30.0 // Scatterモード時、風向を何度ずつ変更してシミュレーションするか[deg]
     }
   },
 
+  "result": {
+    "precision": 8 // 結果出力時の数値の小数点以下の桁数
+  },
+
   "wind_model": {
-    "power_constant": 7.0, //べき法則の係数
-    "power_low_base_alt": 2.0, //べき法則の基準高度[m]
-    "type": "real", //使用する風モデル　real, original, only_powerlow, no_wind
-    "realdata_filename": "wind_data_template.csv" //風向風速データのファイル名。typeがrealの場合のみ有効。
+    "power_constant": 7.0, // べき法則の係数
+    "power_low_base_alt": 2.0, // べき法則の基準高度[m]
+    "type": "real", // 使用する風モデル　real, original, only_powerlow, no_wind
+    "realdata_filename": "wind_data_template.csv" // 風向風速データのファイル名。typeがrealの場合のみ有効。
   }
 }
 ```
