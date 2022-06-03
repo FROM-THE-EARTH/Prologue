@@ -6,7 +6,7 @@
 #include "gnuplot/Gnuplot.hpp"
 #include "simulator/Simulator.hpp"
 
-const auto VERSION = "1.7.3";
+const auto VERSION = "1.8.0";
 
 void ShowSettingInfo();
 
@@ -26,6 +26,8 @@ int main() {
         CommandLine::PrintInfo(PrintInfoType::Error, "Failed to simulate");
         return 1;
     }
+
+    CommandLine::PrintInfo(PrintInfoType::Information, "Plotting result...");
 
     simulator->plotToGnuplot();
 

@@ -1,9 +1,11 @@
 #pragma once
 
+#include <optional>
 #include <string>
 
 struct Environment {
     std::string place;
+    std::optional<double> magneticDeclination;
     double railLength;
     double railAzimuth;
     double railElevation;

@@ -35,7 +35,7 @@ void AeroCoefficientStorage::init(const std::string& filename) {
 
         Internal::AeroCoefSpec spec;
         while (csv.read_row(spec.airspeed, spec.Cp, spec.Cp_a, spec.Cd_i, spec.Cd_f, spec.Cd_a2, spec.Cna)) {
-            m_aeroCoefSpec.push_back(spec);
+            m_aeroCoefSpec.emplace_back(spec);
         }
 
         m_isTimeSeries = true;

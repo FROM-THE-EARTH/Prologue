@@ -23,8 +23,7 @@ bool Engine::loadThrustData(const std::string& filename) {
     char dummy[1024];
 
     while (1) {
-        char c = static_cast<char>(fs.get());
-        if (c < '0' || c > '9') {
+        if (const char c = static_cast<char>(fs.get()); c < '0' || '9' < c) {
             fs.getline(dummy, 1024);
         } else {
             fs.unget();
@@ -35,7 +34,7 @@ bool Engine::loadThrustData(const std::string& filename) {
     while (!fs.eof()) {
         ThrustData thrustdata;
         fs >> thrustdata.time >> thrustdata.thrust;
-        m_thrustData.push_back(thrustdata);
+        m_thrustData.emplace_back(std::move(thrustdata));
     }
 
     if (m_thrustData[m_thrustData.size() - 1].time == 0.0) {

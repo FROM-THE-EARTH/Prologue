@@ -1,5 +1,6 @@
 #include "ResultSaver.hpp"
 
+#include <boost/progress.hpp>
 #include <fstream>
 
 #include "app/CommandLine.hpp"
@@ -11,9 +12,9 @@
 #define SPRINTF snprintf
 #endif
 
-namespace ResultSaver {
-    constexpr char comma = ',';
+#define WITH_COMMA(value) value << ','
 
+namespace ResultSaver {
     const std::vector<std::string> headerDetail = {
         // general
         "time_from_launch[s]",
@@ -27,14 +28,16 @@ namespace ResultSaver {
         "gravity[m/s2]",
         "pressure[Pa]",
         "temperature[C]",
-        "wind[m/s]",
+        "wind_x[m/s]",
+        "wind_y[m/s]",
+        "wind_z[m/s]",
         // body
         "mass[kg]",
         "Cg_from_nose[m]",
         "inertia moment pitch & yaw[kg*m2]",
         "inertia moment roll[kg*m2]",
         "attack angle[deg]",
-        "height[m]",
+        "altitude[m]",
         "velocity[m/s]",
         "airspeed[m/s]",
         "normal_force[N]",
@@ -48,7 +51,7 @@ namespace ResultSaver {
         // position
         "latitude",
         "longitude",
-        "length_from_launch_point[m]",
+        "downrange[m]",
         // calculated
         "Fst[%]",
         "dynamic_pressure[Pa]"};
@@ -57,93 +60,68 @@ namespace ResultSaver {
                                                     "wind_dir[deg]",
                                                     "launch_clear_time[s]",
                                                     "launch_clear_vel[m/s]",
-                                                    "max_height[m]",
-                                                    "max_height_time[s]",
+                                                    "max_altitude[m]",
+                                                    "max_altitude_time[s]",
                                                     "max_velocity[m/s]",
                                                     "max_airspeed[m/s]",
                                                     "max_normal_force_rising[N]"};
 
     namespace Internal {
-        std::string BoolToString(bool b) {
-            return b ? "true" : "false";
-        }
-
-        std::string WithComma(bool b) {
-            return BoolToString(b) + comma;
-        }
-
-        std::string WithComma(int i) {
-            return std::to_string(i) + comma;
-        }
-
-        std::string WithComma(double d) {
-            return std::to_string(d) + comma;
-        }
-
-        std::string WithComma(const std::string& str) {
-            return str + comma;
-        }
-
-        std::string WithComma(const Vector3D& v) {
-            return "\"(" + std::to_string(v.x) + ',' + std::to_string(v.y) + ',' + std::to_string(v.z) + ")\"" + comma;
-        }
-
         void WriteBodyResult(std::ofstream& file, const std::vector<SimuResultStep>& stepResult) {
             for (const auto& head : headerDetail) {
-                file << Internal::WithComma(head);
+                file << WITH_COMMA(head);
             }
             file << "\n";
 
+            boost::progress_display progress(static_cast<uint32_t>(stepResult.size()));
             for (const auto& step : stepResult) {
                 // general
-                file << Internal::WithComma(step.gen_timeFromLaunch) << Internal::WithComma(step.gen_elapsedTime);
+                file << WITH_COMMA(step.gen_timeFromLaunch) << WITH_COMMA(step.gen_elapsedTime);
 
                 // boolean
-                file << Internal::WithComma(step.launchClear) << Internal::WithComma(step.combusting)
-                     << Internal::WithComma(step.parachuteOpened);
+                file << WITH_COMMA(step.launchClear) << WITH_COMMA(step.combusting) << WITH_COMMA(step.parachuteOpened);
 
                 // air
-                file << Internal::WithComma(step.air_density) << Internal::WithComma(step.air_gravity)
-                     << Internal::WithComma(step.air_pressure) << Internal::WithComma(step.air_temperature)
-                     << Internal::WithComma(step.air_wind);
+                file << WITH_COMMA(step.air_density) << WITH_COMMA(step.air_gravity) << WITH_COMMA(step.air_pressure)
+                     << WITH_COMMA(step.air_temperature) << WITH_COMMA(step.air_wind.x) << WITH_COMMA(step.air_wind.y)
+                     << WITH_COMMA(step.air_wind.z);
 
                 // body
-                file << Internal::WithComma(step.rocket_mass) << Internal::WithComma(step.rocket_cgLength)
-                     << Internal::WithComma(step.rocket_iyz) << Internal::WithComma(step.rocket_ix)
-                     << Internal::WithComma(step.rocket_attackAngle) << Internal::WithComma(step.rocket_pos.z)
-                     << Internal::WithComma(step.rocket_velocity.length())
-                     << Internal::WithComma(step.rocket_airspeed_b.length())
-                     << Internal::WithComma(sqrt(step.rocket_force_b.y * step.rocket_force_b.y
-                                                 + step.rocket_force_b.z * step.rocket_force_b.z))
-                     << Internal::WithComma(step.Cnp) << Internal::WithComma(step.Cny) << Internal::WithComma(step.Cmqp)
-                     << Internal::WithComma(step.Cmqy) << Internal::WithComma(step.Cp) << Internal::WithComma(step.Cd)
-                     << Internal::WithComma(step.Cna);
+                file << WITH_COMMA(step.rocket_mass) << WITH_COMMA(step.rocket_cgLength) << WITH_COMMA(step.rocket_iyz)
+                     << WITH_COMMA(step.rocket_ix) << WITH_COMMA(step.rocket_attackAngle)
+                     << WITH_COMMA(step.rocket_pos.z) << WITH_COMMA(step.rocket_velocity.length())
+                     << WITH_COMMA(step.rocket_airspeed_b.length())
+                     << WITH_COMMA(sqrt(step.rocket_force_b.y * step.rocket_force_b.y
+                                        + step.rocket_force_b.z * step.rocket_force_b.z))
+                     << WITH_COMMA(step.Cnp) << WITH_COMMA(step.Cny) << WITH_COMMA(step.Cmqp) << WITH_COMMA(step.Cmqy)
+                     << WITH_COMMA(step.Cp) << WITH_COMMA(step.Cd) << WITH_COMMA(step.Cna);
 
                 // position
-                file << Internal::WithComma(step.latitude) << Internal::WithComma(step.longitude)
-                     << Internal::WithComma(step.lenFromLaunchPoint);
+                file << WITH_COMMA(step.latitude) << WITH_COMMA(step.longitude) << WITH_COMMA(step.downrange);
 
                 // calculated
-                file << Internal::WithComma(step.Fst) << Internal::WithComma(step.dynamicPressure);
+                file << WITH_COMMA(step.Fst) << WITH_COMMA(step.dynamicPressure);
 
                 file << "\n";
+
+                ++progress;
             }
         }
 
         void WriteSummaryHeader(std::ofstream& file) {
             // write header
             for (const auto& head : headerSummary) {
-                file << Internal::WithComma(head);
+                file << WITH_COMMA(head);
             }
             file << "\n";
         }
 
         void WriteSummary(std::ofstream& file, const SimuResultSummary& result) {
-            file << Internal::WithComma(result.windSpeed) << Internal::WithComma(result.windDirection)
-                 << Internal::WithComma(result.launchClearTime)
-                 << Internal::WithComma(result.launchClearVelocity.length()) << Internal::WithComma(result.maxHeight)
-                 << Internal::WithComma(result.detectPeakTime) << Internal::WithComma(result.maxVelocity)
-                 << Internal::WithComma(result.maxAirspeed) << Internal::WithComma(result.maxNormalForceDuringRising);
+            file << WITH_COMMA(result.windSpeed) << WITH_COMMA(result.windDirection)
+                 << WITH_COMMA(result.launchClearTime) << WITH_COMMA(result.launchClearVelocity.length())
+                 << WITH_COMMA(result.maxAltitude) << WITH_COMMA(result.detectPeakTime)
+                 << WITH_COMMA(result.maxVelocity) << WITH_COMMA(result.maxAirspeed)
+                 << WITH_COMMA(result.maxNormalForceDuringRising);
             file << "\n";
         }
 

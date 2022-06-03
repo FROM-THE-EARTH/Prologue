@@ -92,7 +92,7 @@ void Solver::update() {
 }
 
 void Solver::updateParachute() {
-    const bool detectpeakConditon = m_maxHeight > THIS_BODY.pos.z + AppSetting::Simulation::detectPeakThreshold;
+    const bool detectpeakConditon = m_maxAltitude > THIS_BODY.pos.z + AppSetting::Simulation::detectPeakThreshold;
 
     if (detectpeakConditon && !THIS_BODY.detectPeak) {
         THIS_BODY.detectPeak = true;
@@ -331,8 +331,8 @@ void Solver::organizeResult() {
                            *m_windModel.get(),
                            THIS_BODY_SPEC.engine.isCombusting(THIS_BODY.elapsedTime));
 
-    if (m_maxHeight < THIS_BODY.pos.z) {
-        m_maxHeight      = THIS_BODY.pos.z;
+    if (m_maxAltitude < THIS_BODY.pos.z) {
+        m_maxAltitude    = THIS_BODY.pos.z;
         m_detectPeakTime = THIS_BODY.elapsedTime;
     }
 }

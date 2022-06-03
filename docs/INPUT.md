@@ -34,6 +34,7 @@
 
   "wind_model": {
     "power_constant": 7.0, //べき法則の係数
+    "power_low_base_alt": 2.0, //べき法則の基準高度[m]
     "type": "real", //使用する風モデル　real, original, only_powerlow, no_wind
     "realdata_filename": "wind_data_template.csv" //風向風速データのファイル名。typeがrealの場合のみ有効。
   }
@@ -84,6 +85,7 @@
 
 	"environment": {
 		"place": "マップ名称: nosiro_sea nosiro_land izu_sea izu_land",
+		"magnetic_declination": "磁気偏角[deg] nullまたは数値（nullの場合はマップごとのデフォルト値を使用 DYNAMICS.md参照）"
 		"rail_len": "ランチャレール長[m]",
 		"rail_azi": "ランチャ方位角[degree]　北から右回り",
 		"rail_elev": "ランチャ迎角[degree]"

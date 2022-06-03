@@ -10,27 +10,22 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
-#include "rocket/RocketSpec.hpp"
 
-Simulator* Simulator::New(double dt) {
-    Simulator* simulator = nullptr;
-
+std::unique_ptr<Simulator> Simulator::New(double dt) {
     const auto jsonFile = SetJSONFile();
 
     if (AppSetting::WindModel::type == WindModelType::Real) {
-        simulator = new DetailSimulator(jsonFile, dt);
+        return std::make_unique<DetailSimulator>(jsonFile, dt);
     } else {
         switch (SetSimulationMode()) {
         case SimulationMode::Detail:
-            simulator = new DetailSimulator(jsonFile, dt);
-            break;
+            return std::make_unique<DetailSimulator>(jsonFile, dt);
         case SimulationMode::Scatter:
-            simulator = new ScatterSimulator(jsonFile, dt);
-            break;
+            return std::make_unique<ScatterSimulator>(jsonFile, dt);
         }
     }
 
-    return simulator;
+    return nullptr;
 }
 
 bool Simulator::initialize() {
@@ -124,16 +119,28 @@ bool Simulator::run() {
 
     // Set map
     {
-        auto place = m_environment.place;
+        // Get / Set place
+        std::string place = m_environment.place;
         std::transform(
             place.begin(), place.end(), place.begin(), [](int c) { return static_cast<char>(::tolower(c)); });
         if (const auto map = Map::GetMap(place); map.has_value()) {
             m_mapData = map.value();
-            Gnuplot::Initialize(m_outputDirName.c_str(), m_mapData);
         } else {
             CommandLine::PrintInfo(PrintInfoType::Error, "This map is invalid.");
             return false;
         }
+
+        // Set magnetic declination if need
+        if (m_environment.magneticDeclination.has_value()) {
+            CommandLine::PrintInfo(PrintInfoType::Information,
+                                   ("Magnetic declination is set to "
+                                    + std::to_string(m_environment.magneticDeclination.value()) + "[deg] by json")
+                                       .c_str());
+            m_mapData.magneticDeclination = m_environment.magneticDeclination.value();
+        }
+
+        // Initialize gnuplot by the map
+        Gnuplot::Initialize(m_outputDirName.c_str(), m_mapData);
     }
 
     // Simulate
@@ -152,6 +159,8 @@ bool Simulator::run() {
 
     // Save result and init commandline
     {
+        CommandLine::PrintInfo(PrintInfoType::Information, "Saving result...");
+
         saveResult();
 
         const std::string str = "Result is saved in \"" + m_outputDirName + "/\"";

@@ -80,9 +80,9 @@ void SimuResultLogger::update(
         step.Cna                = body.aeroCoef.Cna;
 
         // Position
-        step.latitude           = m_map.coordinate.latitudeAt(body.pos.y);
-        step.longitude          = m_map.coordinate.longitudeAt(body.pos.x);
-        step.lenFromLaunchPoint = body.pos.length();
+        step.latitude  = m_map.coordinate.latitudeAt(body.pos.y);
+        step.longitude = m_map.coordinate.longitudeAt(body.pos.x);
+        step.downrange = body.pos.length();
 
         // Calculated
         step.Fst = 100 * (step.Cp - step.rocket_cgLength) / spec.length;
@@ -97,8 +97,8 @@ void SimuResultLogger::update(
     // Update max
     {
         const bool rising = body.velocity.z > 0;
-        if (m_result.maxHeight < body.pos.z) {
-            m_result.maxHeight      = body.pos.z;
+        if (m_result.maxAltitude < body.pos.z) {
+            m_result.maxAltitude    = body.pos.z;
             m_result.detectPeakTime = body.elapsedTime;
         }
         if (const auto velocity = body.velocity.length(); m_result.maxVelocity < velocity) {

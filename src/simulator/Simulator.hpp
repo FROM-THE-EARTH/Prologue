@@ -1,9 +1,11 @@
 #pragma once
+
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "env/Environment.hpp"
-#include "gnuplot/Gnuplot.hpp"
+#include "env/Map.hpp"
 #include "rocket/RocketSpec.hpp"
 #include "solver/Solver.hpp"
 
@@ -37,7 +39,7 @@ public:
 
     virtual void plotToGnuplot() = 0;
 
-    static Simulator* New(double dt);
+    static std::unique_ptr<Simulator> New(double dt);
 
     bool run();
 
@@ -50,11 +52,11 @@ protected:
     virtual void saveResult() = 0;
 
 private:
-    bool initialize();
-
     static std::string SetJSONFile();
 
     static SimulationMode SetSimulationMode();
+
+    bool initialize();
 
     void setTrajectoryMode();
 

@@ -43,9 +43,9 @@ struct SimuResultStep {
     double Cna = 0;
 
     // Position
-    double latitude           = 0;
-    double longitude          = 0;
-    double lenFromLaunchPoint = 0;
+    double latitude  = 0;
+    double longitude = 0;
+    double downrange = 0;
 
     // Calculated
     double Fst             = 0;
@@ -69,7 +69,7 @@ struct SimuResultSummary {
     Vector3D launchClearVelocity = Vector3D();
 
     // max
-    double maxHeight = 0, detectPeakTime = 0;
+    double maxAltitude = 0, detectPeakTime = 0;
     double maxVelocity                = 0;
     double maxAirspeed                = 0;
     double maxNormalForceDuringRising = 0;
