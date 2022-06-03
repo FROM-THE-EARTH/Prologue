@@ -159,6 +159,8 @@ bool Simulator::run() {
 
     // Save result and init commandline
     {
+        CommandLine::PrintInfo(PrintInfoType::Information, "Saving result...");
+
         saveResult();
 
         const std::string str = "Result is saved in \"" + m_outputDirName + "/\"";

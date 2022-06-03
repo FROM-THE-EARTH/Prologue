@@ -27,6 +27,8 @@ int main() {
         return 1;
     }
 
+    CommandLine::PrintInfo(PrintInfoType::Information, "Plotting result...");
+
     simulator->plotToGnuplot();
 
     Gnuplot::Save();
