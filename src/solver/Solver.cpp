@@ -59,6 +59,8 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
             organizeResult();
         }
 
+        m_resultLogger->setBodyFinalPosition(m_currentBodyIndex, THIS_BODY.pos);
+
         solvedBodyCount++;
 
     } while (solvedBodyCount < 2 * m_detachCount + 1);

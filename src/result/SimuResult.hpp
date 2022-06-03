@@ -57,8 +57,14 @@ struct SimuResultBody {
     std::vector<SimuResultStep> steps;
 };
 
+struct BodyFinalPosition {
+    double latitude  = 0;
+    double longitude = 0;
+};
+
 struct SimuResultSummary {
     std::vector<SimuResultBody> bodyResults;
+    std::vector<BodyFinalPosition> bodyFinalPositions;
 
     // condition
     double windSpeed     = 0;
@@ -91,6 +97,8 @@ public:
     void pushBody();
 
     void setLaunchClear(const Body& body);
+
+    void setBodyFinalPosition(size_t bodyIndex, const Vector3D& pos);
 
     void update(size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel, bool combusting);
 

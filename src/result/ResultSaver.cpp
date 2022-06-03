@@ -108,30 +108,52 @@ namespace ResultSaver {
             }
         }
 
-        void WriteSummaryHeader(std::ofstream& file) {
+        void WriteSummaryHeader(std::ofstream& file, size_t bodyCount) {
             // write header
             for (const auto& head : headerSummary) {
                 file << WITH_COMMA(head);
             }
+
+            // additional header
+            for (size_t i = 0; i < bodyCount; i++) {
+                const std::string body = "body" + std::to_string(i + 1);
+                file << WITH_COMMA(body + "_final_latitude") << WITH_COMMA(body + "_final_longitude");
+            }
+
             file << "\n";
         }
 
-        void WriteSummary(std::ofstream& file, const SimuResultSummary& result) {
+        void WriteSummary(std::ofstream& file, const SimuResultSummary& result, size_t bodyCount) {
             file << WITH_COMMA(result.windSpeed) << WITH_COMMA(result.windDirection)
                  << WITH_COMMA(result.launchClearTime) << WITH_COMMA(result.launchClearVelocity.length())
                  << WITH_COMMA(result.maxAltitude) << WITH_COMMA(result.detectPeakTime)
                  << WITH_COMMA(result.maxVelocity) << WITH_COMMA(result.maxAirspeed)
                  << WITH_COMMA(result.maxNormalForceDuringRising);
+
+            for (size_t i = 0; i < bodyCount; i++) {
+                if (i < result.bodyFinalPositions.size()) {
+                    file << WITH_COMMA(result.bodyFinalPositions[i].latitude)
+                         << WITH_COMMA(result.bodyFinalPositions[i].longitude);
+                } else {
+                    file << WITH_COMMA(0.0) << WITH_COMMA(0.0);
+                }
+            }
+
             file << "\n";
         }
 
         void WriteSummaryScatter(const std::string& dir, const std::vector<SimuResultSummary>& results) {
             std::ofstream file(dir + "summary.csv");
 
-            WriteSummaryHeader(file);
+            size_t bodyCount = 0;
+            for (const auto& result : results) {
+                bodyCount = bodyCount < result.bodyFinalPositions.size() ? result.bodyFinalPositions.size() : bodyCount;
+            }
+
+            WriteSummaryHeader(file, bodyCount);
 
             for (const auto& result : results) {
-                WriteSummary(file, result);
+                WriteSummary(file, result, bodyCount);
             }
 
             file.close();
@@ -140,9 +162,9 @@ namespace ResultSaver {
         void WriteSummaryDetail(const std::string& dir, const SimuResultSummary& result) {
             std::ofstream file(dir + "summary.csv");
 
-            WriteSummaryHeader(file);
+            WriteSummaryHeader(file, result.bodyFinalPositions.size());
 
-            WriteSummary(file, result);
+            WriteSummary(file, result, result.bodyFinalPositions.size());
 
             file.close();
         }

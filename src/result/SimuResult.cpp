@@ -31,11 +31,17 @@ SimuResultSummary SimuResultLogger::getResultScatterFormat() const {
 
 void SimuResultLogger::pushBody() {
     m_result.bodyResults.emplace_back();
+    m_result.bodyFinalPositions.emplace_back();
 }
 
 void SimuResultLogger::setLaunchClear(const Body& body) {
     m_result.launchClearTime     = body.elapsedTime;
     m_result.launchClearVelocity = body.velocity;
+}
+
+void SimuResultLogger::setBodyFinalPosition(size_t bodyIndex, const Vector3D& pos) {
+    m_result.bodyFinalPositions[bodyIndex] = {.latitude  = m_map.coordinate.latitudeAt(pos.y),
+                                              .longitude = m_map.coordinate.longitudeAt(pos.x)};
 }
 
 void SimuResultLogger::update(
