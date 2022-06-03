@@ -2,7 +2,9 @@
 
 #include <boost/progress.hpp>
 #include <fstream>
+#include <iomanip>
 
+#include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "solver/Solver.hpp"
 
@@ -67,6 +69,12 @@ namespace ResultSaver {
                                                     "max_normal_force_rising[N]"};
 
     namespace Internal {
+        std::ofstream OpenResultCSV(const std::string& path) {
+            std::ofstream file(path);
+            file << std::fixed << std::setprecision(AppSetting::Result::precision);
+            return file;
+        }
+
         void WriteBodyResult(std::ofstream& file, const std::vector<SimuResultStep>& stepResult) {
             for (const auto& head : headerDetail) {
                 file << WITH_COMMA(head);
@@ -143,7 +151,7 @@ namespace ResultSaver {
         }
 
         void WriteSummaryScatter(const std::string& dir, const std::vector<SimuResultSummary>& results) {
-            std::ofstream file(dir + "summary.csv");
+            std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv");
 
             size_t bodyCount = 0;
             for (const auto& result : results) {
@@ -160,7 +168,7 @@ namespace ResultSaver {
         }
 
         void WriteSummaryDetail(const std::string& dir, const SimuResultSummary& result) {
-            std::ofstream file(dir + "summary.csv");
+            std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv");
 
             WriteSummaryHeader(file, result.bodyFinalPositions.size());
 
@@ -186,7 +194,7 @@ namespace ResultSaver {
             for (size_t i = 0; i < bodyCount; i++) {
                 const std::string fileName = "detail_body" + std::to_string(i + 1);
                 const std::string path     = dir + fileName + ".csv";
-                std::ofstream file(path);
+                std::ofstream file         = Internal::OpenResultCSV(path);
                 Internal::WriteBodyResult(file, result.bodyResults[i].steps);
                 file.close();
             }
