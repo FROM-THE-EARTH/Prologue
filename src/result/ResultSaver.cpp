@@ -42,6 +42,8 @@ namespace ResultSaver {
         "altitude[m]",
         "velocity[m/s]",
         "airspeed[m/s]",
+        "accel[m/s2]",
+        "longitudinal accel[m/s2]",
         "normal_force[N]",
         "Cnp",
         "Cny",
@@ -99,6 +101,8 @@ namespace ResultSaver {
                      << WITH_COMMA(step.rocket_ix) << WITH_COMMA(step.rocket_attackAngle)
                      << WITH_COMMA(step.rocket_pos.z) << WITH_COMMA(step.rocket_velocity.length())
                      << WITH_COMMA(step.rocket_airspeed_b.length())
+                     << WITH_COMMA(step.rocket_force_b.length() / step.rocket_mass)
+                     << WITH_COMMA(step.rocket_force_b.x / step.rocket_mass)
                      << WITH_COMMA(sqrt(step.rocket_force_b.y * step.rocket_force_b.y
                                         + step.rocket_force_b.z * step.rocket_force_b.z))
                      << WITH_COMMA(step.Cnp) << WITH_COMMA(step.Cny) << WITH_COMMA(step.Cmqp) << WITH_COMMA(step.Cmqy)
