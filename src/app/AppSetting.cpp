@@ -3,6 +3,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
+#include <thread>
 
 #include "CommandLine.hpp"
 #include "utils/JsonUtils.hpp"
@@ -20,6 +21,35 @@ namespace AppSetting {
             }
 
             return JsonUtils::GetValueExc<T>(pt, key);
+        }
+
+        size_t InitThreadCount() {
+            const int count = Internal::InitValue<int>("processing.multi_thread_count");
+            if (count < 1) {
+                CommandLine::PrintInfo(PrintInfoType::Warning,
+                                       "Specified thread count is too low",
+                                       "Thread count is automatically set to 1.");
+                return 1;
+            }
+
+            const size_t threadCountLimit = std::thread::hardware_concurrency();
+            if (threadCountLimit == 0) {
+                CommandLine::PrintInfo(PrintInfoType::Error,
+                                       "Could not get hardware concurrency",
+                                       "Thread count is automatically set to 1.");
+                return 1;
+            }
+
+            if (static_cast<size_t>(count) > threadCountLimit) {
+                CommandLine::PrintInfo(
+                    PrintInfoType::Warning,
+                    "Specified thread count exceeds the number that the machine can run.",
+                    (std::string("Thread count is automatically set to ") + std::to_string(threadCountLimit) + ".")
+                        .c_str());
+                return threadCountLimit;
+            }
+
+            return static_cast<size_t>(count);
         }
 
         WindModelType InitWindModelType() {
@@ -54,7 +84,8 @@ namespace AppSetting {
         }
     }
 
-    const bool Processing::multiThread = Internal::InitValue<bool>("processing.multi_thread");
+    const bool Processing::multiThread   = Internal::InitValue<bool>("processing.multi_thread");
+    const size_t Processing::threadCount = Internal::InitThreadCount();
 
     const double Simulation::dt                  = Internal::InitValue<double>("simulation.dt");
     const double Simulation::detectPeakThreshold = Internal::InitValue<double>("simulation.detect_peak_threshold");

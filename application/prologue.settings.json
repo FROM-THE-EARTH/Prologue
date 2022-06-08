@@ -1,6 +1,7 @@
 {
   "processing": {
-    "multi_thread": true
+    "multi_thread": true,
+    "multi_thread_count": 4
   },
 
   "simulation": {

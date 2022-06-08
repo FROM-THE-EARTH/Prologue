@@ -65,7 +65,6 @@ bool ScatterSimulator::launchNextAsyncSolve(AsyncSolver& solver) {
 }
 
 bool ScatterSimulator::multiThreadSimulation() {
-    const size_t threadCount = 2;
     const size_t simulationCount =
         static_cast<size_t>(std::ceil(360 / AppSetting::Simulation::windDirInterval)
                             * (AppSetting::Simulation::windSpeedMax - AppSetting::Simulation::windSpeedMin + 1));
@@ -73,13 +72,13 @@ bool ScatterSimulator::multiThreadSimulation() {
     bool simulationFinished = false;
     size_t indexCounter     = 0;
 
-    std::vector<AsyncSolver> solvers(threadCount);
-    std::vector<size_t> threadTargetIndexes(threadCount);
+    std::vector<AsyncSolver> solvers(AppSetting::Processing::threadCount);
+    std::vector<size_t> threadTargetIndexes(AppSetting::Processing::threadCount);
 
     m_result.resize(simulationCount);
 
     // Launch initial solves
-    for (size_t i = 0; i < threadCount; i++) {
+    for (size_t i = 0; i < AppSetting::Processing::threadCount; i++) {
         if (!simulationFinished) {
             simulationFinished     = !launchNextAsyncSolve(solvers[i]);
             threadTargetIndexes[i] = indexCounter++;
@@ -88,7 +87,7 @@ bool ScatterSimulator::multiThreadSimulation() {
 
     while (true) {
         if (!simulationFinished) {
-            for (size_t i = 0; i < threadCount; i++) {
+            for (size_t i = 0; i < AppSetting::Processing::threadCount; i++) {
                 // If solvers[i].thread is ready to get the result, get it and solve next
                 if (!simulationFinished && isFutureReady(solvers[i])) {
                     m_result[threadTargetIndexes[i]] = solvers[i].get()->getResultScatterFormat();
@@ -99,7 +98,7 @@ bool ScatterSimulator::multiThreadSimulation() {
         }
         // Get results and end simulation
         else {
-            for (size_t i = 0; i < threadCount; i++) {
+            for (size_t i = 0; i < AppSetting::Processing::threadCount; i++) {
                 // Wait for simulations to finish and get results
                 m_result[threadTargetIndexes[i]] = solvers[i].get()->getResultScatterFormat();
             }
