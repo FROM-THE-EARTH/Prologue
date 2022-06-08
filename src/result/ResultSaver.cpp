@@ -6,13 +6,8 @@
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
+#include "misc/Platform.hpp"
 #include "solver/Solver.hpp"
-
-#if defined(_WIN32) || defined(WIN32)
-#define SPRINTF sprintf_s
-#else
-#define SPRINTF snprintf
-#endif
 
 #define WITH_COMMA(value) value << ','
 

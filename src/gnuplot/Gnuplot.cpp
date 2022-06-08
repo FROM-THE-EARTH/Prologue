@@ -7,21 +7,16 @@
 
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
+#include "misc/Platform.hpp"
 #include "solver/Solver.hpp"
 
-#if defined(_WIN32) || defined(WIN32)
-#define POPEN _popen
-#define PCLOSE _pclose
+#if PLATFORM_WINDOWS
 #define GNUPLOT_TERMINAL "windows"
 #define PAUSE_COMMAND "pause"
-#elif __APPLE__
-#define POPEN popen
-#define PCLOSE pclose
+#elif PLATFORM_MACOS
 #define GNUPLOT_TERMINAL "qt"
 #define PAUSE_COMMAND "read -n1 -r -p \"Press any key to continue...\" key"
 #else
-#define POPEN popen
-#define PCLOSE pclose
 #define GNUPLOT_TERMINAL "x11"
 #define PAUSE_COMMAND "read -rsp $'Press any key to continue...\n'"
 #endif

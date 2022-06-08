@@ -43,11 +43,12 @@ MSVC, GCC, Clang などのコンパイラが入っていない場合はインス
 
 1. ソースコードの修正が完了し、更新準備が整う
 2. `main.cpp`の`const auto VERSION = "X.X.X"` を書き換える
-3. [`README.md`](https://github.com/FROM-THE-EARTH/Prologue/blob/main/README.md)のバージョン・日付・更新履歴を修正する
+3. [`README.md`](https://github.com/FROM-THE-EARTH/Prologue/blob/main/README.md)のバージョン・日付を修正する
 4. 上記作業が終了したコミットに`vX.X.X`とタグをつけ、リモートにプッシュする（例 `v1.2.3`）
    タグを付けたコミットに不具合があり、バージョンを変更せずにリリース作業をやり直す場合、不具合を修正したコミットに`vX.X.X.X`とタグを付けリモートにプッシュする（例 `v1.2.3.1`, `v1.2.3.2`）
 5. [**Actions**] タグに反応して[`release.yml`](https://github.com/FROM-THE-EARTH/Prologue/blob/main/.github/workflows/release.yml)のワークフローが実行される
 6. [**Actions**] [Releases](https://github.com/FROM-THE-EARTH/Prologue/releases) に`vX.X.X`を名前として Windows, macOS, Linux 向けの実行ファイル・設定ファイル・入力ファイルを同包した zip ファイルが登録される
+7. Releases に更新情報を書く
 
 ## CI
 

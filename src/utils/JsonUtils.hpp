@@ -54,7 +54,7 @@ namespace JsonUtils {
     template <typename T>
     T GetValueExc(const boost::property_tree::ptree& pt, const std::string& key) {
         if (!JsonUtils::HasValue<T>(pt, key)) {
-            CommandLine::PrintInfo(PrintInfoType::Error, ("The key of " + key + " has no value.").c_str());
+            CommandLine::PrintInfo(PrintInfoType::Error, "The key of " + key + " has no value.");
             throw 0;
         }
 

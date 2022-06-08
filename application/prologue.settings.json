@@ -1,6 +1,7 @@
 {
   "processing": {
-    "multi_thread": true
+    "multi_thread": true,
+    "multi_thread_count": 4
   },
 
   "simulation": {
@@ -8,7 +9,7 @@
     "detect_peak_threshold": 15.0,
 
     "scatter": {
-      "wind_speed_min": 0.0,
+      "wind_speed_min": 1.0,
       "wind_speed_max": 7.0,
       "wind_dir_interval": 22.5
     }

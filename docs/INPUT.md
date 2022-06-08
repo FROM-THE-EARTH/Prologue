@@ -19,6 +19,7 @@
 {
   "processing": {
     "multi_thread": false // マルチスレッドによる処理の高速化。Scatterモードでのみ有効。
+    "multi_thread_count": 4 // スレッド数
   },
 
   "simulation": {

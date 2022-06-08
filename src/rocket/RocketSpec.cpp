@@ -46,7 +46,7 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
     if (param.parachute[0].terminalVelocity == 0.0) {
         m_existInfCd = true;
         CommandLine::PrintInfo(PrintInfoType::Warning,
-                               (std::string("Rocket: ") + key).c_str(),
+                               "Rocket: " + key,
                                "Terminal velocity is undefined.",
                                "Parachute Cd value is automatically calculated.");
     } else {
@@ -56,11 +56,9 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
     param.engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
     param.aeroCoefStorage.init(JsonUtils::GetValue<std::string>(pt, key + ".aero_coef_file"));
     if (param.aeroCoefStorage.isTimeSeriesSpec()) {
-        CommandLine::PrintInfo(
-            PrintInfoType::Information, ("Rocket: " + key).c_str(), "Aero coefficients are set from CSV");
+        CommandLine::PrintInfo(PrintInfoType::Information, "Rocket: " + key, "Aero coefficients are set from CSV");
     } else {
-        CommandLine::PrintInfo(
-            PrintInfoType::Information, ("Rocket: " + key).c_str(), "Aero coefficients are set from JSON");
+        CommandLine::PrintInfo(PrintInfoType::Information, "Rocket: " + key, "Aero coefficients are set from JSON");
         param.aeroCoefStorage.init(JsonUtils::GetValueExc<double>(pt, key + ".CPlen"),
                                    JsonUtils::GetValue<double>(pt, key + ".CP_alpha"),
                                    JsonUtils::GetValueExc<double>(pt, key + ".Cd_i"),

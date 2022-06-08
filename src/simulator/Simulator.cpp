@@ -133,9 +133,8 @@ bool Simulator::run() {
         // Set magnetic declination if need
         if (m_environment.magneticDeclination.has_value()) {
             CommandLine::PrintInfo(PrintInfoType::Information,
-                                   ("Magnetic declination is set to "
-                                    + std::to_string(m_environment.magneticDeclination.value()) + "[deg] by json")
-                                       .c_str());
+                                   "Magnetic declination is set to "
+                                       + std::to_string(m_environment.magneticDeclination.value()) + "[deg] by json");
             m_mapData.magneticDeclination = m_environment.magneticDeclination.value();
         }
 
@@ -151,10 +150,10 @@ bool Simulator::run() {
             return false;
         }
 
-        const auto end      = std::chrono::system_clock::now();
-        const auto elapsed  = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-        const std::string s = "Finish processing: " + std::to_string(elapsed / 1000000.0) + "[s]";
-        CommandLine::PrintInfo(PrintInfoType::Information, s.c_str());
+        const auto end     = std::chrono::system_clock::now();
+        const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+        CommandLine::PrintInfo(PrintInfoType::Information,
+                               "Finish processing: " + std::to_string(elapsed / 1000000.0) + "[s]");
     }
 
     // Save result and init commandline
@@ -163,8 +162,7 @@ bool Simulator::run() {
 
         saveResult();
 
-        const std::string str = "Result is saved in \"" + m_outputDirName + "/\"";
-        CommandLine::PrintInfo(PrintInfoType::Information, str.c_str());
+        CommandLine::PrintInfo(PrintInfoType::Information, "Result is saved in \"" + m_outputDirName + "/\"");
 
         CommandLine::SetOutputDir(m_outputDirName);
     }
