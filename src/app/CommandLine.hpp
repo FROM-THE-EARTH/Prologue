@@ -14,8 +14,8 @@ namespace CommandLine {
 
         void PrintInfoLines();
 
-        template <class... Args>
-        void ShowChoices(const char* s, Args... choices) {
+        template <typename T, class... Args>
+        void ShowChoices(const T& s, Args... choices) {
             std::cout << Counter << ": " << s << std::endl;
 
             Counter++;
@@ -23,15 +23,15 @@ namespace CommandLine {
             ShowChoices(std::forward<Args>(choices)...);
         }
 
-        template <class... Args>
-        void PrintInfoLines(const char* line, Args... lines) {
+        template <typename T, class... Args>
+        void PrintInfoLines(const T& line, Args... lines) {
             std::cout << "   " << line << std::endl;
 
             PrintInfoLines(std::forward<Args>(lines)...);
         }
 
-        template <class... Args>
-        void PrintInfoFirstLine(PrintInfoType type, const char* line, Args... lines) {
+        template <typename T, class... Args>
+        void PrintInfoFirstLine(PrintInfoType type, const T& line, Args... lines) {
             switch (type) {
             case PrintInfoType::Information:
                 std::cout << "I: ";
@@ -52,8 +52,8 @@ namespace CommandLine {
         }
     }
 
-    template <class... Args>
-    void Question(const char* question, Args... choices) {
+    template <typename T, class... Args>
+    void Question(const T& question, Args... choices) {
         std::cout << "<!===" << question << "===!>" << std::endl;
 
         Internal::Counter = 1;

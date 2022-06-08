@@ -44,8 +44,7 @@ namespace AppSetting {
                 CommandLine::PrintInfo(
                     PrintInfoType::Warning,
                     "Specified thread count exceeds the number that the machine can run.",
-                    (std::string("Thread count is automatically set to ") + std::to_string(threadCountLimit) + ".")
-                        .c_str());
+                    "Thread count is automatically set to " + std::to_string(threadCountLimit) + ".");
                 return threadCountLimit;
             }
 
@@ -67,7 +66,7 @@ namespace AppSetting {
                 CommandLine::PrintInfo(PrintInfoType::Error,
                                        "In prologue.settings.json",
                                        "wind_model.type",
-                                       ("\"" + windmodeltype + "\" is invalid string.").c_str(),
+                                       "\"" + windmodeltype + "\" is invalid string.",
                                        "Set \"real\", \"original\", \"only_powerlow\" or \"no_wind\"");
                 throw 0;
             }

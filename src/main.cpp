@@ -40,10 +40,10 @@ int main() {
 
 void ShowSettingInfo() {
     // Wind model
-    const std::string s = "Wind data file: " + AppSetting::WindModel::realdataFilename;
+    const std::string windFile = "Wind data file: " + AppSetting::WindModel::realdataFilename;
     switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
-        CommandLine::PrintInfo(PrintInfoType::Information, "Wind model: Real", s.c_str(), "Run detail mode simulation");
+        CommandLine::PrintInfo(PrintInfoType::Information, "Wind model: Real", windFile, "Run detail mode simulation");
         break;
 
     case WindModelType::Original:
