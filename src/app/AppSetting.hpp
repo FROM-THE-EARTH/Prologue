@@ -7,6 +7,7 @@ enum class WindModelType { Real, Original, OnlyPowerLow, NoWind };
 namespace AppSetting {
     namespace Processing {
         extern const bool multiThread;
+        extern const size_t threadCount;
     }
 
     namespace Simulation {
