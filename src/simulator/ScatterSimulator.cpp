@@ -1,9 +1,12 @@
 #include "ScatterSimulator.hpp"
 
-#include <thread>
-
 #include "app/AppSetting.hpp"
 #include "result/ResultSaver.hpp"
+
+template <typename T>
+bool isFutureReady(const std::future<T>& f) {
+    return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+}
 
 bool ScatterSimulator::simulate() {
     m_windSpeed     = AppSetting::Simulation::windSpeedMin;
@@ -24,19 +27,16 @@ bool ScatterSimulator::simulate() {
     return true;
 }
 
-void ScatterSimulator::solve(
-    double windSpeed, double windDir, std::shared_ptr<SimuResultLogger>& resultLogger, bool* finish, bool* error) {
+std::shared_ptr<SimuResultLogger> ScatterSimulator::solve(double windSpeed, double windDir) {
     Solver solver(
         m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
-    if (resultLogger = solver.solve(windSpeed, windDir); resultLogger) {
-        resultLogger->organize();
-        *error = false;
+    if (const auto result = solver.solve(windSpeed, windDir); result) {
+        result->organize();
+        return result;
     } else {
-        *error = true;
+        return nullptr;
     }
-
-    *finish = true;
 }
 
 bool ScatterSimulator::singleThreadSimulation() {
@@ -59,69 +59,52 @@ bool ScatterSimulator::singleThreadSimulation() {
     return true;
 }
 
+bool ScatterSimulator::launchNextAsyncSolve(AsyncSolver& solver) {
+    solver = std::async(std::launch::async, &ScatterSimulator::solve, this, m_windSpeed, m_windDirection);
+    return updateWindCondition();
+}
+
 bool ScatterSimulator::multiThreadSimulation() {
     const size_t threadCount = 2;
-    bool finish              = false;
-    size_t simulated         = 1;
+    const size_t simulationCount =
+        static_cast<size_t>(std::ceil(360 / AppSetting::Simulation::windDirInterval)
+                            * (AppSetting::Simulation::windSpeedMax - AppSetting::Simulation::windSpeedMin + 1));
 
-    while (!finish) {
-        bool e = false;
+    bool simulationFinished = false;
+    size_t indexCounter     = 0;
 
-        std::shared_ptr<SimuResultLogger> results[threadCount];
-        std::thread threads[threadCount];
-        bool finished[threadCount] = {false};
-        bool error[threadCount]    = {false};
+    std::vector<AsyncSolver> solvers(threadCount);
+    std::vector<size_t> threadTargetIndexes(threadCount);
 
-        simulated = 1;
+    m_result.resize(simulationCount);
 
-        threads[0] = std::thread(&ScatterSimulator::solve,
-                                 this,
-                                 m_windSpeed,
-                                 m_windDirection,
-                                 std::ref(results[0]),
-                                 &finished[0],
-                                 &error[0]);
-        threads[0].detach();
-        for (size_t i = 1; i < threadCount; i++) {
-            finish = !updateWindCondition();
-            if (finish) {
-                break;
+    // Launch initial solves
+    for (size_t i = 0; i < threadCount; i++) {
+        if (!simulationFinished) {
+            simulationFinished     = !launchNextAsyncSolve(solvers[i]);
+            threadTargetIndexes[i] = indexCounter++;
+        }
+    }
+
+    while (true) {
+        if (!simulationFinished) {
+            for (size_t i = 0; i < threadCount; i++) {
+                // If solvers[i].thread is ready to get the result, get it and solve next
+                if (!simulationFinished && isFutureReady(solvers[i])) {
+                    m_result[threadTargetIndexes[i]] = solvers[i].get()->getResultScatterFormat();
+                    simulationFinished               = !launchNextAsyncSolve(solvers[i]);
+                    threadTargetIndexes[i]           = indexCounter++;
+                }
             }
-
-            threads[i] = std::thread(&ScatterSimulator::solve,
-                                     this,
-                                     m_windSpeed,
-                                     m_windDirection,
-                                     std::ref(results[i]),
-                                     &finished[i],
-                                     &error[i]);
-            threads[i].detach();
-            simulated++;
         }
-
-        // wait threads
-        while (1) {
-            bool f = true;
-            for (size_t i = 0; i < simulated; i++) {
-                f = f && (finished[i] || error[i]);
-                e = e || error[i];
+        // Get results and end simulation
+        else {
+            for (size_t i = 0; i < threadCount; i++) {
+                // Wait for simulations to finish and get results
+                m_result[threadTargetIndexes[i]] = solvers[i].get()->getResultScatterFormat();
             }
-            if (f) {
-                break;
-            }
-            std::cout << "";
+            break;
         }
-
-        // error occured
-        if (e) {
-            return false;
-        }
-
-        for (size_t i = 0; i < simulated; i++) {
-            m_result.emplace_back(results[i]->getResultScatterFormat());
-        }
-
-        finish = !updateWindCondition();
     }
 
     return true;
@@ -139,11 +122,11 @@ void ScatterSimulator::plotToGnuplot() {
 bool ScatterSimulator::updateWindCondition() {
     m_windDirection += AppSetting::Simulation::windDirInterval;
     if (m_windDirection >= 360.0) {
-        m_windDirection = 0.0;
-        m_windSpeed += 1.0;
-        if (m_windSpeed > AppSetting::Simulation::windSpeedMax) {
+        if (m_windSpeed >= AppSetting::Simulation::windSpeedMax) {
             return false;
         }
+        m_windDirection = 0.0;
+        m_windSpeed += 1.0;
     }
 
     return true;
