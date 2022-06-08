@@ -1,5 +1,7 @@
 #include "ScatterSimulator.hpp"
 
+#include <boost/progress.hpp>
+
 #include "app/AppSetting.hpp"
 #include "result/ResultSaver.hpp"
 
@@ -40,13 +42,19 @@ std::shared_ptr<SimuResultLogger> ScatterSimulator::solve(double windSpeed, doub
 }
 
 bool ScatterSimulator::singleThreadSimulation() {
+    const size_t simulationCount =
+        static_cast<size_t>(std::ceil(360 / AppSetting::Simulation::windDirInterval)
+                            * (AppSetting::Simulation::windSpeedMax - AppSetting::Simulation::windSpeedMin + 1));
+    boost::progress_display pd(static_cast<uint32_t>(simulationCount));
+
     while (1) {
         Solver solver(
             m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
         if (const auto result = solver.solve(m_windSpeed, m_windDirection); result) {
             result->organize();
-            m_result.push_back(result->getResultScatterFormat());
+            m_result.emplace_back(result->getResultScatterFormat());
+            ++pd;
         } else {
             return false;
         }
@@ -77,6 +85,8 @@ bool ScatterSimulator::multiThreadSimulation() {
 
     m_result.resize(simulationCount);
 
+    boost::progress_display pd(static_cast<uint32_t>(simulationCount));
+
     // Launch initial solves
     for (size_t i = 0; i < AppSetting::Processing::threadCount; i++) {
         if (!simulationFinished) {
@@ -93,6 +103,7 @@ bool ScatterSimulator::multiThreadSimulation() {
                     m_result[threadTargetIndexes[i]] = solvers[i].get()->getResultScatterFormat();
                     simulationFinished               = !launchNextAsyncSolve(solvers[i]);
                     threadTargetIndexes[i]           = indexCounter++;
+                    ++pd;
                 }
             }
         }
@@ -101,6 +112,7 @@ bool ScatterSimulator::multiThreadSimulation() {
             for (size_t i = 0; i < AppSetting::Processing::threadCount; i++) {
                 // Wait for simulations to finish and get results
                 m_result[threadTargetIndexes[i]] = solvers[i].get()->getResultScatterFormat();
+                ++pd;
             }
             break;
         }
