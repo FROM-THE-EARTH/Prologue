@@ -33,7 +33,8 @@ std::shared_ptr<SimuResultLogger> ScatterSimulator::solve(double windSpeed, doub
     Solver solver(
         m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
 
-    if (const auto result = solver.solve(windSpeed, windDir); result) {
+    // Wind direction is based on launch azimuth
+    if (const auto result = solver.solve(windSpeed, windDir + m_environment.railAzimuth); result) {
         result->organize();
         return result;
     } else {
