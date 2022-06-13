@@ -32,6 +32,8 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
     // multi rokcet : every rockets including after detachment
     size_t solvedBodyCount = 0;
     do {
+        m_steps = 0;
+
         initializeRocket();
 
         // loop until the rocket lands
@@ -56,7 +58,11 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
 
             applyDelta();
 
-            organizeResult();
+            if (m_steps % AppSetting::Result::stepSaveInterval == 0) {
+                organizeResult();
+            }
+
+            m_steps++;
         }
 
         m_resultLogger->setBodyFinalPosition(m_currentBodyIndex, THIS_BODY.pos);

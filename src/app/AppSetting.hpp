@@ -22,6 +22,7 @@ namespace AppSetting {
 
     namespace Result {
         extern const int precision;
+        extern const int stepSaveInterval;
     }
 
     namespace WindModel {

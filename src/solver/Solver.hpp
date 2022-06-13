@@ -41,6 +41,9 @@ class Solver {
     double m_maxAltitude    = 0;
     double m_detectPeakTime = 0;
 
+    // Simulation
+    size_t m_steps = 0;
+
     // result
     std::shared_ptr<SimuResultLogger> m_resultLogger = nullptr;
 

@@ -81,6 +81,16 @@ namespace AppSetting {
                 return 8;
             }
         }
+
+        int InitStepSaveInterval() {
+            const int interval = Internal::InitValue<int>("result.step_save_interval");
+            if (interval < 1) {
+                CommandLine::PrintInfo(PrintInfoType::Warning, "Step save interval is set to the default value of 10.");
+                return 10;
+            } else {
+                return interval;
+            }
+        }
     }
 
     const bool Processing::multiThread   = Internal::InitValue<bool>("processing.multi_thread");
@@ -92,7 +102,8 @@ namespace AppSetting {
     const double Simulation::windSpeedMax        = Internal::InitValue<double>("simulation.scatter.wind_speed_max");
     const double Simulation::windDirInterval     = Internal::InitValue<double>("simulation.scatter.wind_dir_interval");
 
-    const int Result::precision = Internal::InitResultPrecision();
+    const int Result::precision        = Internal::InitResultPrecision();
+    const int Result::stepSaveInterval = Internal::InitStepSaveInterval();
 
     const double WindModel::powerConstant         = Internal::InitValue<double>("wind_model.power_constant");
     const double WindModel::powerLowBaseAltitude  = Internal::InitValue<double>("wind_model.power_low_base_alt");
