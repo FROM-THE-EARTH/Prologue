@@ -1,5 +1,6 @@
 #include "Gnuplot.hpp"
 
+#include <app/AppSetting.hpp>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -239,15 +240,14 @@ namespace Gnuplot {
         bodyCount = results[0].bodyResults.size();
 
         for (size_t i = 0; i < results.size(); i++) {
-            if (results[i].windDirection == 0.0) {
-                plotCount++;
-            }
             Internal::CalcRange(results[i], i == 0, i == results.size() - 1);
         }
 
-        const size_t directions = results.size() / plotCount;
-        const size_t winds      = plotCount;
-        plotCount *= bodyCount;
+        const size_t directions = static_cast<size_t>(std::ceil(360 / AppSetting::Simulation::windDirInterval));
+        const size_t winds =
+            static_cast<size_t>(AppSetting::Simulation::windSpeedMax - AppSetting::Simulation::windSpeedMin + 1);
+
+        plotCount = winds * bodyCount;
 
         for (size_t i = 0; i < winds; i++) {          // winds
             for (size_t j = 0; j < bodyCount; j++) {  // bodies

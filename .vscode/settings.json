@@ -3,9 +3,9 @@
   "C_Cpp.clang_format_style": "file",
   "C_Cpp.autoAddFileAssociations": false,
   "files.associations": {
-    ".clang-format": "yaml",
+    ".clang-format": "yaml"
   },
   "[cpp]": {
     "editor.defaultFormatter": "ms-vscode.cpptools"
-  },
+  }
 }

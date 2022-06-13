@@ -16,7 +16,8 @@
   },
 
   "result": {
-    "precision": 8
+    "precision": 8,
+    "step_save_interval": 10
   },
 
   "wind_model": {
