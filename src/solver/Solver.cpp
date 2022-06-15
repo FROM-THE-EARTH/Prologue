@@ -65,6 +65,11 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
             m_steps++;
         }
 
+        // Save last if need
+        if (m_steps > 0 && (m_steps - 1) % AppSetting::Result::stepSaveInterval != 0) {
+            organizeResult();
+        }
+
         m_resultLogger->setBodyFinalPosition(m_currentBodyIndex, THIS_BODY.pos);
 
         solvedBodyCount++;
