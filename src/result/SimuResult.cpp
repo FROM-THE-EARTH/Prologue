@@ -21,9 +21,8 @@ SimuResultSummary SimuResultLogger::getResultScatterFormat() const {
 
     // remove body result that not contain velid landing point
     for (int i = static_cast<int>(result.bodyResults.size() - 1); i >= 0; i--) {
-        auto& landingStep = result.bodyResults[i].steps[0];
-        if (landingStep.rocket_pos.z != 0.0) {
-            landingStep.rocket_pos.z = 0.0;
+        if (result.bodyResults[i].steps[0].rocket_pos.z != 0.0) {
+            result.bodyResults.erase(result.bodyResults.begin() + i);
         }
     }
 
