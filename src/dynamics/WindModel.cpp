@@ -108,14 +108,15 @@ double WindModel::getGravity() {
 
 double WindModel::getTemperature() {
     for (size_t i = 0; i < N; i++) {
-        if (m_geopotentialHeight < heightList[i + 1])
+        if (m_geopotentialHeight < heightList[i + 1]) {
             return baseTemperature[i] + tempDecayRate[i] * (m_geopotentialHeight - heightList[i])
                    + Constant::AbsoluteZero;
+        }
     }
 
     CommandLine::PrintInfo(PrintInfoType::Error, "Wind model is not defined above 32000m");
 
-    return 0;
+    exit(1);
 }
 
 double WindModel::getPressure() {
@@ -123,19 +124,20 @@ double WindModel::getPressure() {
 
     for (size_t i = 0; i < N; i++) {
         if (m_geopotentialHeight <= heightList[i + 1]) {
-            if (i == 1)
+            if (i == 1) {
                 return basePressure[i]
                        * exp(-(m_geopotentialHeight - heightList[i]) * Constant::G
                              / (Constant::GasConstant * baseTemperature[i]));
-            else
+            } else {
                 return basePressure[i]
                        * pow(baseTemperature[i] / temp, Constant::G / (Constant::GasConstant * tempDecayRate[i]));
+            }
         }
     }
 
     CommandLine::PrintInfo(PrintInfoType::Error, "Wind model is not defined above 32000m");
 
-    return 0;
+    exit(1);
 }
 
 double WindModel::getAirDensity() {
