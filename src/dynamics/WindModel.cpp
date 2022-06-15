@@ -114,7 +114,9 @@ double WindModel::getTemperature() {
         }
     }
 
-    CommandLine::PrintInfo(PrintInfoType::Error, "Wind model is not defined above 32000m");
+    CommandLine::PrintInfo(PrintInfoType::Error,
+                           "Current height is " + std::to_string(m_height) + "m",
+                           "Wind model is not defined above 32000m");
 
     exit(1);
 }
@@ -135,7 +137,9 @@ double WindModel::getPressure() {
         }
     }
 
-    CommandLine::PrintInfo(PrintInfoType::Error, "Wind model is not defined above 32000m");
+    CommandLine::PrintInfo(PrintInfoType::Error,
+                           "Current height is " + std::to_string(m_height) + "m",
+                           "Wind model is not defined above 32000m");
 
     exit(1);
 }
