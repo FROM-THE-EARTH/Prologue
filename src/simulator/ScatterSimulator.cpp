@@ -49,11 +49,7 @@ bool ScatterSimulator::singleThreadSimulation() {
     boost::progress_display pd(static_cast<uint32_t>(simulationCount));
 
     while (1) {
-        Solver solver(
-            m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
-
-        if (const auto result = solver.solve(m_windSpeed, m_windDirection); result) {
-            result->organize();
+        if (const auto result = solve(m_windSpeed, m_windDirection)) {
             m_result.emplace_back(result->getResultScatterFormat());
             ++pd;
         } else {
