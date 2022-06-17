@@ -21,6 +21,21 @@ constexpr double geostrophicWind   = 15;    // [m/s]
 constexpr double surfaceLayerLimit = 300;   // [m] Surface layer -300[m]
 constexpr double ekmanLayerLimit   = 1000;  // [m] Ekman layer 300-1000[m]
 
+double normalizeAngle(double angle) {
+    if (0 <= angle && angle < 360) {
+        return angle;
+    } else if (-360 <= angle && angle < 0) {
+        return 360 + angle;
+    } else if (angle >= 360) {
+        return angle - 360 * static_cast<int>(std::floor(angle / 360));
+    } else if (angle < -360) {
+        return angle - 360 * static_cast<int>(std::floor(angle / 360));
+    } else {
+        CommandLine::PrintInfo(PrintInfoType::Warning, "Unhandled angle " + std::to_string(angle));
+        return angle;
+    }
+}
+
 double applyPowerLow(double windSpeed, double height) {
     return windSpeed
            * pow(height / AppSetting::WindModel::powerLowBaseAltitude, 1.0 / AppSetting::WindModel::powerConstant);
@@ -31,7 +46,8 @@ Vector3D applyPowerLow(const Vector3D& wind, double height) {
 }
 
 WindModel::WindModel(double groundWindSpeed, double groundWindDirection, double magneticDeclination) :
-    m_groundWindSpeed(groundWindSpeed), m_groundWindDirection(groundWindDirection - magneticDeclination) {
+    m_groundWindSpeed(groundWindSpeed),
+    m_groundWindDirection(normalizeAngle(groundWindDirection - magneticDeclination)) {
     m_directionInterval = 270 - m_groundWindDirection;
     if (m_directionInterval <= -45.0) {
         m_directionInterval = 270 - m_groundWindDirection + 360;
