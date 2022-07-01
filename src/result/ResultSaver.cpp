@@ -33,7 +33,7 @@ namespace ResultSaver {
         "Cg_from_nose[m]",
         "inertia moment pitch & yaw[kg*m2]",
         "inertia moment roll[kg*m2]",
-        "attack angle[deg]",
+        "attack angle[rad]",
         "altitude[m]",
         "velocity[m/s]",
         "airspeed[m/s]",
