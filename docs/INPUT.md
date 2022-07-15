@@ -43,6 +43,11 @@
     "power_low_base_alt": 2.0, // べき法則の基準高度[m]
     "type": "real", // 使用する風モデル　real, original, only_powerlow, no_wind
     "realdata_filename": "wind_data_template.csv" // 風向風速データのファイル名。typeがrealの場合のみ有効。
+  },
+
+  "atmosphere": {
+    "base_pressure_pascal": 101325, // 高度 0 [m] における気圧（正確にはジオポテンシャル高度 0 [m]）
+    "base_temperature_celsius": 15  // 高度 0 [m] における気温（正確にはジオポテンシャル高度 0 [m]）
   }
 }
 ```
