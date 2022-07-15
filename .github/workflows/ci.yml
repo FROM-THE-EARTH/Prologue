@@ -15,10 +15,15 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-2022, macos-latest, ubuntu-20.04]
+        config:
+          [
+            { os: windows-2022, launch_command: ".\Prologue.exe" },
+            { os: macos-latest, launch_command: "./Prologue" },
+            { os: ubuntu-20.04, launch_command: "xvfb-run ./Prologue" },
+          ]
 
-    name: CI for ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: CI for ${{ matrix.config.os }}
+    runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v2
 
@@ -60,41 +65,41 @@ jobs:
       # Single rocket testing
       - name: "[Test] Single/Detail/Trajectry/0[m]/0[deg]"
         if: runner.os != 'Windows'
-        run: echo "2" "2" "1" "0" "0" "exit" | xvfb-run ./Prologue
+        run: echo "2" "2" "1" "0" "0" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       - name: "[Test] Single/Detail/Parachute/0[m]/0[deg]"
         if: runner.os != 'Windows'
-        run: echo "2" "2" "2" "0" "0" "exit" | xvfb-run ./Prologue
+        run: echo "2" "2" "2" "0" "0" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       - name: "[Test] Single/Scatter/Trajectry"
         if: runner.os != 'Windows'
-        run: echo "2" "1" "1" "exit" | xvfb-run ./Prologue
+        run: echo "2" "1" "1" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       - name: "[Test] Single/Scatter/Parachute"
         if: runner.os != 'Windows'
-        run: echo "2" "1" "2" "exit" | xvfb-run ./Prologue
+        run: echo "2" "1" "2" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       # Multi rocket testing (Detach mode: When burning finished)
       - name: "[Test] Multi/Detail/Trajectry/0[m]/0[deg]"
         if: runner.os != 'Windows'
-        run: echo "1" "2" "1" "0" "0" "1" "exit" | xvfb-run ./Prologue
+        run: echo "1" "2" "1" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       #- name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
       #  if: runner.os != 'Windows'
-      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | xvfb-run ./Prologue
+      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }}
       #  working-directory: ./application
 
       - name: "[Test] Multi/Scatter/Trajectry"
         if: runner.os != 'Windows'
-        run: echo "1" "1" "1" "1" "exit" | xvfb-run ./Prologue
+        run: echo "1" "1" "1" "1" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       #- name: "[Test] Multi/Scatter/Parachute"
       #  if: runner.os != 'Windows'
-      #  run: echo "1" "1" "2" "1" "exit" | xvfb-run ./Prologue
+      #  run: echo "1" "1" "2" "1" "exit" | ${{ matrix.config.launch_command }}
       #  working-directory: ./application
