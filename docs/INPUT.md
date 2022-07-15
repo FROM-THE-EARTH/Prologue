@@ -8,6 +8,8 @@
 - 風向風速 [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/wind/sample.csv)
 - 機体速度 vs Cp, Cp_a, Cd_i,Cd_f, Cd_a2, Cna [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/aero_coef/sample.csv)
 
+**JSONファイルにおいて以下のようなコメントは実際には許可されていないため、実行時にはコメントを残さないように気をつけてください。**
+
 ## シミュレータの設定
 
 シミュレータの設定を行います。<br>
@@ -15,33 +17,33 @@
 **拡張子**: `json`<br>
 **形式**:
 
-```
+```json
 {
   "processing": {
-    "multi_thread": false // マルチスレッドによる処理の高速化。Scatterモードでのみ有効。
+    "multi_thread": false,  // マルチスレッドによる処理の高速化。Scatterモードでのみ有効。
     "multi_thread_count": 4 // スレッド数
   },
 
   "simulation": {
-    "dt": 0.001, // １ステップで経過する時間。小さければより精度が上がるが計算に時間がかかる。
+    "dt": 0.001,                   // 1 ステップで経過する時間。小さければより精度が上がるが計算に時間がかかる。
     "detect_peak_threshold": 15.0, // 頂点検知によるパラシュート開傘時、最高高度から何m落下したら開傘するかどうか[m]
 
     "scatter": {
-      "wind_speed_min": 0.0, // Scatterモード時、シミュレーション対象の風速の最小値[m]
-      "wind_speed_max": 7.0, // Scatterモード時、シミュレーション対象の風速の最大値[m]
+      "wind_speed_min": 0.0,    // Scatterモード時、シミュレーション対象の風速の最小値[m]
+      "wind_speed_max": 7.0,    // Scatterモード時、シミュレーション対象の風速の最大値[m]
       "wind_dir_interval": 30.0 // Scatterモード時、風向を何度ずつ変更してシミュレーションするか[deg]
     }
   },
 
   "result": {
-    "precision": 8, // 結果出力時の数値の小数点以下の桁数
+    "precision": 8,          // 結果出力時の数値の小数点以下の桁数
     "step_save_interval": 10 // 何回のステップ毎に結果を保存するか（出力ファイルが巨大になるのを防ぐため）
   },
 
   "wind_model": {
-    "power_constant": 7.0, // べき法則の係数
-    "power_low_base_alt": 2.0, // べき法則の基準高度[m]
-    "type": "real", // 使用する風モデル　real, original, only_powerlow, no_wind
+    "power_constant": 7.0,                        // べき法則の係数
+    "power_low_base_alt": 2.0,                    // べき法則の基準高度[m]
+    "type": "real",                               // 使用する風モデル　real, original, only_powerlow, no_wind
     "realdata_filename": "wind_data_template.csv" // 風向風速データのファイル名。typeがrealの場合のみ有効。
   },
 
@@ -59,7 +61,7 @@
 **拡張子**: `json`<br>
 **形式**:
 
-```
+```json
 {
 	"rocket1": {
 		"ref_len": "Rocket length[m]",
