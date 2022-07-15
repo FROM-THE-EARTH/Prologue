@@ -109,4 +109,7 @@ namespace AppSetting {
     const double WindModel::powerLowBaseAltitude  = Internal::InitValue<double>("wind_model.power_low_base_alt");
     const WindModelType WindModel::type           = Internal::InitWindModelType();
     const std::string WindModel::realdataFilename = Internal::InitValue<std::string>("wind_model.realdata_filename");
+
+    const double Atmosphere::basePressure    = Internal::InitValue<double>("atmosphere.base_pressure_pascal");
+    const double Atmosphere::baseTemperature = Internal::InitValue<double>("atmosphere.base_temperature_celsius");
 }

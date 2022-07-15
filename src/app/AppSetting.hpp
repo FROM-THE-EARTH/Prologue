@@ -31,4 +31,9 @@ namespace AppSetting {
         extern const WindModelType type;
         extern const std::string realdataFilename;
     }
+
+    namespace Atmosphere {
+        extern const double basePressure;     // Base pressure [Pa] at geopotential height 0 [m]
+        extern const double baseTemperature;  // Base temperature [°C] at geopotential height 0 [m]
+    }
 }

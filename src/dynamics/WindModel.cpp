@@ -33,8 +33,11 @@ namespace Atmospehre {
     // 32000 ~ [m]      : Undefined and an error will occur if the altitude exceeds this
     constexpr double LayerThresholds[LayerCount + 1] = {0, 11000, 20000, 32000};
 
-    constexpr Layer Layers[LayerCount] = {
-        {.baseTemperature = 15.0, .lapseRate = 6.5e-3, .basePressure = 101325, .baseDensity = 1.2985},
+    const Layer Layers[LayerCount] = {
+        {.baseTemperature = AppSetting::Atmosphere::baseTemperature,
+         .lapseRate       = 6.5e-3,
+         .basePressure    = AppSetting::Atmosphere::basePressure,
+         .baseDensity     = 1.2985},
         {.baseTemperature = -56.5, .lapseRate = 0.0e-3, .basePressure = 22632.064, .baseDensity = 0.3639},
         {.baseTemperature = -76.5, .lapseRate = 1.0e-3, .basePressure = 5474.889, .baseDensity = 0.0880}};
 
