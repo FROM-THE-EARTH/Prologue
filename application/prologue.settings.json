@@ -25,5 +25,10 @@
     "power_low_base_alt": 5.0,
     "type": "original",
     "realdata_filename": "sample.csv"
+  },
+
+  "atmosphere": {
+    "base_pressure_pascal": 101325,
+    "base_temperature_celsius": 15
   }
 }

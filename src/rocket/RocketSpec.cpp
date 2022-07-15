@@ -53,7 +53,15 @@ void RocketSpec::setRocketParam(const boost::property_tree::ptree& pt, size_t in
         param.parachute[0].Cd = CalcParachuteCd(param.massFinal, param.parachute[0].terminalVelocity);
     }
 
+    // Initialize Engine
     param.engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
+    if (const auto result = JsonUtils::GetValueOpt<double>(pt, key + ".thrust_measured_pressure"); result.has_value()) {
+        param.engine.setThrustMeasuredPressure(result.value());
+    }
+    if (const auto result = JsonUtils::GetValueOpt<double>(pt, key + ".engine_nozzle_diameter"); result.has_value()) {
+        param.engine.setNozzleDiameter(result.value());
+    }
+
     param.aeroCoefStorage.init(JsonUtils::GetValue<std::string>(pt, key + ".aero_coef_file"));
     if (param.aeroCoefStorage.isTimeSeriesSpec()) {
         CommandLine::PrintInfo(PrintInfoType::Information, "Rocket: " + key, "Aero coefficients are set from CSV");

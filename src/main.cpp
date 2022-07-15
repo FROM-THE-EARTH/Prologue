@@ -6,7 +6,7 @@
 #include "gnuplot/Gnuplot.hpp"
 #include "simulator/Simulator.hpp"
 
-const auto VERSION = "1.8.8";
+const auto VERSION = "1.8.9";
 
 void ShowSettingInfo();
 

@@ -17,6 +17,8 @@
     "op_type_1st": 0,
     "delay_time_1st": 0,
     "motor_file": "Sample_K240.txt",
+    "thrust_measured_pressure": 101325,
+    "engine_nozzle_diameter": 0,
     "aero_coef_file": ""
   },
 

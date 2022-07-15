@@ -45,18 +45,22 @@ public:
         return m_wind;
     }
 
+    // [kg/m^3]
     double density() const {
         return m_airDensity;
     }
 
+    // [m/s^2]
     double gravity() const {
         return m_gravity;
     }
 
+    // [Pa]
     double pressure() const {
         return m_pressure;
     }
 
+    // [°C]
     double temperature() const {
         return m_temperature;
     }

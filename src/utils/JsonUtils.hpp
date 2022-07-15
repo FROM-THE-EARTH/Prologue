@@ -36,7 +36,7 @@ namespace JsonUtils {
     template <typename T>
     std::optional<T> GetValueOpt(const boost::property_tree::ptree& pt, const std::string& key) {
         if (JsonUtils::HasValue<T>(pt, key)) {
-            JsonUtils::GetValue<T>(pt, key);
+            return JsonUtils::GetValue<T>(pt, key);
         } else {
             return std::nullopt;
         }
