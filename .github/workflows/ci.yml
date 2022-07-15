@@ -39,12 +39,13 @@ jobs:
           brew install gnuplot
           brew install jq
 
-      - name: Install gnuplot and jq
+      - name: Install gnuplot, jq and xvfb
         if: runner.os == 'Linux'
         run: |
           sudo apt update
           sudo apt install gnuplot
           sudo apt install jq
+          sudo apt install xvfb
 
       - name: Set dt to 0.001 and wind_speed_max to 3.0 to reduce processing time
         if: runner.os != 'Windows'
@@ -59,41 +60,41 @@ jobs:
       # Single rocket testing
       - name: "[Test] Single/Detail/Trajectry/0[m]/0[deg]"
         if: runner.os != 'Windows'
-        run: echo "2" "2" "1" "0" "0" "exit" | ./Prologue
+        run: echo "2" "2" "1" "0" "0" "exit" | xvfb-run ./Prologue
         working-directory: ./application
 
       - name: "[Test] Single/Detail/Parachute/0[m]/0[deg]"
         if: runner.os != 'Windows'
-        run: echo "2" "2" "2" "0" "0" "exit" | ./Prologue
+        run: echo "2" "2" "2" "0" "0" "exit" | xvfb-run ./Prologue
         working-directory: ./application
 
       - name: "[Test] Single/Scatter/Trajectry"
         if: runner.os != 'Windows'
-        run: echo "2" "1" "1" "exit" | ./Prologue
+        run: echo "2" "1" "1" "exit" | xvfb-run ./Prologue
         working-directory: ./application
 
       - name: "[Test] Single/Scatter/Parachute"
         if: runner.os != 'Windows'
-        run: echo "2" "1" "2" "exit" | ./Prologue
+        run: echo "2" "1" "2" "exit" | xvfb-run ./Prologue
         working-directory: ./application
 
       # Multi rocket testing (Detach mode: When burning finished)
       - name: "[Test] Multi/Detail/Trajectry/0[m]/0[deg]"
         if: runner.os != 'Windows'
-        run: echo "1" "2" "1" "0" "0" "1" "exit" | ./Prologue
+        run: echo "1" "2" "1" "0" "0" "1" "exit" | xvfb-run ./Prologue
         working-directory: ./application
 
       #- name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
       #  if: runner.os != 'Windows'
-      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | ./Prologue
+      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | xvfb-run ./Prologue
       #  working-directory: ./application
 
       - name: "[Test] Multi/Scatter/Trajectry"
         if: runner.os != 'Windows'
-        run: echo "1" "1" "1" "1" "exit" | ./Prologue
+        run: echo "1" "1" "1" "1" "exit" | xvfb-run ./Prologue
         working-directory: ./application
 
       #- name: "[Test] Multi/Scatter/Parachute"
       #  if: runner.os != 'Windows'
-      #  run: echo "1" "1" "2" "1" "exit" | ./Prologue
+      #  run: echo "1" "1" "2" "1" "exit" | xvfb-run ./Prologue
       #  working-directory: ./application
