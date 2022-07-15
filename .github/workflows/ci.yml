@@ -33,15 +33,25 @@ jobs:
           cd build
           cmake --build . --config Debug
 
-      - name: Install gnuplot
+      - name: Install gnuplot and jq
         if: runner.os == 'macOS'
-        run: brew install gnuplot
+        run: |
+          brew install gnuplot
+          brew install jq
 
-      - name: Install gnuplot
+      - name: Install gnuplot and jq
         if: runner.os == 'Linux'
         run: |
           sudo apt update
           sudo apt install gnuplot
+          sudo apt install jq
+
+      - name: Set dt to 0.001 and wind_speed_max to 3.0 to reduce processing time
+        if: runner.os != 'Windows'
+        run: |
+          jq ".simulation.dt|=0.001" prologue.settings.json > tmp && mv tmp prologue.settings.json
+          jq ".simulation.scatter.wind_speed_max|=3.0" prologue.settings.json > tmp && mv tmp prologue.settings.json
+        working-directory: ./application
 
       ## Test simulations on macOS and Linux
       ## Windows cannot install the gnuplot from command line
