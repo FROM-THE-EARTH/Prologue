@@ -32,3 +32,58 @@ jobs:
         run: |
           cd build
           cmake --build . --config Debug
+
+      - name: Install gnuplot
+        if: runner.os == 'macOS'
+        run: brew install gnuplot
+
+      - name: Install gnuplot
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install gnuplot
+
+      ## Test simulations on macOS and Linux
+      ## Windows cannot install the gnuplot from command line
+
+      # Single rocket testing
+      - name: "[Test] Single/Detail/Trajectry/0[m]/0[deg]"
+        if: runner.os != 'Windows'
+        run: echo "2" "2" "1" "0" "0" "exit" | ./Prologue
+        working-directory: ./application
+
+      - name: "[Test] Single/Detail/Parachute/0[m]/0[deg]"
+        if: runner.os != 'Windows'
+        run: echo "2" "2" "2" "0" "0" "exit" | ./Prologue
+        working-directory: ./application
+
+      - name: "[Test] Single/Scatter/Trajectry"
+        if: runner.os != 'Windows'
+        run: echo "2" "1" "1" "exit" | ./Prologue
+        working-directory: ./application
+
+      - name: "[Test] Single/Scatter/Parachute"
+        if: runner.os != 'Windows'
+        run: echo "2" "1" "2" "exit" | ./Prologue
+        working-directory: ./application
+
+      # Multi rocket testing (Detach mode: When burning finished)
+      - name: "[Test] Multi/Detail/Trajectry/0[m]/0[deg]"
+        if: runner.os != 'Windows'
+        run: echo "1" "2" "1" "0" "0" "1" "exit" | ./Prologue
+        working-directory: ./application
+
+      #- name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
+      #  if: runner.os != 'Windows'
+      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | ./Prologue
+      #  working-directory: ./application
+
+      - name: "[Test] Multi/Scatter/Trajectry"
+        if: runner.os != 'Windows'
+        run: echo "1" "1" "1" "1" "exit" | ./Prologue
+        working-directory: ./application
+
+      #- name: "[Test] Multi/Scatter/Parachute"
+      #  if: runner.os != 'Windows'
+      #  run: echo "1" "1" "2" "1" "exit" | ./Prologue
+      #  working-directory: ./application
