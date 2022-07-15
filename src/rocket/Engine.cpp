@@ -49,7 +49,7 @@ bool Engine::loadThrustData(const std::string& filename) {
     return true;
 }
 
-double Engine::thrustAt(double time) const {
+double Engine::thrustAt(double time, double pressure) const {
     if (!m_exist || time < 0.0 || time > m_thrustData[m_thrustData.size() - 1].time) {
         return 0;
     }
@@ -61,5 +61,7 @@ double Engine::thrustAt(double time) const {
     const double thrust1 = m_thrustData[i].thrust;
     const double thrust2 = m_thrustData[i + 1].thrust;
 
-    return Algorithm::Lerp(time, time1, time2, thrust1, thrust2);
+    const auto thrust = Algorithm::Lerp(time, time1, time2, thrust1, thrust2);
+
+    return thrust + (m_thrustMeasuredPressure - pressure) * m_nozzleArea;
 }

@@ -242,7 +242,7 @@ void Solver::updateExternalForce() {
     THIS_BODY.moment_b = Vector3D(0, 0, 0);
 
     // Thrust
-    THIS_BODY.force_b.x += THIS_BODY_SPEC.engine.thrustAt(THIS_BODY.elapsedTime);
+    THIS_BODY.force_b.x += THIS_BODY_SPEC.engine.thrustAt(THIS_BODY.elapsedTime, m_windModel->pressure());
 
     if (!THIS_BODY.parachuteOpened) {
         // Aero

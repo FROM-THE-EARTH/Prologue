@@ -77,7 +77,10 @@
 		"op_type_1st": "0:detect-peak, 1:fixed-time 2:time-from-detect-peak",
 		"op_time_1st": "open time",
 		"delay_time_1st": "パラシュートが開くのにかかる時間",
+
 		"motor_file": "エンジンの推力履歴ファイル名　分離後1段目などの場合は空白にする",
+		"thrust_measured_pressure": "推力測定時の気圧[Pa]　キーが存在しない場合はデフォルト値101325[Pa]",
+		"engine_nozzle_diameter": "ノズル直径[m]　キーが存在しない場合はデフォルト値0[m]",
 
 		"CPlen": "CP place from nose[m] 圧力中心(aero_coef_fileがある場合は無効)",
 		"Cp_alpha": "圧力中心傾斜[m/rad] from nose(aero_coef_fileがある場合は無効)",
