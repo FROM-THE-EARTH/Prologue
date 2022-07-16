@@ -78,7 +78,7 @@ namespace CommandLine {
         }
     }
 
-    void SetOutputDir(const std::string dirname) {
+    void SetOutputDir(const std::string& dirname) {
         Internal::OutputDir = dirname;
     }
 }

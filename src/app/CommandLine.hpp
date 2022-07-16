@@ -84,5 +84,5 @@ namespace CommandLine {
 
     void Run();
 
-    void SetOutputDir(const std::string dirname);
+    void SetOutputDir(const std::string& dirname);
 }
