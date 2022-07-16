@@ -53,7 +53,7 @@ bool Simulator::initialize() {
 
     // read json
     m_environment.initialize(m_jsonFile);
-    m_rocketSpec.initialize(m_jsonFile);
+    m_rocketSpec = std::make_unique<RocketSpecification>(m_jsonFile);
 
     // output
     m_outputDirName = m_jsonFile;

@@ -28,7 +28,7 @@ protected:
 
     // from json
     Environment m_environment;
-    RocketSpecification m_rocketSpec;
+    std::unique_ptr<RocketSpecification> m_rocketSpec = nullptr;
     MapData m_mapData;
 
     // result

@@ -51,9 +51,11 @@ private:
     bool m_existInfCd = false;
 
 public:
-    void initialize(const std::string& filename);
+    RocketSpecification() = delete;
 
-    static bool IsMultipleRocket(const std::string& filename);
+    explicit RocketSpecification(const std::string& specFileName);
+
+    static bool IsMultipleRocket(const std::string& specFileName);
 
     size_t bodyCount() const {
         return m_bodySpecs.size();
