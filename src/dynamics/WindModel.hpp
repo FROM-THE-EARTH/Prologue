@@ -30,8 +30,6 @@ class WindModel {
     double m_temperature        = 0.0;
     Vector3D m_wind;
 
-    bool m_initialized = false;
-
 public:
     WindModel(double magneticDeclination);  // real
 
@@ -63,10 +61,6 @@ public:
     // [°C]
     double temperature() const {
         return m_temperature;
-    }
-
-    bool initialized() const {
-        return m_initialized;
     }
 
 private:

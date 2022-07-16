@@ -18,7 +18,7 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
         break;
     }
 
-    if (!m_windModel->initialized()) {
+    if (m_windModel == nullptr) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Cannot create wind model");
         return nullptr;
     }

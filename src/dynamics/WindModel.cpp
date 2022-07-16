@@ -86,8 +86,6 @@ WindModel::WindModel(double groundWindSpeed, double groundWindDirection, double 
     if (m_directionInterval <= -45.0) {
         m_directionInterval = 270 - m_groundWindDirection + 360;
     }
-
-    m_initialized = true;
 }
 
 WindModel::WindModel(double magneticDeclination) : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
@@ -116,8 +114,6 @@ WindModel::WindModel(double magneticDeclination) : m_groundWindSpeed(0.0), m_gro
     for (auto& wind : m_windData) {
         wind.direction -= magneticDeclination;
     }
-
-    m_initialized = true;
 }
 
 void WindModel::update(double height) {
