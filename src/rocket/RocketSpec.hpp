@@ -45,16 +45,23 @@ struct BodySpecification {
     AeroCoefficientStorage aeroCoefStorage;
 };
 
-struct RocketSpecification {
+class RocketSpecification {
 private:
+    std::vector<BodySpecification> m_bodySpecs;
     bool m_existInfCd = false;
 
 public:
-    std::vector<BodySpecification> bodySpec;  // could be multiple(multiple rocket)
-
     void initialize(const std::string& filename);
 
     static bool IsMultipleRocket(const std::string& filename);
+
+    size_t bodyCount() const {
+        return m_bodySpecs.size();
+    }
+
+    const BodySpecification& bodySpec(size_t bodyIndex) const {
+        return m_bodySpecs[bodyIndex];
+    }
 
 private:
     void setBodySpecification(const boost::property_tree::ptree& pt, size_t index);

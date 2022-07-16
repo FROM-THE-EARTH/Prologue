@@ -18,9 +18,9 @@ double CalcParachuteCd(double massFinal, double terminalVelocity) {
 void RocketSpecification::setBodySpecification(const boost::property_tree::ptree& pt, size_t index) {
     const std::string key = BodyList[index];
 
-    bodySpec.emplace_back();
+    m_bodySpecs.emplace_back();
 
-    BodySpecification& spec = bodySpec[index];
+    BodySpecification& spec = m_bodySpecs[index];
 
     spec.length     = JsonUtils::GetValueExc<double>(pt, key + ".ref_len");
     spec.diameter   = JsonUtils::GetValueExc<double>(pt, key + ".diam");
@@ -78,10 +78,10 @@ void RocketSpecification::setBodySpecification(const boost::property_tree::ptree
 }
 
 void RocketSpecification::setInfParachuteCd() {
-    for (size_t i = 0; i < bodySpec.size(); i++) {
-        if (bodySpec[i].parachutes[0].Cd == 0) {
-            for (int j = (int)bodySpec.size() - 1; j >= 0; j--) {
-                bodySpec[i].parachutes[0].Cd += bodySpec[j].parachutes[0].Cd;
+    for (size_t i = 0; i < m_bodySpecs.size(); i++) {
+        if (m_bodySpecs[i].parachutes[0].Cd == 0) {
+            for (int j = static_cast<int>(m_bodySpecs.size() - 1); j >= 0; j--) {
+                m_bodySpecs[i].parachutes[0].Cd += m_bodySpecs[j].parachutes[0].Cd;
             }
         }
     }

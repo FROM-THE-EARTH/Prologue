@@ -5,7 +5,7 @@
 #include "env/Map.hpp"
 
 #define THIS_BODY m_rocket.bodies[m_currentBodyIndex]
-#define THIS_BODY_SPEC m_rocketSpec.bodySpec[m_currentBodyIndex]
+#define THIS_BODY_SPEC m_rocketSpec.bodySpec(m_currentBodyIndex)
 
 std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDirection) {
     switch (AppSetting::WindModel::type) {
@@ -87,9 +87,9 @@ void Solver::initializeRocket() {
     }
 
     // First rocket
-    m_bodyDelta.mass       = m_rocketSpec.bodySpec[0].massInitial;
-    m_bodyDelta.reflLength = m_rocketSpec.bodySpec[0].CGLengthInitial;
-    m_bodyDelta.iyz        = m_rocketSpec.bodySpec[0].rollingMomentInertiaInitial;
+    m_bodyDelta.mass       = m_rocketSpec.bodySpec(0).massInitial;
+    m_bodyDelta.reflLength = m_rocketSpec.bodySpec(0).CGLengthInitial;
+    m_bodyDelta.iyz        = m_rocketSpec.bodySpec(0).rollingMomentInertiaInitial;
     m_bodyDelta.ix         = 0.02;
     m_bodyDelta.pos        = Vector3D(0, 0, 0);
     m_bodyDelta.velocity   = Vector3D(0, 0, 0);
@@ -170,9 +170,10 @@ bool Solver::updateDetachment() {
 
             Body& nextBody1      = m_rocket.bodies[m_currentBodyIndex + 1];
             nextBody1            = detach;
-            nextBody1.mass       = m_rocketSpec.bodySpec[m_currentBodyIndex + 1].massInitial;
-            nextBody1.reflLength = m_rocketSpec.bodySpec[m_currentBodyIndex + 1].CGLengthInitial;
-            nextBody1.iyz        = m_rocketSpec.bodySpec[m_currentBodyIndex + 1].rollingMomentInertiaInitial;
+            nextBody1.mass       = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).massInitial;
+            nextBody1.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).CGLengthInitial;
+            nextBody1.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).rollingMomentInertiaInitial;
+
             // receive power from the engine of the upper body for 0.2 seconds
             /*double sumThrust = 0;
             for (double t = 0; t <= 0.2; t += m_dt) {
@@ -182,9 +183,9 @@ bool Solver::updateDetachment() {
 
             Body& nextBody2      = m_rocket.bodies[m_currentBodyIndex + 2];
             nextBody2            = detach;
-            nextBody2.mass       = m_rocketSpec.bodySpec[m_currentBodyIndex + 2].massInitial;
-            nextBody2.reflLength = m_rocketSpec.bodySpec[m_currentBodyIndex + 2].CGLengthInitial;
-            nextBody2.iyz        = m_rocketSpec.bodySpec[m_currentBodyIndex + 2].rollingMomentInertiaInitial;
+            nextBody2.mass       = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).massInitial;
+            nextBody2.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).CGLengthInitial;
+            nextBody2.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).rollingMomentInertiaInitial;
         }
 
         m_detachCount++;

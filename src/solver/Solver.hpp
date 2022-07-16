@@ -64,7 +64,7 @@ public:
         m_rocketSpec(spec),
         m_environment(env),
         m_mapData(mapData) {
-        m_rocket.bodies.resize(m_rocketSpec.bodySpec.size());
+        m_rocket.bodies.resize(m_rocketSpec.bodyCount());
     }
 
     std::shared_ptr<SimuResultLogger> solve(double windSpeed, double windDirection);
