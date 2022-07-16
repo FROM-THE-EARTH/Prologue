@@ -83,12 +83,12 @@ struct SimuResultSummary {
 
 class SimuResultLogger {
 private:
-    const RocketSpec m_rocketSpec;
+    const RocketSpecification m_rocketSpec;
     const MapData m_map;
     SimuResultSummary m_result;
 
 public:
-    SimuResultLogger(const RocketSpec& spec, const MapData& map, double windSpeed, double windDirection);
+    SimuResultLogger(const RocketSpecification& rocketSpec, const MapData& map, double windSpeed, double windDirection);
 
     SimuResultSummary getResult() const;
 

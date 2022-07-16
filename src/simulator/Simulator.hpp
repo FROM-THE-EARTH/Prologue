@@ -28,7 +28,7 @@ protected:
 
     // from json
     Environment m_environment;
-    RocketSpec m_rocketSpec;
+    RocketSpecification m_rocketSpec;
     MapData m_mapData;
 
     // result

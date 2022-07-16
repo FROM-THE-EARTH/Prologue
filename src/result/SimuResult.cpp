@@ -1,7 +1,10 @@
 #include "SimuResult.hpp"
 
-SimuResultLogger::SimuResultLogger(const RocketSpec& spec, const MapData& map, double windSpeed, double windDirection) :
-    m_rocketSpec(spec), m_map(map) {
+SimuResultLogger::SimuResultLogger(const RocketSpecification& rocketSpec,
+                                   const MapData& map,
+                                   double windSpeed,
+                                   double windDirection) :
+    m_rocketSpec(rocketSpec), m_map(map) {
     m_result.windSpeed     = windSpeed;
     m_result.windDirection = windDirection;
 }

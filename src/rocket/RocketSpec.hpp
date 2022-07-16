@@ -45,7 +45,7 @@ struct BodySpecification {
     AeroCoefficientStorage aeroCoefStorage;
 };
 
-struct RocketSpec {
+struct RocketSpecification {
 private:
     bool m_existInfCd = false;
 

@@ -38,7 +38,7 @@ bool Simulator::initialize() {
         setWindCondition();
     }
 
-    if (RocketSpec::IsMultipleRocket(m_jsonFile)) {
+    if (RocketSpecification::IsMultipleRocket(m_jsonFile)) {
         CommandLine::PrintInfo(PrintInfoType::Information, "This is Multiple Rocket");
         m_rocketType = RocketType::Multi;
         setDetachType();
