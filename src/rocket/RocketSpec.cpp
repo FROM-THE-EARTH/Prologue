@@ -37,21 +37,21 @@ void RocketSpecification::setBodySpecification(const boost::property_tree::ptree
 
     spec.Cmq = JsonUtils::GetValueExc<double>(pt, key + ".Cmq");
 
-    spec.parachute.emplace_back(Parachute());
-    spec.parachute[0].terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
-    spec.parachute[0].openingType =
+    spec.parachutes.emplace_back(Parachute());
+    spec.parachutes[0].terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
+    spec.parachutes[0].openingType =
         static_cast<ParachuteOpeningType>(JsonUtils::GetValue<int>(pt, key + ".op_type_1st"));
-    spec.parachute[0].openingTime = JsonUtils::GetValue<double>(pt, key + ".op_time_1st");
-    spec.parachute[0].delayTime   = JsonUtils::GetValue<double>(pt, key + ".delay_time_1st");
+    spec.parachutes[0].openingTime = JsonUtils::GetValue<double>(pt, key + ".op_time_1st");
+    spec.parachutes[0].delayTime   = JsonUtils::GetValue<double>(pt, key + ".delay_time_1st");
 
-    if (spec.parachute[0].terminalVelocity == 0.0) {
+    if (spec.parachutes[0].terminalVelocity == 0.0) {
         m_existInfCd = true;
         CommandLine::PrintInfo(PrintInfoType::Warning,
                                "Rocket: " + key,
                                "Terminal velocity is undefined.",
                                "Parachute Cd value is automatically calculated.");
     } else {
-        spec.parachute[0].Cd = CalcParachuteCd(spec.massFinal, spec.parachute[0].terminalVelocity);
+        spec.parachutes[0].Cd = CalcParachuteCd(spec.massFinal, spec.parachutes[0].terminalVelocity);
     }
 
     // Initialize Engine
@@ -79,9 +79,9 @@ void RocketSpecification::setBodySpecification(const boost::property_tree::ptree
 
 void RocketSpecification::setInfParachuteCd() {
     for (size_t i = 0; i < bodySpec.size(); i++) {
-        if (bodySpec[i].parachute[0].Cd == 0) {
+        if (bodySpec[i].parachutes[0].Cd == 0) {
             for (int j = (int)bodySpec.size() - 1; j >= 0; j--) {
-                bodySpec[i].parachute[0].Cd += bodySpec[j].parachute[0].Cd;
+                bodySpec[i].parachutes[0].Cd += bodySpec[j].parachutes[0].Cd;
             }
         }
     }

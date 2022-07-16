@@ -14,8 +14,8 @@ enum class ParachuteOpeningType : size_t {
 };
 
 struct Parachute {
-    double terminalVelocity;
     ParachuteOpeningType openingType;
+    double terminalVelocity;
     double openingTime;
     double delayTime;
     double openingHeight;
@@ -24,22 +24,22 @@ struct Parachute {
 };
 
 struct BodySpecification {
-    double length;      // m
-    double diameter;    // m
-    double bottomArea;  // m^2
+    double length;      // [m]
+    double diameter;    // [m]
+    double bottomArea;  // [m^2]
 
-    double CGLengthInitial;  // m
-    double CGLengthFinal;    // m
+    double CGLengthInitial;  // [m]
+    double CGLengthFinal;    // [m]
 
-    double massInitial;  // kg
-    double massFinal;    // kg
+    double massInitial;  // [kg]
+    double massFinal;    // [kg]
 
-    double rollingMomentInertiaInitial;  // kg*m^2
-    double rollingMomentInertiaFinal;    // kg*m^2
+    double rollingMomentInertiaInitial;  // [kg*m^2]
+    double rollingMomentInertiaFinal;    // [kg*m^2]
 
     double Cmq;
 
-    std::vector<Parachute> parachute;
+    std::vector<Parachute> parachutes;
 
     Engine engine;
     AeroCoefficientStorage aeroCoefStorage;
