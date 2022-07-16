@@ -3,6 +3,7 @@
 #include <boost/progress.hpp>
 
 #include "app/AppSetting.hpp"
+#include "gnuplot/Gnuplot.hpp"
 #include "result/ResultSaver.hpp"
 
 template <typename T>

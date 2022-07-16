@@ -3,7 +3,6 @@
 #include <future>
 
 #include "Simulator.hpp"
-#include "gnuplot/Gnuplot.hpp"
 
 class ScatterSimulator : public Simulator {
     using AsyncSolver = std::future<std::shared_ptr<SimuResultLogger>>;

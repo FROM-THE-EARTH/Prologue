@@ -1,5 +1,6 @@
 #include "DetailSimulator.hpp"
 
+#include "gnuplot/Gnuplot.hpp"
 #include "result/ResultSaver.hpp"
 
 bool DetailSimulator::simulate() {
@@ -18,4 +19,8 @@ bool DetailSimulator::simulate() {
 void DetailSimulator::saveResult() {
     const std::string dir = "result/" + m_outputDirName + "/";
     ResultSaver::SaveDetail(dir, m_result);
+}
+
+void DetailSimulator::plotToGnuplot() {
+    Gnuplot::Plot(m_result);
 }
