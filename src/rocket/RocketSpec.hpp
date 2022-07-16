@@ -7,7 +7,7 @@
 #include "AeroCoefficient.hpp"
 #include "Engine.hpp"
 
-enum class ParachuteOpeningType: size_t {
+enum class ParachuteOpeningType : size_t {
     DetectPeak = 0,
     FixedTime,
     TimeFromDetectPeak,
@@ -23,7 +23,7 @@ struct Parachute {
     double Cd = 0;
 };
 
-struct RocketParam {
+struct BodySpecification {
     double length;      // m
     double diameter;    // m
     double bottomArea;  // m^2
@@ -50,14 +50,14 @@ private:
     bool m_existInfCd = false;
 
 public:
-    std::vector<RocketParam> rocketParam;  // could be multiple(multiple rocket)
+    std::vector<BodySpecification> bodySpec;  // could be multiple(multiple rocket)
 
     void initialize(const std::string& filename);
 
     static bool IsMultipleRocket(const std::string& filename);
 
 private:
-    void setRocketParam(const boost::property_tree::ptree& pt, size_t index);
+    void setBodySpecification(const boost::property_tree::ptree& pt, size_t index);
 
     void setInfParachuteCd();
 };

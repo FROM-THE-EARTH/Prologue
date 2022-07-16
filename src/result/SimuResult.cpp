@@ -46,7 +46,7 @@ void SimuResultLogger::setBodyFinalPosition(size_t bodyIndex, const Vector3D& po
 
 void SimuResultLogger::update(
     size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel, bool combusting) {
-    const auto& spec = m_rocketSpec.rocketParam[bodyIndex];
+    const auto& spec = m_rocketSpec.bodySpec[bodyIndex];
 
     {
         SimuResultStep step = {0};
