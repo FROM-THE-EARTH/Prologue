@@ -7,7 +7,7 @@
 #include "AeroCoefficient.hpp"
 #include "Engine.hpp"
 
-enum ParaOpenType : int {
+enum class ParachuteOpeningType: size_t {
     DetectPeak = 0,
     FixedTime,
     TimeFromDetectPeak,
@@ -15,7 +15,7 @@ enum ParaOpenType : int {
 
 struct Parachute {
     double terminalVelocity;
-    ParaOpenType openingType;
+    ParachuteOpeningType openingType;
     double openingTime;
     double delayTime;
     double openingHeight;

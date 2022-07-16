@@ -115,12 +115,13 @@ void Solver::updateParachute() {
         return;
     }
 
-    const bool detectpeak = THIS_BODY_SPEC.parachute[0].openingType == ParaOpenType::DetectPeak;
+    const bool detectpeak = THIS_BODY_SPEC.parachute[0].openingType == ParachuteOpeningType::DetectPeak;
 
-    const bool fixedtime          = THIS_BODY_SPEC.parachute[0].openingType == ParaOpenType::FixedTime;
+    const bool fixedtime          = THIS_BODY_SPEC.parachute[0].openingType == ParachuteOpeningType::FixedTime;
     const bool fixedtimeCondition = THIS_BODY.elapsedTime > THIS_BODY_SPEC.parachute[0].openingTime;
 
-    const bool time_from_detect_peak = THIS_BODY_SPEC.parachute[0].openingType == ParaOpenType::TimeFromDetectPeak;
+    const bool time_from_detect_peak =
+        THIS_BODY_SPEC.parachute[0].openingType == ParachuteOpeningType::TimeFromDetectPeak;
 
     if ((detectpeak && detectpeakConditon) || (fixedtime && fixedtimeCondition)) {
         THIS_BODY.parachuteOpened = true;
