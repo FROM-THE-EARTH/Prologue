@@ -35,7 +35,7 @@ namespace Atmospehre {
 
     const Layer Layers[LayerCount] = {
         {.baseTemperature = AppSetting::Atmosphere::baseTemperature,
-         .lapseRate       = 6.5e-3,
+         .lapseRate       = -6.5e-3,
          .basePressure    = AppSetting::Atmosphere::basePressure,
          .baseDensity     = 1.2985},
         {.baseTemperature = -56.5, .lapseRate = 0.0e-3, .basePressure = 22632.064, .baseDensity = 0.3639},
