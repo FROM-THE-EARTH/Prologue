@@ -49,6 +49,7 @@ MSVC, GCC, Clang などのコンパイラが入っていない場合はインス
 5. [**Actions**] タグに反応して[`release.yml`](https://github.com/FROM-THE-EARTH/Prologue/blob/main/.github/workflows/release.yml)のワークフローが実行される
 6. [**Actions**] [Releases](https://github.com/FROM-THE-EARTH/Prologue/releases) に`vX.X.X`を名前として Windows, macOS, Linux 向けの実行ファイル・設定ファイル・入力ファイルを同包した zip ファイルが登録される
 7. Releases に更新情報を書く
+8. developブランチをmainブランチにマージする
 
 ## CI
 
