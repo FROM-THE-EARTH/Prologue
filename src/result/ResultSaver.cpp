@@ -1,4 +1,4 @@
-#include "ResultSaver.hpp"
+﻿#include "ResultSaver.hpp"
 
 #include <boost/progress.hpp>
 #include <fstream>

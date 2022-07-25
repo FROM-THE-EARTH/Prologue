@@ -1,4 +1,4 @@
-#include "JsonUtils.hpp"
+﻿#include "JsonUtils.hpp"
 
 namespace JsonUtils {
     bool Exist(const boost::property_tree::ptree& pt, const std::string& key) {

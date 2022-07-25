@@ -1,4 +1,4 @@
-#include "ScatterSimulator.hpp"
+﻿#include "ScatterSimulator.hpp"
 
 #include <boost/progress.hpp>
 

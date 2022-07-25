@@ -1,4 +1,4 @@
-#include "Simulator.hpp"
+﻿#include "Simulator.hpp"
 
 #include <chrono>
 #include <filesystem>

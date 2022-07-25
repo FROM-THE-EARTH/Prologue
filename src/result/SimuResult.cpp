@@ -1,4 +1,4 @@
-#include "SimuResult.hpp"
+﻿#include "SimuResult.hpp"
 
 SimuResultLogger::SimuResultLogger(const RocketSpecification& rocketSpec,
                                    const MapData& map,

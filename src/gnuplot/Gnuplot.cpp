@@ -1,4 +1,4 @@
-#include "Gnuplot.hpp"
+﻿#include "Gnuplot.hpp"
 
 #include <app/AppSetting.hpp>
 #include <filesystem>

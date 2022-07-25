@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // Macros to check which platform compiling on
 #if defined(_WIN32) || defined(WIN32)

@@ -1,4 +1,4 @@
-#include "AeroCoefficient.hpp"
+﻿#include "AeroCoefficient.hpp"
 
 // disable all warnings of fast-cpp-csv-parser
 #pragma warning(push, 0)

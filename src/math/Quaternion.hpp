@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Vector3D.hpp"
 #include "misc/Constant.hpp"

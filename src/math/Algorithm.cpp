@@ -1,4 +1,4 @@
-#include "Algorithm.hpp"
+﻿#include "Algorithm.hpp"
 
 #include "app/CommandLine.hpp"
 

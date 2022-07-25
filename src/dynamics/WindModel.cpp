@@ -1,4 +1,4 @@
-#include "WindModel.hpp"
+﻿#include "WindModel.hpp"
 
 #include <fstream>
 #include <iostream>
