@@ -1,4 +1,8 @@
-﻿#include "SimuResult.hpp"
+﻿// ------------------------------------------------
+// SimuResult.hppの実装
+// ------------------------------------------------
+
+#include "SimuResult.hpp"
 
 SimuResultLogger::SimuResultLogger(const RocketSpecification& rocketSpec,
                                    const MapData& map,

@@ -1,4 +1,8 @@
-﻿#include "Algorithm.hpp"
+﻿// ------------------------------------------------
+// Algorithm.hppの実装
+// ------------------------------------------------
+
+#include "Algorithm.hpp"
 
 #include "app/CommandLine.hpp"
 

@@ -1,4 +1,8 @@
-﻿#include "Map.hpp"
+﻿// ------------------------------------------------
+// Map.hppの実装
+// ------------------------------------------------
+
+#include "Map.hpp"
 
 namespace Map {
     std::optional<MapData> GetMap(const std::string& key) {

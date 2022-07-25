@@ -1,4 +1,8 @@
-﻿#include "Gnuplot.hpp"
+﻿// ------------------------------------------------
+// Gnuplot.hppの実装
+// ------------------------------------------------
+
+#include "Gnuplot.hpp"
 
 #include <app/AppSetting.hpp>
 #include <filesystem>

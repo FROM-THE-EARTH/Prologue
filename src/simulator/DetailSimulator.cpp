@@ -1,4 +1,8 @@
-﻿#include "DetailSimulator.hpp"
+﻿// ------------------------------------------------
+// DetailSimulator.hppの実装
+// ------------------------------------------------
+
+#include "DetailSimulator.hpp"
 
 #include "gnuplot/Gnuplot.hpp"
 #include "result/ResultSaver.hpp"

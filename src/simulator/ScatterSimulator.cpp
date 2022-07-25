@@ -1,4 +1,8 @@
-﻿#include "ScatterSimulator.hpp"
+﻿// ------------------------------------------------
+// ScatterSimulator.hppの実装
+// ------------------------------------------------
+
+#include "ScatterSimulator.hpp"
 
 #include <boost/progress.hpp>
 

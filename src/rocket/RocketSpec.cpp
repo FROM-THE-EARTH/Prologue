@@ -1,4 +1,9 @@
-﻿#include "RocketSpec.hpp"
+﻿// ------------------------------------------------
+// RocketSpec.hppの実装
+// 主に諸元JSONの読み取り
+// ------------------------------------------------
+
+#include "RocketSpec.hpp"
 
 #include <cmath>
 #include <iostream>

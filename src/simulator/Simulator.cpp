@@ -1,4 +1,8 @@
-﻿#include "Simulator.hpp"
+﻿// ------------------------------------------------
+// Simulator.hppの実装
+// ------------------------------------------------
+
+#include "Simulator.hpp"
 
 #include <chrono>
 #include <filesystem>

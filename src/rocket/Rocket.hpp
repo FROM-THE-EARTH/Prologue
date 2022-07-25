@@ -1,4 +1,8 @@
-﻿#pragma once
+﻿// ------------------------------------------------
+// 解析に用いる機体のパラメータ
+// ------------------------------------------------
+
+#pragma once
 
 #include "AeroCoefficient.hpp"
 #include "math/Quaternion.hpp"

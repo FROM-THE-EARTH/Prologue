@@ -1,4 +1,8 @@
-﻿#include "Solver.hpp"
+﻿// ------------------------------------------------
+// Solver.hppの実装
+// ------------------------------------------------
+
+#include "Solver.hpp"
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"

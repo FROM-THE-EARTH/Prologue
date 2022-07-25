@@ -1,4 +1,8 @@
-﻿#include "Vector3D.hpp"
+﻿// ------------------------------------------------
+// Vector3D.hppの実装
+// ------------------------------------------------
+
+#include "Vector3D.hpp"
 
 #include "Quaternion.hpp"
 

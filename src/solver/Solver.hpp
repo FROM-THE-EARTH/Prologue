@@ -1,4 +1,8 @@
-﻿#pragma once
+﻿// ------------------------------------------------
+// 解析用クラス
+// ------------------------------------------------
+
+#pragma once
 
 #include "dynamics/WindModel.hpp"
 #include "env/Environment.hpp"

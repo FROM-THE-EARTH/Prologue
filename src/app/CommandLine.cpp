@@ -1,4 +1,8 @@
-﻿#include "CommandLine.hpp"
+﻿// ------------------------------------------------
+// CommandLine.hppの実装
+// ------------------------------------------------
+
+#include "CommandLine.hpp"
 
 #include <filesystem>
 #include <functional>

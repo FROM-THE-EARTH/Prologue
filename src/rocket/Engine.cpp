@@ -1,4 +1,8 @@
-﻿#include "Engine.hpp"
+﻿// ------------------------------------------------
+// Engine.hppの実装
+// ------------------------------------------------
+
+#include "Engine.hpp"
 
 #include <fstream>
 #include <iostream>

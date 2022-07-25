@@ -1,4 +1,8 @@
-﻿#include "AeroCoefficient.hpp"
+﻿// ------------------------------------------------
+// AeroCoefficient.hppの実装
+// ------------------------------------------------
+
+#include "AeroCoefficient.hpp"
 
 // disable all warnings of fast-cpp-csv-parser
 #pragma warning(push, 0)

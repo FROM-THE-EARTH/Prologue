@@ -1,4 +1,8 @@
-﻿#include "ResultSaver.hpp"
+﻿// ------------------------------------------------
+// ResultSaver.hppの実装
+// ------------------------------------------------
+
+#include "ResultSaver.hpp"
 
 #include <boost/progress.hpp>
 #include <fstream>

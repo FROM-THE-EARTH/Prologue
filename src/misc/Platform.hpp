@@ -1,4 +1,9 @@
-﻿#pragma once
+﻿// ------------------------------------------------
+// Windows, macOS, Linuxの判定マクロ
+// popen関数の切り替え
+// ------------------------------------------------
+
+#pragma once
 
 // Macros to check which platform compiling on
 #if defined(_WIN32) || defined(WIN32)

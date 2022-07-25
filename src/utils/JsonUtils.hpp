@@ -1,4 +1,9 @@
-﻿#pragma once
+﻿// ------------------------------------------------
+// JSON読み取りに関する関数定義
+// ほぼtemplateでcppで定義できないのでhppで定義
+// ------------------------------------------------
+
+#pragma once
 
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>

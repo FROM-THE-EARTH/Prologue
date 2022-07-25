@@ -1,4 +1,11 @@
-﻿#pragma once
+﻿// ------------------------------------------------
+// シミュレータークラス
+// ファイル読み取り、初期化を行い結果を元にSolverクラスで解析を実行する
+// class Simulatorは抽象クラスとして定義しているためそのままでは使えない
+// Detail/Scatterモードに対して、Simulatorクラスを継承したDetailSimulator/ScatterSimulatorを定義している
+// ------------------------------------------------
+
+#pragma once
 
 #include <memory>
 #include <string>
