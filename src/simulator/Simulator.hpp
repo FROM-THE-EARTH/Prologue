@@ -1,3 +1,12 @@
+﻿// ------------------------------------------------
+// シミュレータークラス
+// ファイル読み取り、初期化を行い結果を元にSolverクラスで解析を実行する
+// class Simulatorは抽象クラスとして定義しているためそのままでは使えない
+// Detail/Scatterモードに対して、Simulatorクラスを継承したDetailSimulator/ScatterSimulatorを定義している
+// 抽象クラスでは、virtual void func() { ... } とすることで継承したクラスでその内部実装を変更することできる
+// virtual void func() = 0;とした関数は継承先で必ず実装しなければならない
+// ------------------------------------------------
+
 #pragma once
 
 #include <memory>
@@ -28,19 +37,23 @@ protected:
 
     // from json
     Environment m_environment;
-    RocketSpec m_rocketSpec;
+    std::unique_ptr<RocketSpecification> m_rocketSpec = nullptr;
     MapData m_mapData;
 
     // result
     std::string m_outputDirName;
 
 public:
+    // 抽象クラスのデストラクタはvirtualで定義し直さなければいけない
     virtual ~Simulator() {}
 
+    // Gnuplotへ結果をプロット
     virtual void plotToGnuplot() = 0;
 
+    // DetailSimulatorまたはScatterSimulatorの生成
     static std::unique_ptr<Simulator> New(double dt);
 
+    // シミュレーション実行
     bool run();
 
 protected:

@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// 解析用クラス
+// ------------------------------------------------
+
 #pragma once
 
 #include "dynamics/WindModel.hpp"
@@ -22,7 +26,7 @@ class Solver {
     const double m_detachTime;
 
     // spec
-    const RocketSpec m_rocketSpec;
+    const RocketSpecification m_rocketSpec;
 
     // rocket
     Rocket m_rocket;
@@ -55,7 +59,7 @@ public:
            DetachType detachType,
            double detachTime,
            const Environment& env,
-           const RocketSpec& spec) :
+           const RocketSpecification& spec) :
         m_dt(dt),
         m_rocketType(rocketType),
         m_trajectoryMode(mode),
@@ -64,7 +68,7 @@ public:
         m_rocketSpec(spec),
         m_environment(env),
         m_mapData(mapData) {
-        m_rocket.bodies.resize(m_rocketSpec.rocketParam.size());
+        m_rocket.bodies.resize(m_rocketSpec.bodyCount());
     }
 
     std::shared_ptr<SimuResultLogger> solve(double windSpeed, double windDirection);

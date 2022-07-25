@@ -1,14 +1,19 @@
+﻿// ------------------------------------------------
+// マップクラス及び各マップの定義
+// ------------------------------------------------
+
 #pragma once
 
 #include <optional>
 
-#include "env/MapCoordinate.hpp"
-#include "env/MapType.hpp"
+#include "env/GeoCoordinate.hpp"
+
+enum class MapType { NOSIRO_SEA, NOSIRO_LAND, IZU_SEA, IZU_LAND, UNKNOWN };
 
 struct MapData {
     std::string key;
     MapType type;
-    MapCoordinate coordinate;
+    GeoCoordinate coordinate;
     double magneticDeclination;
     std::string imageFileName;
     double gnuplot_dx, gnuplot_dy;
@@ -28,7 +33,7 @@ struct MapData {
             double originYForGnuplot) :
         key(keyForJson),
         type(mapType),
-        coordinate(MapCoordinate(launchPointLatitude, launchPointLongitude)),
+        coordinate(GeoCoordinate(launchPointLatitude, launchPointLongitude)),
         magneticDeclination(_magneticDeclination),
         imageFileName(imageFileNameForGnuplot),
         gnuplot_dx(dxForGnuplot),

@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// 風モデルクラス
+// ------------------------------------------------
+
 #pragma once
 
 #include <string>
@@ -30,15 +34,16 @@ class WindModel {
     double m_temperature        = 0.0;
     Vector3D m_wind;
 
-    bool m_initialized = false;
-
 public:
-    WindModel(double magneticDeclination);  // real
+    // 風向風速ファイルから風モデルを構築
+    WindModel(double magneticDeclination);
 
+    // オリジナル、またはべき乗則での風モデル構築
     WindModel(double groundWindSpeed,
               double groundWindDirection,
               double magneticDeclination);  // original or only_powerlow
 
+    // 高度を更新
     void update(double height);
 
     Vector3D wind() const {
@@ -63,10 +68,6 @@ public:
     // [°C]
     double temperature() const {
         return m_temperature;
-    }
-
-    bool initialized() const {
-        return m_initialized;
     }
 
 private:

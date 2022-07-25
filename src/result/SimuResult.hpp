@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// シミュレーション結果に関するデータクラス
+// ------------------------------------------------
+
 #pragma once
 
 #include <vector>
@@ -8,7 +12,7 @@
 #include "rocket/Rocket.hpp"
 #include "rocket/RocketSpec.hpp"
 
-// result of each steps
+// ステップ毎の結果
 struct SimuResultStep {
     // General
     double gen_timeFromLaunch = 0;
@@ -52,16 +56,18 @@ struct SimuResultStep {
     double dynamicPressure = 0;
 };
 
-// result of rocket1, rocket2 or rocket3
+// 各body(rocket1, rocket2, rocket3, ...)でのSimuResultStepを格納
 struct SimuResultBody {
     std::vector<SimuResultStep> steps;
 };
 
+// bodyの最終落下地点
 struct BodyFinalPosition {
     double latitude  = 0;
     double longitude = 0;
 };
 
+// シミュレーション結果の主要な値を格納
 struct SimuResultSummary {
     std::vector<SimuResultBody> bodyResults;
     std::vector<BodyFinalPosition> bodyFinalPositions;
@@ -81,14 +87,15 @@ struct SimuResultSummary {
     double maxNormalForceDuringRising = 0;
 };
 
+// ステップごとに結果を格納、出力を行うクラス
 class SimuResultLogger {
 private:
-    const RocketSpec m_rocketSpec;
+    const RocketSpecification m_rocketSpec;
     const MapData m_map;
     SimuResultSummary m_result;
 
 public:
-    SimuResultLogger(const RocketSpec& spec, const MapData& map, double windSpeed, double windDirection);
+    SimuResultLogger(const RocketSpecification& rocketSpec, const MapData& map, double windSpeed, double windDirection);
 
     SimuResultSummary getResult() const;
 

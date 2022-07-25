@@ -1,8 +1,13 @@
+﻿// ------------------------------------------------
+// ScatterSimulator.hppの実装
+// ------------------------------------------------
+
 #include "ScatterSimulator.hpp"
 
 #include <boost/progress.hpp>
 
 #include "app/AppSetting.hpp"
+#include "gnuplot/Gnuplot.hpp"
 #include "result/ResultSaver.hpp"
 
 template <typename T>
@@ -31,7 +36,7 @@ bool ScatterSimulator::simulate() {
 
 std::shared_ptr<SimuResultLogger> ScatterSimulator::solve(double windSpeed, double windDir) {
     Solver solver(
-        m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
+        m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, *m_rocketSpec);
 
     // Wind direction is based on launch azimuth
     if (const auto result = solver.solve(windSpeed, windDir + m_environment.railAzimuth); result) {

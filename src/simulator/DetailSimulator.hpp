@@ -1,7 +1,10 @@
+﻿// ------------------------------------------------
+// Detailモードに対するSimulatorの定義
+// ------------------------------------------------
+
 #pragma once
 
 #include "Simulator.hpp"
-#include "gnuplot/Gnuplot.hpp"
 
 class DetailSimulator : public Simulator {
 private:
@@ -14,7 +17,5 @@ public:
 
     void saveResult() override;
 
-    void plotToGnuplot() override {
-        Gnuplot::Plot(m_result);
-    }
+    void plotToGnuplot() override;
 };

@@ -1,10 +1,15 @@
+﻿// ------------------------------------------------
+// DetailSimulator.hppの実装
+// ------------------------------------------------
+
 #include "DetailSimulator.hpp"
 
+#include "gnuplot/Gnuplot.hpp"
 #include "result/ResultSaver.hpp"
 
 bool DetailSimulator::simulate() {
     Solver solver(
-        m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, m_rocketSpec);
+        m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, *m_rocketSpec);
 
     if (auto resultLogger = solver.solve(m_windSpeed, m_windDirection); resultLogger) {
         resultLogger->organize();
@@ -18,4 +23,8 @@ bool DetailSimulator::simulate() {
 void DetailSimulator::saveResult() {
     const std::string dir = "result/" + m_outputDirName + "/";
     ResultSaver::SaveDetail(dir, m_result);
+}
+
+void DetailSimulator::plotToGnuplot() {
+    Gnuplot::Plot(m_result);
 }

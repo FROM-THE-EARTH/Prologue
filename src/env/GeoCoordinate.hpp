@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// 緯度経度に関するクラス
+// ------------------------------------------------
+
 #pragma once
 
 #include <cmath>
@@ -5,7 +9,7 @@
 
 #include "misc/Constant.hpp"
 
-class MapCoordinate {
+class GeoCoordinate {
 private:
     double m_latitude;   // launchpoint [deg N]
     double m_longitude;  // launchpoint [deg E]
@@ -13,9 +17,9 @@ private:
     double m_degPerLen_longitude;
 
 public:
-    MapCoordinate() = default;
+    GeoCoordinate() = default;
 
-    MapCoordinate(double latitude, double longitude) : m_latitude(latitude), m_longitude(longitude) {
+    GeoCoordinate(double latitude, double longitude) : m_latitude(latitude), m_longitude(longitude) {
         m_degPerLen_latitude  = 31.0 / 0.00027778;
         m_degPerLen_longitude = 6378150.0 * std::cos(latitude / 180.0 * Constant::PI) * 2.0 * Constant::PI / 360.0;
     }

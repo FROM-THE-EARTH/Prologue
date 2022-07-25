@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// コマンド受付に関するインターフェース
+// ------------------------------------------------
+
 #pragma once
 
 #include <iostream>
@@ -7,6 +11,12 @@
 enum class PrintInfoType { Information, Warning, Error };
 
 namespace CommandLine {
+
+    // ------------------------------------------------
+    // templateはcppで定義できないためここで定義
+    // 外部で使うことはないのでInternal名前空間内で定義
+    // ------------------------------------------------
+
     namespace Internal {
         extern size_t Counter;
 
@@ -84,5 +94,5 @@ namespace CommandLine {
 
     void Run();
 
-    void SetOutputDir(const std::string dirname);
+    void SetOutputDir(const std::string& dirname);
 }

@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// Solver.hppの実装
+// ------------------------------------------------
+
 #include "Solver.hpp"
 
 #include "app/AppSetting.hpp"
@@ -5,7 +9,7 @@
 #include "env/Map.hpp"
 
 #define THIS_BODY m_rocket.bodies[m_currentBodyIndex]
-#define THIS_BODY_SPEC m_rocketSpec.rocketParam[m_currentBodyIndex]
+#define THIS_BODY_SPEC m_rocketSpec.bodySpec(m_currentBodyIndex)
 
 std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDirection) {
     switch (AppSetting::WindModel::type) {
@@ -18,7 +22,7 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
         break;
     }
 
-    if (!m_windModel->initialized()) {
+    if (m_windModel == nullptr) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Cannot create wind model");
         return nullptr;
     }
@@ -87,9 +91,9 @@ void Solver::initializeRocket() {
     }
 
     // First rocket
-    m_bodyDelta.mass       = m_rocketSpec.rocketParam[0].massInitial;
-    m_bodyDelta.reflLength = m_rocketSpec.rocketParam[0].CGLengthInitial;
-    m_bodyDelta.iyz        = m_rocketSpec.rocketParam[0].rollingMomentInertiaInitial;
+    m_bodyDelta.mass       = m_rocketSpec.bodySpec(0).massInitial;
+    m_bodyDelta.reflLength = m_rocketSpec.bodySpec(0).CGLengthInitial;
+    m_bodyDelta.iyz        = m_rocketSpec.bodySpec(0).rollingMomentInertiaInitial;
     m_bodyDelta.ix         = 0.02;
     m_bodyDelta.pos        = Vector3D(0, 0, 0);
     m_bodyDelta.velocity   = Vector3D(0, 0, 0);
@@ -115,19 +119,20 @@ void Solver::updateParachute() {
         return;
     }
 
-    const bool detectpeak = THIS_BODY_SPEC.parachute[0].openingType == ParaOpenType::DetectPeak;
+    const bool detectpeak = THIS_BODY_SPEC.parachutes[0].openingType == ParachuteOpeningType::DetectPeak;
 
-    const bool fixedtime          = THIS_BODY_SPEC.parachute[0].openingType == ParaOpenType::FixedTime;
-    const bool fixedtimeCondition = THIS_BODY.elapsedTime > THIS_BODY_SPEC.parachute[0].openingTime;
+    const bool fixedtime          = THIS_BODY_SPEC.parachutes[0].openingType == ParachuteOpeningType::FixedTime;
+    const bool fixedtimeCondition = THIS_BODY.elapsedTime > THIS_BODY_SPEC.parachutes[0].openingTime;
 
-    const bool time_from_detect_peak = THIS_BODY_SPEC.parachute[0].openingType == ParaOpenType::TimeFromDetectPeak;
+    const bool time_from_detect_peak =
+        THIS_BODY_SPEC.parachutes[0].openingType == ParachuteOpeningType::TimeFromDetectPeak;
 
     if ((detectpeak && detectpeakConditon) || (fixedtime && fixedtimeCondition)) {
         THIS_BODY.parachuteOpened = true;
     }
 
     const bool time_from_detect_peakCondition =
-        THIS_BODY.elapsedTime - m_detectPeakTime > THIS_BODY_SPEC.parachute[0].openingTime;
+        THIS_BODY.elapsedTime - m_detectPeakTime > THIS_BODY_SPEC.parachutes[0].openingTime;
 
     if (time_from_detect_peak) {
         if (!THIS_BODY.waitForOpenPara && detectpeakConditon) {
@@ -169,21 +174,22 @@ bool Solver::updateDetachment() {
 
             Body& nextBody1      = m_rocket.bodies[m_currentBodyIndex + 1];
             nextBody1            = detach;
-            nextBody1.mass       = m_rocketSpec.rocketParam[m_currentBodyIndex + 1].massInitial;
-            nextBody1.reflLength = m_rocketSpec.rocketParam[m_currentBodyIndex + 1].CGLengthInitial;
-            nextBody1.iyz        = m_rocketSpec.rocketParam[m_currentBodyIndex + 1].rollingMomentInertiaInitial;
+            nextBody1.mass       = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).massInitial;
+            nextBody1.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).CGLengthInitial;
+            nextBody1.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).rollingMomentInertiaInitial;
+
             // receive power from the engine of the upper body for 0.2 seconds
             /*double sumThrust = 0;
             for (double t = 0; t <= 0.2; t += m_dt) {
-                sumThrust += m_rocketSpec.rocketParam[m_currentBodyIndex + 2].engine.thrustAt(t) * (0.2 - t) / 0.2;
+                sumThrust += m_rocketSpec.bodySpec[m_currentBodyIndex + 2].engine.thrustAt(t) * (0.2 - t) / 0.2;
             }
             nextBody1.velocity -= Vector3D((sumThrust / nextBody1.mass) * m_dt, 0, 0).applyQuaternion(nextBody1.quat);*/
 
             Body& nextBody2      = m_rocket.bodies[m_currentBodyIndex + 2];
             nextBody2            = detach;
-            nextBody2.mass       = m_rocketSpec.rocketParam[m_currentBodyIndex + 2].massInitial;
-            nextBody2.reflLength = m_rocketSpec.rocketParam[m_currentBodyIndex + 2].CGLengthInitial;
-            nextBody2.iyz        = m_rocketSpec.rocketParam[m_currentBodyIndex + 2].rollingMomentInertiaInitial;
+            nextBody2.mass       = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).massInitial;
+            nextBody2.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).CGLengthInitial;
+            nextBody2.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).rollingMomentInertiaInitial;
         }
 
         m_detachCount++;
@@ -288,7 +294,7 @@ void Solver::updateRocketDelta() {
     } else if (THIS_BODY.parachuteOpened) {  // parachute opened
         const Vector3D paraSpeed = THIS_BODY.velocity;
         const double drag        = 0.5 * m_windModel->density() * paraSpeed.z * paraSpeed.z * 1.0
-                            * THIS_BODY_SPEC.parachute[THIS_BODY.parachuteIndex].Cd;
+                            * THIS_BODY_SPEC.parachutes[THIS_BODY.parachuteIndex].Cd;
 
         m_bodyDelta.velocity.z = drag / THIS_BODY.mass - m_windModel->gravity();
         m_bodyDelta.velocity.x = 0;

@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// ロケットの諸元に関するデータクラス
+// ------------------------------------------------
+
 #pragma once
 
 #include <boost/property_tree/ptree.hpp>
@@ -7,15 +11,15 @@
 #include "AeroCoefficient.hpp"
 #include "Engine.hpp"
 
-enum ParaOpenType : int {
+enum class ParachuteOpeningType : size_t {
     DetectPeak = 0,
     FixedTime,
     TimeFromDetectPeak,
 };
 
 struct Parachute {
+    ParachuteOpeningType openingType;
     double terminalVelocity;
-    ParaOpenType openingType;
     double openingTime;
     double delayTime;
     double openingHeight;
@@ -23,41 +27,50 @@ struct Parachute {
     double Cd = 0;
 };
 
-struct RocketParam {
-    double length;      // m
-    double diameter;    // m
-    double bottomArea;  // m^2
+struct BodySpecification {
+    double length;      // [m]
+    double diameter;    // [m]
+    double bottomArea;  // [m^2]
 
-    double CGLengthInitial;  // m
-    double CGLengthFinal;    // m
+    double CGLengthInitial;  // [m]
+    double CGLengthFinal;    // [m]
 
-    double massInitial;  // kg
-    double massFinal;    // kg
+    double massInitial;  // [kg]
+    double massFinal;    // [kg]
 
-    double rollingMomentInertiaInitial;  // kg*m^2
-    double rollingMomentInertiaFinal;    // kg*m^2
+    double rollingMomentInertiaInitial;  // [kg*m^2]
+    double rollingMomentInertiaFinal;    // [kg*m^2]
 
     double Cmq;
 
-    std::vector<Parachute> parachute;
+    std::vector<Parachute> parachutes;
 
     Engine engine;
     AeroCoefficientStorage aeroCoefStorage;
 };
 
-struct RocketSpec {
+class RocketSpecification {
 private:
+    std::vector<BodySpecification> m_bodySpecs;
     bool m_existInfCd = false;
 
 public:
-    std::vector<RocketParam> rocketParam;  // could be multiple(multiple rocket)
+    RocketSpecification() = delete;
 
-    void initialize(const std::string& filename);
+    explicit RocketSpecification(const std::string& specFileName);
 
-    static bool IsMultipleRocket(const std::string& filename);
+    static bool IsMultipleRocket(const std::string& specFileName);
+
+    size_t bodyCount() const {
+        return m_bodySpecs.size();
+    }
+
+    const BodySpecification& bodySpec(size_t bodyIndex) const {
+        return m_bodySpecs[bodyIndex];
+    }
 
 private:
-    void setRocketParam(const boost::property_tree::ptree& pt, size_t index);
+    void setBodySpecification(const boost::property_tree::ptree& pt, size_t index);
 
     void setInfParachuteCd();
 };

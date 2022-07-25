@@ -1,13 +1,18 @@
+﻿// ------------------------------------------------
+// CommandLine.hppの実装
+// ------------------------------------------------
+
 #include "CommandLine.hpp"
 
 #include <filesystem>
+#include <functional>
 
 #include "gnuplot/Gnuplot.hpp"
 
-struct Commands {
-    const char* command;
+struct Command {
+    const char* input;
     const char* description;
-    void (*operation)();
+    std::function<void()> handler;
 };
 
 namespace CommandLine {
@@ -39,15 +44,15 @@ namespace CommandLine {
         }
     }
 
-    const Commands commands[] = {{"show", "Show result in Gnuplot", Gnuplot::Show},
-                                 {"open", "Open result folder in explorer", Internal::OpenExplorer},
-                                 {"help", "Show commands", Internal::ShowHelp},
-                                 {"exit", "Exit application", Internal::ExitApplication}};
+    const Command commands[] = {{"show", "Show result in Gnuplot", Gnuplot::Show},
+                                {"open", "Open result folder in explorer", Internal::OpenExplorer},
+                                {"help", "Show commands", Internal::ShowHelp},
+                                {"exit", "Exit application", Internal::ExitApplication}};
 
     namespace Internal {
         void ShowHelp() {
-            for (auto& c : commands) {
-                std::cout << "\t" << c.command << ": " << c.description << std::endl;
+            for (const auto& command : commands) {
+                std::cout << "\t" << command.input << ": " << command.description << std::endl;
             }
         }
     }
@@ -56,18 +61,18 @@ namespace CommandLine {
         std::cout << "Input the command" << std::endl;
         Internal::ShowHelp();
 
-        std::string cmd;
+        std::string input;
         bool unknown = true;
 
         while (!Internal::Exit) {
             unknown = true;
 
             std::cout << ">";
-            std::cin >> cmd;
-            for (auto& c : commands) {
-                if (cmd == c.command) {
+            std::cin >> input;
+            for (const auto& command : commands) {
+                if (input == command.input) {
                     unknown = false;
-                    c.operation();
+                    command.handler();
                 }
             }
 
@@ -77,7 +82,7 @@ namespace CommandLine {
         }
     }
 
-    void SetOutputDir(const std::string dirname) {
+    void SetOutputDir(const std::string& dirname) {
         Internal::OutputDir = dirname;
     }
 }

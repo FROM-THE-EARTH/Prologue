@@ -1,4 +1,8 @@
-﻿#include "Quaternion.hpp"
+﻿// ------------------------------------------------
+// Quaternion.hppの実装
+// ------------------------------------------------
+
+#include "Quaternion.hpp"
 
 Quaternion::Quaternion(double angle, double direction) {
     const double yaw   = direction * Constant::PI / 180;

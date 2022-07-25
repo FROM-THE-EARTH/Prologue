@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// Environment.hppの実装
+// ------------------------------------------------
+
 #include "env/Environment.hpp"
 
 #include <boost/property_tree/ptree.hpp>

@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// Simulator.hppの実装
+// ------------------------------------------------
+
 #include "Simulator.hpp"
 
 #include <chrono>
@@ -10,6 +14,7 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
+#include "gnuplot/Gnuplot.hpp"
 
 std::unique_ptr<Simulator> Simulator::New(double dt) {
     const auto jsonFile = SetJSONFile();
@@ -37,7 +42,7 @@ bool Simulator::initialize() {
         setWindCondition();
     }
 
-    if (RocketSpec::IsMultipleRocket(m_jsonFile)) {
+    if (RocketSpecification::IsMultipleRocket(m_jsonFile)) {
         CommandLine::PrintInfo(PrintInfoType::Information, "This is Multiple Rocket");
         m_rocketType = RocketType::Multi;
         setDetachType();
@@ -52,7 +57,7 @@ bool Simulator::initialize() {
 
     // read json
     m_environment.initialize(m_jsonFile);
-    m_rocketSpec.initialize(m_jsonFile);
+    m_rocketSpec = std::make_unique<RocketSpecification>(m_jsonFile);
 
     // output
     m_outputDirName = m_jsonFile;
