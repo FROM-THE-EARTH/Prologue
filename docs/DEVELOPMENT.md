@@ -17,6 +17,21 @@
 
 MSVC, GCC, Clang などのコンパイラが入っていない場合はインストールしてください。
 
+## ディレクトリ、ファイルについて
+- `.github`: GitHub Actionsのワークフローの定義ファイルなどGitHubで参照されるファイル
+- `.vscode`: VSCodeの設定などを記述したファイル群
+- `application`: ビルドしたファイルの出力先。ここにシミュレーションの入出力ファイルが格納される
+- `deps`: Prologueが依存している外部ライブラリのファイル
+- `docs`: ドキュメントファイル群
+- `src`: ソースファイル
+- `.clang-format`: C++ファイルのフォーマット設定、VSCodeの設定でファイルを保存するたびにこの設定をもとに自動フォーマットされる
+- `.editorconfig`: コーディングスタイルを統一するための設定
+- `.gitattributes`: おまじないのようなもの
+- `.gitignore`: git管理下に置かないファイルを設定する
+- `CMakeLists.txt`: CMakeというツールでWindows, macOS, Linuxの異なる環境下でのビルドを簡単に行えるようにしていて、これはその設定ファイル
+- `LICENSE`: Prologueのライセンス
+- `README.md`: リポジトリのトップページに表示されている説明書のようなもの
+
 ## ビルド
 
 ビルドは VSCode の拡張機能 CMakeTools を利用して行います。VSCode でこのリポジトリを開くと CMakeTools が自動的に構成を開始します。
