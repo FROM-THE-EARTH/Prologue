@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// 風モデルクラス
+// ------------------------------------------------
+
 #pragma once
 
 #include <string>
@@ -31,12 +35,15 @@ class WindModel {
     Vector3D m_wind;
 
 public:
-    WindModel(double magneticDeclination);  // real
+    // 風向風速ファイルから風モデルを構築
+    WindModel(double magneticDeclination);
 
+    // オリジナル、またはべき乗則での風モデル構築
     WindModel(double groundWindSpeed,
               double groundWindDirection,
               double magneticDeclination);  // original or only_powerlow
 
+    // 高度を更新
     void update(double height);
 
     Vector3D wind() const {

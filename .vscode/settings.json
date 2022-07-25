@@ -6,6 +6,7 @@
     ".clang-format": "yaml"
   },
   "[cpp]": {
-    "editor.defaultFormatter": "ms-vscode.cpptools"
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "files.encoding": "utf8bom"
   }
 }

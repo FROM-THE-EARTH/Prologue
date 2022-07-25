@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// DetailSimulator.hppの実装
+// ------------------------------------------------
+
 #include "DetailSimulator.hpp"
 
 #include "gnuplot/Gnuplot.hpp"

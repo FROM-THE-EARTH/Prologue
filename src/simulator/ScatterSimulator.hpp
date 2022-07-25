@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// Scatterモードに対するSimulatorの定義
+// ------------------------------------------------
+
 #pragma once
 
 #include <future>
@@ -5,6 +9,7 @@
 #include "Simulator.hpp"
 
 class ScatterSimulator : public Simulator {
+    // 型名が長いので別名を付けている
     using AsyncSolver = std::future<std::shared_ptr<SimuResultLogger>>;
 
 private:

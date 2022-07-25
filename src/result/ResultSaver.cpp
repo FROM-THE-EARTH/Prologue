@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// ResultSaver.hppの実装
+// ------------------------------------------------
+
 #include "ResultSaver.hpp"
 
 #include <boost/progress.hpp>

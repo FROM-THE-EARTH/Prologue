@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// WindModel.hppの実装
+// ------------------------------------------------
+
 #include "WindModel.hpp"
 
 #include <fstream>
@@ -9,12 +13,12 @@
 #include "misc/Constant.hpp"
 
 // --------------------------------------------------------------
-// International Standard Atmosphere
+// 大気モデルは国際標準大気参考にしている
 // JP Wikipedia: https://ja.wikipedia.org/wiki/%E5%9B%BD%E9%9A%9B%E6%A8%99%E6%BA%96%E5%A4%A7%E6%B0%97
 // EN Wikipedia: https://en.wikipedia.org/wiki/International_Standard_Atmosphere
 //
-// Use the model written in https://pigeon-poppo.com/standard-atmosphere/
-// This site follows https://ntrs.nasa.gov/citations/19770009539
+// 実際に実装したモデル: https://pigeon-poppo.com/standard-atmosphere/
+// 上記サイトが参照しているNASAの論文: https://ntrs.nasa.gov/citations/19770009539
 // --------------------------------------------------------------
 namespace Atmospehre {
     struct Layer {
@@ -33,6 +37,7 @@ namespace Atmospehre {
     // 32000 ~ [m]      : Undefined and an error will occur if the altitude exceeds this
     constexpr double LayerThresholds[LayerCount + 1] = {0, 11000, 20000, 32000};
 
+    // 各層におけるパラメータ
     const Layer Layers[LayerCount] = {
         {.baseTemperature = AppSetting::Atmosphere::baseTemperature,
          .lapseRate       = -6.5e-3,
@@ -42,19 +47,20 @@ namespace Atmospehre {
         {.baseTemperature = -76.5, .lapseRate = 1.0e-3, .basePressure = 5474.889, .baseDensity = 0.0880}};
 
     namespace Wind {
-        constexpr double GeostrophicWind = 15;  // [m/s]
+        constexpr double GeostrophicWind = 15;  // 地衡風 [m/s]
 
-        constexpr double SurfaceLayerLimit = 300;  // Surface layer 0~300 [m]
+        constexpr double SurfaceLayerLimit = 300;  // 接地境界層 0 ~ 300 [m]
 
         // --------------------------------------------------------------
-        // Ekman layer
+        // エクマン層
         // Wikipedia: https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%AF%E3%83%9E%E3%83%B3%E5%A2%83%E7%95%8C%E5%B1%A4
         // From: http://kishou.u-gakugei.ac.jp/graduate/local/doc04.pdf
         // --------------------------------------------------------------
-        constexpr double EkmanLayerLimit = 1000;  // Ekman layer 300~1000 [m]
+        constexpr double EkmanLayerLimit = 1000;  // エクマン層 300 ~ 1000 [m]
     }
 }
 
+// 0未満または360以上の角度を0 ~ 360におさめる
 double normalizeAngle(double angle) {
     if (0 <= angle && angle < 360) {
         return angle;

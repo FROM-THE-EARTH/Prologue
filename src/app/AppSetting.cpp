@@ -1,3 +1,8 @@
+﻿// ------------------------------------------------
+// AppSetting.hppの実装
+// prologue.settings.jsonの初期化に関わる
+// ------------------------------------------------
+
 #include "AppSetting.hpp"
 
 #include <boost/property_tree/json_parser.hpp>
@@ -9,6 +14,10 @@
 #include "utils/JsonUtils.hpp"
 
 namespace AppSetting {
+    // ------------------------------------------------
+    // 初期化に関する諸関数の定義
+    // ------------------------------------------------
+
     namespace Internal {
         bool initialized = false;
         boost::property_tree::ptree pt;
@@ -92,6 +101,10 @@ namespace AppSetting {
             }
         }
     }
+
+    // ------------------------------------------------
+    // 初期化
+    // ------------------------------------------------
 
     const bool Processing::multiThread   = Internal::InitValue<bool>("processing.multi_thread");
     const size_t Processing::threadCount = Internal::InitThreadCount();

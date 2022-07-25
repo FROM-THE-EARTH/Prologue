@@ -1,3 +1,7 @@
+﻿// ------------------------------------------------
+// int main()を含む、プログラムの開始関数
+// ------------------------------------------------
+
 #include <iostream>
 #include <string>
 
@@ -15,24 +19,30 @@ int main() {
 
     ShowSettingInfo();
 
+    // Simulatorインスタンスの生成
+    // Simulator抽象クラスのポインタを受け取っているが、実際の中身はDetailSimulator型またはScatterSimulator型
     const auto simulator = Simulator::New(AppSetting::Simulation::dt);
 
+    // インスタンスの生成に失敗したかどうか（simulator == nullptrと同値）
     if (!simulator) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Failed to initialize simulator");
         return 1;
     }
 
+    // シミュレーション実行
     if (!simulator->run()) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Failed to simulate");
         return 1;
     }
 
+    // Gnuplotで結果をプロット
     CommandLine::PrintInfo(PrintInfoType::Information, "Plotting result...");
 
     simulator->plotToGnuplot();
 
     Gnuplot::Save();
 
+    // コマンド受付
     CommandLine::Run();
 
     return 0;
