@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <fstream>
 
-void Plotter3D::saveResult(const SimuResultSummary& result) const {
+void Plotter3D::saveResult(const SimuResultSummary& result) {
     saveLaunchPoint();
 
     for (size_t i = 0; i < m_plotCount; i++) {

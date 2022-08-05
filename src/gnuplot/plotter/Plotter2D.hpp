@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "IPlotter.hpp"
+#include "PlotterBase.hpp"
 #include "env/Map.hpp"
 #include "solver/Solver.hpp"
 
-class Plotter2D : public IPlotter {
+class Plotter2D : public PlotterBase<std::vector<SimuResultSummary>> {
 private:
     struct PlotRange {
         double xMin, xMax;
@@ -22,7 +22,7 @@ private:
 public:
     explicit Plotter2D(std::string_view resultDirectory, size_t bodyCount, const MapData& mapData);
 
-    void saveResult(const std::vector<SimuResultSummary>& results);
+    void saveResult(const std::vector<SimuResultSummary>& results) override;
 
     void savePlotAsPng();
 

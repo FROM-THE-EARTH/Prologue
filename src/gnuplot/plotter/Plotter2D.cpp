@@ -10,7 +10,7 @@
 #include "app/AppSetting.hpp"
 
 Plotter2D::Plotter2D(std::string_view resultDirectory, size_t bodyCount, const MapData& mapData) :
-    IPlotter(
+    PlotterBase(
         resultDirectory,
         bodyCount,
         bodyCount
