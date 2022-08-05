@@ -17,9 +17,9 @@ jobs:
       matrix:
         config:
           [
-            { os: windows-2022, launch_command: ".\Prologue.exe" },
-            { os: macos-latest, launch_command: "./Prologue" },
-            { os: ubuntu-20.04, launch_command: "xvfb-run ./Prologue" },
+            { os: windows-2022, launch_command: "./Prologue.exe  --dry-run", move_option: "-Force" },
+            { os: macos-latest, launch_command: "./Prologue", move_option: "" },
+            { os: ubuntu-20.04, launch_command: "xvfb-run ./Prologue", move_option: "" },
           ]
 
     name: CI for ${{ matrix.config.os }}
@@ -34,72 +34,66 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Debug ..
 
       - name: Build
-        run: |
-          cd build
-          cmake --build . --config Debug
+        run: cmake --build . --config Debug
+        working-directory: ./build
 
-      - name: Install gnuplot and jq
+      - name: Install gnuplot
         if: runner.os == 'macOS'
-        run: |
-          brew install gnuplot
-          brew install jq
+        run: brew install gnuplot
 
-      - name: Install gnuplot, jq and xvfb
+      - name: Install gnuplot and xvfb
         if: runner.os == 'Linux'
         run: |
           sudo apt update
           sudo apt install gnuplot
-          sudo apt install jq
           sudo apt install xvfb
 
       - name: Set dt to 0.001 and wind_speed_max to 3.0 to reduce processing time
-        if: runner.os != 'Windows'
         run: |
-          jq ".simulation.dt|=0.001" prologue.settings.json > tmp && mv tmp prologue.settings.json
-          jq ".simulation.scatter.wind_speed_max|=3.0" prologue.settings.json > tmp && mv tmp prologue.settings.json
+          jq ".simulation.dt|=0.001" prologue.settings.json > tmp && mv tmp prologue.settings.json ${{ matrix.config.move_option }}
+          jq ".simulation.scatter.wind_speed_max|=3.0" prologue.settings.json > tmp && mv tmp prologue.settings.json ${{ matrix.config.move_option }}
         working-directory: ./application
 
-      ## Test simulations on macOS and Linux
-      ## Windows cannot install the gnuplot from command line
+      # -------------------------------------------------------
+      # Test single rocket
+      # -------------------------------------------------------
 
-      # Single rocket testing
+      ## Test saving and plotting for and detail simulation
       - name: "[Test] Single/Detail/Trajectry/0[m]/0[deg]"
-        if: runner.os != 'Windows'
         run: echo "2" "2" "1" "0" "0" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
-      - name: "[Test] Single/Detail/Parachute/0[m]/0[deg]"
-        if: runner.os != 'Windows'
-        run: echo "2" "2" "2" "0" "0" "exit" | ${{ matrix.config.launch_command }}
-        working-directory: ./application
-
+      ## Test saving and plotting for scatter simulation
       - name: "[Test] Single/Scatter/Trajectry"
-        if: runner.os != 'Windows'
         run: echo "2" "1" "1" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
-      - name: "[Test] Single/Scatter/Parachute"
-        if: runner.os != 'Windows'
-        run: echo "2" "1" "2" "exit" | ${{ matrix.config.launch_command }}
+      - name: "[Test] Single/Detail/Parachute/0[m]/0[deg]"
+        run: echo "2" "2" "2" "0" "0" "exit" | ${{ matrix.config.launch_command }} --dry-run
         working-directory: ./application
 
-      # Multi rocket testing (Detach mode: When burning finished)
+      - name: "[Test] Single/Scatter/Parachute"
+        run: echo "2" "1" "2" "exit" | ${{ matrix.config.launch_command }} --dry-run
+        working-directory: ./application
+
+      # -------------------------------------------------------
+      # Test multi rocket (Detach mode: When burning finished)
+      # -------------------------------------------------------
+
+      ## Test saving and plotting for and detail simulation
       - name: "[Test] Multi/Detail/Trajectry/0[m]/0[deg]"
-        if: runner.os != 'Windows'
         run: echo "1" "2" "1" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
-      #- name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
-      #  if: runner.os != 'Windows'
-      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }}
-      #  working-directory: ./application
-
+      ## Test saving and plotting for and scatter simulation
       - name: "[Test] Multi/Scatter/Trajectry"
-        if: runner.os != 'Windows'
         run: echo "1" "1" "1" "1" "exit" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
+      #- name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
+      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }} --dry-run
+      #  working-directory: ./application
+
       #- name: "[Test] Multi/Scatter/Parachute"
-      #  if: runner.os != 'Windows'
-      #  run: echo "1" "1" "2" "1" "exit" | ${{ matrix.config.launch_command }}
+      #  run: echo "1" "1" "2" "1" "exit" | ${{ matrix.config.launch_command }} --dry-run
       #  working-directory: ./application

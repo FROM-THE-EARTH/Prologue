@@ -29,8 +29,7 @@ void Plotter2D::saveResult(const std::vector<SimuResultSummary>& results) {
     for (size_t i = 0; i < winds; i++) {            // winds
         for (size_t j = 0; j < m_bodyCount; j++) {  // bodies
             const std::string filename = "body" + std::to_string(j) + "_landings" + std::to_string(i);
-            const std::string fname    = m_resultDirectory + "data/" + filename + ".txt ";
-            std::ofstream file(fname.c_str());
+            std::ofstream file(m_resultDirectory + "data/" + filename + ".txt");
 
             for (size_t k = 0; k < directions; k++) {  // directions
                 const size_t n     = directions * i + k;
