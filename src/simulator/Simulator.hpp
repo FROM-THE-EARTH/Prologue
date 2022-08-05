@@ -54,7 +54,7 @@ public:
     static std::unique_ptr<Simulator> New(double dt);
 
     // シミュレーション実行
-    bool run();
+    bool run(bool output);
 
 protected:
     Simulator(const std::string& jsonFile, SimulationMode simulationMode, double dt) :

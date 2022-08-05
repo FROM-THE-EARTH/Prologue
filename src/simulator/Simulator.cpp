@@ -113,7 +113,7 @@ bool Simulator::initialize() {
     return true;
 }
 
-bool Simulator::run() {
+bool Simulator::run(bool output) {
     if (!initialize()) {
         CommandLine::PrintInfo(PrintInfoType::Error, "Could not initialize Simulator");
         return false;
@@ -158,7 +158,7 @@ bool Simulator::run() {
     }
 
     // Save result and init commandline
-    {
+    if (output) {
         CommandLine::PrintInfo(PrintInfoType::Information, "Saving result...");
 
         saveResult();
