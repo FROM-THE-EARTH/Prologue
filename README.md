@@ -32,6 +32,12 @@ Version: 1.8.10
 
 6. `result/` フォルダ下に結果が格納される
 
+## コマンドラインオプション
+ターミナルで実行時、`./Prologue --command`のようにして以下のオプションを指定できます。
+- `--no-save`: 結果を保存しない
+- `--no-plot`: 結果をプロットしない
+- `--dry-run`: 結果を保存もプロットしない（`--no-save --no-plot`と同値）
+
 ## For Developers
 
 必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOPMENT.md)を読んでください。
