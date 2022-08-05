@@ -9,7 +9,7 @@
 #include "app/CommandLine.hpp"
 #include "simulator/Simulator.hpp"
 
-const auto VERSION = "1.8.10";
+const auto VERSION = "1.8.11";
 
 // Comamnd line option
 struct Option {
