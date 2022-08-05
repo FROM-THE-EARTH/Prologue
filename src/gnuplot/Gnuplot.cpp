@@ -84,13 +84,13 @@ namespace Gnuplot {
         }
 
         void PlotLaunchPoint() {
-            std::ofstream file("result/" + dirname + "/data/launch.txt");
+            std::ofstream file("result/" + dirname + "/data/launch_point.txt");
             file << 0 << " " << 0 << " " << 0 << std::endl;
             file.close();
         }
 
         void Show2D() {
-            command += "\"data/launch.txt\" ";
+            command += "\"data/launch_point.txt\" ";
             command += "title \"LaunchPoint\" ";
             command += "with ";
             command += "points ";
@@ -98,33 +98,38 @@ namespace Gnuplot {
             command += "lc rgb \"yellow\"";
             command += ", ";
 
-            for (size_t i = 0; i < plotCount; i++) {
-                command += "\"data/result" + std::to_string(i) + ".txt\" ";
-                size_t k = i / bodyCount;
-                if (k == 0) {
-                    command += "title \"Body No." + std::to_string(i % bodyCount + 1) + "\" ";
-                } else {
-                    command += "notitle ";
-                }
-                command += "with ";
-                command += "lines ";
-                command += "lw 2 ";
+            const auto windCount = plotCount / bodyCount;
+            for (size_t i = 0; i < windCount; i++) {
+                for (size_t j = 0; j < bodyCount; j++) {
+                    const std::string filename = "body" + std::to_string(j) + "_landings" + std::to_string(i);
+                    command += "\"data/" + filename + ".txt\" ";
 
-                if (i % bodyCount == 0) {
-                    command += "lc rgb \"red\"";
-                } else {
-                    command += "lc rgb \"blue\"";
-                }
+                    if (i == 0) {
+                        command += "title \"Body No." + std::to_string(j + 1) + "\" ";
+                    } else {
+                        command += "notitle ";
+                    }
+                    command += "with ";
+                    command += "lines ";
+                    command += "lw 2 ";
 
-                if (i != plotCount - 1)
-                    command += ", ";
+                    if (j == 0) {
+                        command += "lc rgb \"red\"";
+                    } else {
+                        command += "lc rgb \"blue\"";
+                    }
+
+                    if (i != plotCount - 1) {
+                        command += ", ";
+                    }
+                }
             }
 
             gnuplot.send(command);
         }
 
         void Show3D() {
-            command += "\"data/launch.txt\" ";
+            command += "\"data/launch_point.txt\" ";
             command += "title \"LaunchPoint\" ";
             command += "with ";
             command += "points ";
@@ -133,14 +138,16 @@ namespace Gnuplot {
             command += ", ";
 
             for (size_t i = 0; i < plotCount; i++) {
-                command += "\"data/result" + std::to_string(i) + ".txt\" ";
+                const std::string filename = "body" + std::to_string(i) + "_trajectory";
+                command += "\"data/" + filename + ".txt\" ";
                 command += "title \"Body No." + std::to_string(i + 1) + "\" ";
                 command += "with ";
                 command += "lines ";
                 command += "lw 2";
 
-                if (i != plotCount - 1)
+                if (i != plotCount - 1) {
                     command += ", ";
+                }
             }
 
             gnuplot.send(command);
@@ -223,7 +230,8 @@ namespace Gnuplot {
         plotCount = result.bodyResults.size();
 
         for (size_t i = 0; i < plotCount; i++) {
-            std::ofstream file("result/" + dirname + "/data/result" + std::to_string(i) + ".txt");
+            const std::string filename = "body" + std::to_string(i) + "_trajectory";
+            std::ofstream file("result/" + dirname + "/data/" + filename + ".txt");
             for (const auto& step : result.bodyResults[i].steps) {
                 file << step.rocket_pos.x << " " << step.rocket_pos.y << " " << step.rocket_pos.z << std::endl;
             }
@@ -253,8 +261,8 @@ namespace Gnuplot {
 
         for (size_t i = 0; i < winds; i++) {          // winds
             for (size_t j = 0; j < bodyCount; j++) {  // bodies
-                const std::string fname =
-                    "result/" + dirname + "/data/result" + std::to_string(i * bodyCount + j) + ".txt";
+                const std::string filename = "body" + std::to_string(j) + "_landings" + std::to_string(i);
+                const std::string fname    = "result/" + dirname + "/data/" + filename + ".txt ";
                 std::ofstream file(fname.c_str());
 
                 for (size_t k = 0; k < directions; k++) {  // directions
