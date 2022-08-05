@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "GnuplotController.hpp"
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
 #include "misc/Platform.hpp"
@@ -34,7 +35,7 @@ struct GnuplotRange {
 };
 
 namespace Gnuplot {
-    FILE* p;
+    GnuplotController gnuplot;
 
     std::string dirname;
     std::string command;
@@ -48,38 +49,38 @@ namespace Gnuplot {
     namespace Internal {
         void Initialize() {
             // reset
-            fprintf(p, "reset\n");
+            gnuplot.send("reset");
 
             // Ticslevel
-            fprintf(p, "set ticslevel 0\n");
+            gnuplot.send("set ticslevel 0");
 
             // grid
-            fprintf(p, "set grid\n");
+            gnuplot.send("set grid");
 
             // legends box
-            fprintf(p, "set key opaque box\n");
+            gnuplot.send("set key opaque box");
 
             // Label
-            fprintf(p, "set xlabel \"Distance[m](+: East, -: West)\"\n");
-            fprintf(p, "set ylabel \"Distance[m](+: North, -: South)\"\n");
-            fprintf(p, "set zlabel \"Height[m]\"\n");
+            gnuplot.send("set xlabel \"Distance[m](+: East, -: West)\"");
+            gnuplot.send("set ylabel \"Distance[m](+: North, -: South)\"");
+            gnuplot.send("set zlabel \"Height[m]\"");
 
             // title, xyz ratio, range
             switch (dimension) {
             case PlotDimension::Dimension2D:
-                fprintf(p, "set size ratio -1\n");
-                fprintf(p, "set xrange[%f:%f]\n", range.xMin, range.xMax);
-                fprintf(p, "set yrange[%f:%f]\n", range.yMin, range.yMax);
+                gnuplot.send("set size ratio -1");
+                gnuplot.send("set xrange[%f:%f]", range.xMin, range.xMax);
+                gnuplot.send("set yrange[%f:%f]", range.yMin, range.yMax);
                 command = "plot ";
                 break;
 
             case PlotDimension::Dimension3D:
-                fprintf(p, "set title \"Wind: %.2f[m/s] %.2f[deg]\"\n", windSpeed, windDirection);
-                fprintf(p, "set view equal xyz\n");
+                gnuplot.send("set title \"Wind: %.2f[m/s] %.2f[deg]\"", windSpeed, windDirection);
+                gnuplot.send("set view equal xyz");
                 command = "splot ";
                 break;
             }
-            fprintf(p, "set title font \"MS Gothic, 20\"\n");
+            gnuplot.send("set title font \"MS Gothic, 20\"");
         }
 
         void PlotLaunchPoint() {
@@ -119,8 +120,7 @@ namespace Gnuplot {
                     command += ", ";
             }
 
-            command += "\n";
-            fprintf(p, "%s", command.c_str());
+            gnuplot.send(command);
         }
 
         void Show3D() {
@@ -143,8 +143,7 @@ namespace Gnuplot {
                     command += ", ";
             }
 
-            command += "\n";
-            fprintf(p, "%s", command.c_str());
+            gnuplot.send(command);
         }
 
         void CalcRange(const SimuResultSummary& result, bool init, bool end) {
@@ -197,15 +196,15 @@ namespace Gnuplot {
         }
 
         void SaveAsPNG() {
-            fprintf(p, "set terminal pngcairo size 1920, 1440\n");
+            gnuplot.send("set terminal pngcairo size 1920, 1440");
 
-            fprintf(p, "set output \"result.png\"\n");
+            gnuplot.send("set output \"result.png\"");
 
-            fprintf(p, "load \"result.plt\"\n");
+            gnuplot.send("load \"result.plt\"");
 
-            fprintf(p, "set terminal " GNUPLOT_TERMINAL "\n");
+            gnuplot.send("set terminal " GNUPLOT_TERMINAL);
 
-            fprintf(p, "set output\n");
+            gnuplot.send("set output");
         }
     }
 
@@ -279,18 +278,17 @@ namespace Gnuplot {
 
     void Show() {
         if (std::filesystem::exists("result.plt")) {
-            p = POPEN("gnuplot", "w");
-            fprintf(p, "load \"result.plt\"\n");
+            gnuplot.open();
+            gnuplot.send("load \"result.plt\"");
         } else {
-            p = POPEN("gnuplot", "w");
-            if (p == nullptr) {
+            if (!gnuplot.open()) {
                 std::cout << "Could not open gnuplot" << std::endl;
                 return;
             }
 
             Internal::Initialize();
 
-            fprintf(p, "cd \"result/%s\"\n", dirname.c_str());
+            gnuplot.send("cd \"result/%s\"", dirname.c_str());
 
             switch (dimension) {
             case PlotDimension::Dimension2D:
@@ -304,25 +302,24 @@ namespace Gnuplot {
             }
         }
 
-        fflush(p);
+        gnuplot.flush();
 
         system(PAUSE_COMMAND);
 
-        fprintf(p, " exit\n");
+        gnuplot.send(" exit");
 
-        PCLOSE(p);
+        gnuplot.close();
     }
 
     void Save() {
-        p = POPEN("gnuplot", "w");
-        if (p == nullptr) {
+        if (!gnuplot.open()) {
             std::cout << "Could not open gnuplot" << std::endl;
             return;
         }
 
         Internal::Initialize();
 
-        fprintf(p, "cd \"result/%s\"\n", dirname.c_str());
+        gnuplot.send("cd \"result/%s\"", dirname.c_str());
 
         switch (dimension) {
         case PlotDimension::Dimension2D:
@@ -335,22 +332,22 @@ namespace Gnuplot {
             break;
         }
 
-        fflush(p);
+        gnuplot.flush();
 
-        fprintf(p, "save \"result.plt\"\n");
+        gnuplot.send("save \"result.plt\"");
 
-        fprintf(p, "replot\n");
+        gnuplot.send("replot");
 
-        fprintf(p, "set terminal " GNUPLOT_TERMINAL "\n");
+        gnuplot.send("set terminal " GNUPLOT_TERMINAL);
 
-        fflush(p);
+        gnuplot.flush();
 
         if (dimension == PlotDimension::Dimension2D) {
             Internal::SaveAsPNG();
         }
 
-        fprintf(p, "exit\n");
+        gnuplot.send(" exit");
 
-        PCLOSE(p);
+        gnuplot.close();
     }
 }
