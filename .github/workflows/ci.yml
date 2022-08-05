@@ -11,6 +11,9 @@ on:
       - main
       - develop
 
+env:
+  DISPLAY: ":99"
+
 jobs:
   build:
     strategy:
@@ -19,7 +22,7 @@ jobs:
           [
             { os: windows-2022, launch_command: "./Prologue.exe  --dry-run", move_option: "-Force" },
             { os: macos-latest, launch_command: "./Prologue", move_option: "" },
-            { os: ubuntu-20.04, launch_command: "xvfb-run ./Prologue", move_option: "" },
+            { os: ubuntu-20.04, launch_command: "./Prologue", move_option: "" },
           ]
 
     name: CI for ${{ matrix.config.os }}
@@ -47,6 +50,10 @@ jobs:
           sudo apt update
           sudo apt install gnuplot
           sudo apt install xvfb
+
+      - name: Run xvfb
+        if: runner.os == 'Linux'
+        run: Xvfb -ac ${{ env.DISPLAY }} -screen 0 1920x1080x24 &
 
       - name: Set dt to 0.001 and wind_speed_max to 3.0 to reduce processing time
         run: |
