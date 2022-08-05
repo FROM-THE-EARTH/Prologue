@@ -7,7 +7,7 @@
 #include <boost/progress.hpp>
 
 #include "app/AppSetting.hpp"
-#include "gnuplot/Gnuplot.hpp"
+#include "gnuplot/plotter/Plotter2D.hpp"
 #include "result/ResultSaver.hpp"
 
 template <typename T>
@@ -129,7 +129,10 @@ void ScatterSimulator::saveResult() {
 }
 
 void ScatterSimulator::plotToGnuplot() {
-    Gnuplot::Plot(m_result);
+    auto plotter = Plotter2D("result/" + m_outputDirName + "/", m_result[0].bodyResults.size(), m_mapData);
+    plotter.saveResult(m_result);
+    plotter.savePlot();
+    plotter.savePlotAsPng();
 }
 
 bool ScatterSimulator::updateWindCondition() {

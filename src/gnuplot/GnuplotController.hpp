@@ -32,18 +32,21 @@ public:
 
     // プロセスを閉じる
     void close() {
-        flush();
-        m_ptr.release();
+        if (m_ptr) {
+            send("exit");
+            flush();
+            m_ptr.release();
+        }
     }
 
     // 現時点までのバッファを書き込み
-    void flush() {
+    void flush() const {
         fflush(m_ptr.get());
     }
 
     // コマンドを入力
     template <class... Args>
-    void send(std::string_view command, const Args&... args) {
+    void send(std::string_view command, const Args&... args) const {
         fprintf(m_ptr.get(), command.ends_with('\n') ? command.data() : (std::string(command) + '\n').c_str(), args...);
     }
 };

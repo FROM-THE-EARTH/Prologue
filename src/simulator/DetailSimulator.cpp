@@ -4,7 +4,7 @@
 
 #include "DetailSimulator.hpp"
 
-#include "gnuplot/Gnuplot.hpp"
+#include "gnuplot/plotter/Plotter3D.hpp"
 #include "result/ResultSaver.hpp"
 
 bool DetailSimulator::simulate() {
@@ -26,5 +26,8 @@ void DetailSimulator::saveResult() {
 }
 
 void DetailSimulator::plotToGnuplot() {
-    Gnuplot::Plot(m_result);
+    auto plotter =
+        Plotter3D("result/" + m_outputDirName + "/", m_result.bodyResults.size(), m_windSpeed, m_windDirection);
+    plotter.saveResult(m_result);
+    plotter.savePlot();
 }

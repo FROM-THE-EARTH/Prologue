@@ -14,7 +14,6 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
-#include "gnuplot/Gnuplot.hpp"
 
 std::unique_ptr<Simulator> Simulator::New(double dt) {
     const auto jsonFile = SetJSONFile();
@@ -142,9 +141,6 @@ bool Simulator::run() {
                                        + std::to_string(m_environment.magneticDeclination.value()) + "[deg] by json");
             m_mapData.magneticDeclination = m_environment.magneticDeclination.value();
         }
-
-        // Initialize gnuplot by the map
-        Gnuplot::Initialize(m_outputDirName.c_str(), m_mapData);
     }
 
     // Simulate
@@ -168,8 +164,6 @@ bool Simulator::run() {
         saveResult();
 
         CommandLine::PrintInfo(PrintInfoType::Information, "Result is saved in \"" + m_outputDirName + "/\"");
-
-        CommandLine::SetOutputDir(m_outputDirName);
     }
 
     return true;

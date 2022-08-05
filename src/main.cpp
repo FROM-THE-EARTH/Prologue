@@ -7,7 +7,6 @@
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
-#include "gnuplot/Gnuplot.hpp"
 #include "simulator/Simulator.hpp"
 
 const auto VERSION = "1.8.10";
@@ -40,10 +39,7 @@ int main() {
 
     simulator->plotToGnuplot();
 
-    Gnuplot::Save();
-
-    // コマンド受付
-    CommandLine::Run();
+    // plotter->savePlot();
 
     return 0;
 }
