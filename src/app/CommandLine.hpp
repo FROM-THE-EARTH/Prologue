@@ -11,7 +11,6 @@
 enum class PrintInfoType { Information, Warning, Error };
 
 namespace CommandLine {
-
     // ------------------------------------------------
     // templateはcppで定義できないためここで定義
     // 外部で使うことはないのでInternal名前空間内で定義
@@ -91,8 +90,4 @@ namespace CommandLine {
         Internal::PrintInfoFirstLine(type, std::forward<Args>(lines)...);
         std::cout << std::endl;
     }
-
-    void Run();
-
-    void SetOutputDir(const std::string& dirname);
 }

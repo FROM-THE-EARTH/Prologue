@@ -4,9 +4,9 @@
 
 ## Download
 
-Latest Update: 2022/07/16
+Latest Update: 2022/08/05
 
-Version: 1.8.10
+Version: 1.8.11
 
 [**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)
 
@@ -31,6 +31,12 @@ Version: 1.8.10
 5. 指示に従ってシミュレーションを行う
 
 6. `result/` フォルダ下に結果が格納される
+
+## コマンドラインオプション
+ターミナルで実行時、`./Prologue --command`のようにして以下のオプションを指定できます。
+- `--no-save`: 結果を保存しない
+- `--no-plot`: 結果をプロットしない
+- `--dry-run`: 結果を保存もプロットしない（`--no-save --no-plot`と同値）
 
 ## For Developers
 

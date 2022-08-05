@@ -36,7 +36,9 @@ set(SOURCE_FILES
 	"src/env/Environment.cpp"
 	"src/env/Map.cpp"
 
-	"src/gnuplot/Gnuplot.cpp"
+	"src/gnuplot/plotter/IPlotter.cpp"
+	"src/gnuplot/plotter/Plotter2D.cpp"
+	"src/gnuplot/plotter/Plotter3D.cpp"
 
 	"src/math/Algorithm.cpp"
 	"src/math/Quaternion.cpp"
