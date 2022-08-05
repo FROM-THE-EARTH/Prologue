@@ -213,9 +213,8 @@ namespace Gnuplot {
         dirname = _dirname;
 
         const std::filesystem::path dir = "result/" + dirname + "/data";
-        if (!std::filesystem::exists(dir)) {
-            std::filesystem::create_directory(dir);
-        }
+        std::filesystem::remove_all(dir);
+        std::filesystem::create_directory(dir);
     }
 
     void Plot(const SimuResultSummary& result) {
