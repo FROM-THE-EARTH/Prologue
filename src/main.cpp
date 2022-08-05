@@ -39,8 +39,6 @@ int main() {
 
     simulator->plotToGnuplot();
 
-    // plotter->savePlot();
-
     return 0;
 }
 
