@@ -127,8 +127,6 @@ void Plotter2D::plot() const {
 }
 
 void Plotter2D::calcPlotRange(const std::vector<SimuResultSummary>& results) {
-    m_range = {0};
-
     for (size_t i = 0; i < results.size(); i++) {
         const auto& result = results[i];
 
