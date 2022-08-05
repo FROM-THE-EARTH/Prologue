@@ -17,7 +17,7 @@ jobs:
       matrix:
         config:
           [
-            { os: windows-2022, launch_command: ".\Prologue.exe  --dry-run", move_option: "-Force" },
+            { os: windows-2022, launch_command: "./Prologue.exe  --dry-run", move_option: "-Force" },
             { os: macos-latest, launch_command: "./Prologue", move_option: "" },
             { os: ubuntu-20.04, launch_command: "xvfb-run ./Prologue", move_option: "" },
           ]
