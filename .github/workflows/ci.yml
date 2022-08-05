@@ -17,9 +17,9 @@ jobs:
       matrix:
         config:
           [
-            { os: windows-2022, launch_command: ".\Prologue.exe  --dry-run" },
-            { os: macos-latest, launch_command: "./Prologue" },
-            { os: ubuntu-20.04, launch_command: "xvfb-run ./Prologue" },
+            { os: windows-2022, launch_command: ".\Prologue.exe  --dry-run", move_option: "-Force" },
+            { os: macos-latest, launch_command: "./Prologue", move_option: "" },
+            { os: ubuntu-20.04, launch_command: "xvfb-run ./Prologue", move_option: "" },
           ]
 
     name: CI for ${{ matrix.config.os }}
@@ -50,8 +50,8 @@ jobs:
 
       - name: Set dt to 0.001 and wind_speed_max to 3.0 to reduce processing time
         run: |
-          jq ".simulation.dt|=0.001" prologue.settings.json > tmp && mv tmp prologue.settings.json
-          jq ".simulation.scatter.wind_speed_max|=3.0" prologue.settings.json > tmp && mv tmp prologue.settings.json
+          jq ".simulation.dt|=0.001" prologue.settings.json > tmp && mv tmp prologue.settings.json ${{ matrix.config.move_option }}
+          jq ".simulation.scatter.wind_speed_max|=3.0" prologue.settings.json > tmp && mv tmp prologue.settings.json ${{ matrix.config.move_option }}
         working-directory: ./application
 
       # -------------------------------------------------------
