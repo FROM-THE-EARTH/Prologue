@@ -15,5 +15,7 @@ struct Environment {
     double railAzimuth;
     double railElevation;
 
-    void initialize(const boost::property_tree::ptree& specJson);
+    Environment() = delete;
+
+    explicit Environment(const boost::property_tree::ptree& specJson);
 };

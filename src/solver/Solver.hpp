@@ -52,24 +52,13 @@ class Solver {
     std::shared_ptr<SimuResultLogger> m_resultLogger = nullptr;
 
 public:
-    Solver(double dt,
-           MapData mapData,
-           RocketType rocketType,
-           TrajectoryMode mode,
-           DetachType detachType,
-           double detachTime,
-           const Environment& env,
-           const RocketSpecification& spec) :
-        m_dt(dt),
-        m_rocketType(rocketType),
-        m_trajectoryMode(mode),
-        m_detachType(detachType),
-        m_detachTime(detachTime),
-        m_rocketSpec(spec),
-        m_environment(env),
-        m_mapData(mapData) {
-        m_rocket.bodies.resize(m_rocketSpec.bodyCount());
-    }
+    explicit Solver(MapData mapData,
+                    RocketType rocketType,
+                    TrajectoryMode mode,
+                    DetachType detachType,
+                    double detachTime,
+                    const Environment& env,
+                    const RocketSpecification& spec);
 
     std::shared_ptr<SimuResultLogger> solve(double windSpeed, double windDirection);
 

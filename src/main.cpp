@@ -7,7 +7,7 @@
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
-#include "simulator/Simulator.hpp"
+#include "simulator/SimulatorFactory.hpp"
 
 const auto VERSION = "1.8.11";
 
@@ -34,9 +34,9 @@ int main(int argc, char* argv[]) {
 
     ShowSettingInfo();
 
-    // Simulatorインスタンスの生成
-    // Simulator抽象クラスのポインタを受け取っているが、実際の中身はDetailSimulator型またはScatterSimulator型
-    const auto simulator = Simulator::New(AppSetting::Simulation::dt);
+    // SimulatorBaseインスタンスの生成
+    // SimulatorBase抽象クラスのポインタを受け取っているが、実際の中身はDetailSimulator型またはScatterSimulator型
+    const auto simulator = SimulatorFactory::Create();
 
     // インスタンスの生成に失敗したかどうか（simulator == nullptrと同値）
     if (!simulator) {

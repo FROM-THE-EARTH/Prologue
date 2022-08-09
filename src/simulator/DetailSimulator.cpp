@@ -8,10 +8,15 @@
 #include "result/ResultSaver.hpp"
 
 bool DetailSimulator::simulate() {
-    Solver solver(
-        m_dt, m_mapData, m_rocketType, m_trajectoryMode, m_detachType, m_detachTime, m_environment, *m_rocketSpec);
+    Solver solver(m_mapData,
+                  m_rocketType,
+                  m_setting.trajectoryMode,
+                  m_setting.detachType,
+                  m_setting.detachTime,
+                  m_environment,
+                  m_rocketSpec);
 
-    if (auto resultLogger = solver.solve(m_windSpeed, m_windDirection); resultLogger) {
+    if (auto resultLogger = solver.solve(m_setting.windSpeed, m_setting.windDirection); resultLogger) {
         resultLogger->organize();
         m_result = resultLogger->getResult();
         return true;
@@ -26,8 +31,8 @@ void DetailSimulator::saveResult() {
 }
 
 void DetailSimulator::plotToGnuplot() {
-    auto plotter =
-        Plotter3D("result/" + m_outputDirName + "/", m_result.bodyResults.size(), m_windSpeed, m_windDirection);
+    auto plotter = Plotter3D(
+        "result/" + m_outputDirName + "/", m_result.bodyResults.size(), m_setting.windSpeed, m_setting.windDirection);
     plotter.saveResult(m_result);
     plotter.savePlot();
 }

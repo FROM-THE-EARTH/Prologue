@@ -53,7 +53,8 @@ set(SOURCE_FILES
 
 	"src/simulator/DetailSimulator.cpp"
 	"src/simulator/ScatterSimulator.cpp"
-	"src/simulator/Simulator.cpp"
+	"src/simulator/SimulatorBase.cpp"
+	"src/simulator/SimulatorFactory.cpp"
 
 	"src/solver/Solver.cpp"
 
