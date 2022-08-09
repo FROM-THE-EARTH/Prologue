@@ -1,17 +1,18 @@
 ﻿// ------------------------------------------------
-// Detailモードに対するSimulatorの定義
+// Detailモードに対するSimulatorBaseの定義
 // ------------------------------------------------
 
 #pragma once
 
-#include "Simulator.hpp"
+#include "SimulatorBase.hpp"
 
-class DetailSimulator : public Simulator {
+class DetailSimulator : public SimulatorBase {
 private:
     SimuResultSummary m_result;
 
 public:
-    DetailSimulator(const std::string& jsonFile, double dt) : Simulator(jsonFile, SimulationMode::Detail, dt) {}
+    // 継承コンストラクタ
+    using SimulatorBase::SimulatorBase;
 
     bool simulate() override;
 

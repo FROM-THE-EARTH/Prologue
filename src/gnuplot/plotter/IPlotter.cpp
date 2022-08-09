@@ -64,7 +64,7 @@ void IPlotter::initializePlot() const {
     m_gnuplot.send("set zlabel \"Height[m]\"");
 
     // Font
-    m_gnuplot.send("set title font \"MS Gothic, 20\"");
+    m_gnuplot.send("set terminal " GNUPLOT_TERMINAL " font \"Arial,9\"");
 }
 
 void IPlotter::saveLaunchPoint() const {

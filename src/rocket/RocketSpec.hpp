@@ -57,9 +57,9 @@ private:
 public:
     RocketSpecification() = delete;
 
-    explicit RocketSpecification(const std::string& specFileName);
+    explicit RocketSpecification(const boost::property_tree::ptree& specJson);
 
-    static bool IsMultipleRocket(const std::string& specFileName);
+    static bool IsMultipleRocket(const boost::property_tree::ptree& specJson);
 
     size_t bodyCount() const {
         return m_bodySpecs.size();

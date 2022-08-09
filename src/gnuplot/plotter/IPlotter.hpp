@@ -36,9 +36,9 @@ public:
     void savePlot();
 
 protected:
-    virtual void initializePlot() const;
-
     virtual void plot() const = 0;
+
+    virtual void initializePlot() const;
 
     void saveLaunchPoint() const;
 };

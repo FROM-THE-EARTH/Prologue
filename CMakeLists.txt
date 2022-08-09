@@ -30,6 +30,7 @@ include_directories(
 set(SOURCE_FILES
 	"src/app/AppSetting.cpp"
 	"src/app/CommandLine.cpp"
+	"src/app/Option.cpp"
 
 	"src/dynamics/WindModel.cpp"
 
@@ -53,7 +54,8 @@ set(SOURCE_FILES
 
 	"src/simulator/DetailSimulator.cpp"
 	"src/simulator/ScatterSimulator.cpp"
-	"src/simulator/Simulator.cpp"
+	"src/simulator/SimulatorBase.cpp"
+	"src/simulator/SimulatorFactory.cpp"
 
 	"src/solver/Solver.cpp"
 

@@ -11,6 +11,24 @@
 #define THIS_BODY m_rocket.bodies[m_currentBodyIndex]
 #define THIS_BODY_SPEC m_rocketSpec.bodySpec(m_currentBodyIndex)
 
+Solver::Solver(MapData mapData,
+               RocketType rocketType,
+               TrajectoryMode mode,
+               DetachType detachType,
+               double detachTime,
+               const Environment& env,
+               const RocketSpecification& spec) :
+    m_dt(AppSetting::Simulation::dt),
+    m_rocketType(rocketType),
+    m_trajectoryMode(mode),
+    m_detachType(detachType),
+    m_detachTime(detachTime),
+    m_rocketSpec(spec),
+    m_environment(env),
+    m_mapData(mapData) {
+    m_rocket.bodies.resize(m_rocketSpec.bodyCount());
+}
+
 std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDirection) {
     switch (AppSetting::WindModel::type) {
     case WindModelType::Real:

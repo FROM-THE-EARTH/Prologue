@@ -1,22 +1,27 @@
 ﻿// ------------------------------------------------
-// Scatterモードに対するSimulatorの定義
+// Scatterモードに対するSimulatorBaseの定義
 // ------------------------------------------------
 
 #pragma once
 
 #include <future>
+#include <vector>
 
-#include "Simulator.hpp"
+#include "SimulatorBase.hpp"
 
-class ScatterSimulator : public Simulator {
+class ScatterSimulator : public SimulatorBase {
     // 型名が長いので別名を付けている
     using AsyncSolver = std::future<std::shared_ptr<SimuResultLogger>>;
 
 private:
+    double m_windSpeed     = 0.0;
+    double m_windDirection = 0.0;
+
     std::vector<SimuResultSummary> m_result;
 
 public:
-    ScatterSimulator(const std::string& jsonFile, double dt) : Simulator(jsonFile, SimulationMode::Scatter, dt) {}
+    // 継承コンストラクタ
+    using SimulatorBase::SimulatorBase;
 
     bool simulate() override;
 

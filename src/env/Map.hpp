@@ -21,16 +21,16 @@ struct MapData {
 
     MapData() = default;
 
-    MapData(const std::string& keyForJson,
-            MapType mapType,
-            double _magneticDeclination,
-            double launchPointLatitude,
-            double launchPointLongitude,
-            std::string imageFileNameForGnuplot,
-            double dxForGnuplot,
-            double dyForGnuplot,
-            double originXForGnuplot,
-            double originYForGnuplot) :
+    explicit MapData(const std::string& keyForJson,
+                     MapType mapType,
+                     double _magneticDeclination,
+                     double launchPointLatitude,
+                     double launchPointLongitude,
+                     std::string imageFileNameForGnuplot,
+                     double dxForGnuplot,
+                     double dyForGnuplot,
+                     double originXForGnuplot,
+                     double originYForGnuplot) :
         key(keyForJson),
         type(mapType),
         coordinate(GeoCoordinate(launchPointLatitude, launchPointLongitude)),

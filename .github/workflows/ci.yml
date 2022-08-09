@@ -11,6 +11,9 @@ on:
       - main
       - develop
 
+env:
+  DISPLAY: ":99"
+
 jobs:
   build:
     strategy:
@@ -19,7 +22,7 @@ jobs:
           [
             { os: windows-2022, launch_command: "./Prologue.exe  --dry-run", move_option: "-Force" },
             { os: macos-latest, launch_command: "./Prologue", move_option: "" },
-            { os: ubuntu-20.04, launch_command: "xvfb-run ./Prologue", move_option: "" },
+            { os: ubuntu-20.04, launch_command: "./Prologue", move_option: "" },
           ]
 
     name: CI for ${{ matrix.config.os }}
@@ -48,6 +51,10 @@ jobs:
           sudo apt install gnuplot
           sudo apt install xvfb
 
+      - name: Run xvfb
+        if: runner.os == 'Linux'
+        run: Xvfb -ac ${{ env.DISPLAY }} -screen 0 1920x1080x24 &
+
       - name: Set dt to 0.001 and wind_speed_max to 3.0 to reduce processing time
         run: |
           jq ".simulation.dt|=0.001" prologue.settings.json > tmp && mv tmp prologue.settings.json ${{ matrix.config.move_option }}
@@ -60,20 +67,20 @@ jobs:
 
       ## Test saving and plotting for and detail simulation
       - name: "[Test] Single/Detail/Trajectry/0[m]/0[deg]"
-        run: echo "2" "2" "1" "0" "0" "exit" | ${{ matrix.config.launch_command }}
+        run: echo "2" "2" "1" "0" "0" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       ## Test saving and plotting for scatter simulation
       - name: "[Test] Single/Scatter/Trajectry"
-        run: echo "2" "1" "1" "exit" | ${{ matrix.config.launch_command }}
+        run: echo "2" "1" "1" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       - name: "[Test] Single/Detail/Parachute/0[m]/0[deg]"
-        run: echo "2" "2" "2" "0" "0" "exit" | ${{ matrix.config.launch_command }} --dry-run
+        run: echo "2" "2" "2" "0" "0" | ${{ matrix.config.launch_command }} --dry-run
         working-directory: ./application
 
       - name: "[Test] Single/Scatter/Parachute"
-        run: echo "2" "1" "2" "exit" | ${{ matrix.config.launch_command }} --dry-run
+        run: echo "2" "1" "2" | ${{ matrix.config.launch_command }} --dry-run
         working-directory: ./application
 
       # -------------------------------------------------------
@@ -82,18 +89,18 @@ jobs:
 
       ## Test saving and plotting for and detail simulation
       - name: "[Test] Multi/Detail/Trajectry/0[m]/0[deg]"
-        run: echo "1" "2" "1" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }}
+        run: echo "1" "2" "1" "0" "0" "1" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       ## Test saving and plotting for and scatter simulation
       - name: "[Test] Multi/Scatter/Trajectry"
-        run: echo "1" "1" "1" "1" "exit" | ${{ matrix.config.launch_command }}
+        run: echo "1" "1" "1" "1" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       #- name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
-      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }} --dry-run
+      #  run: echo "1" "2" "2" "0" "0" "1" | ${{ matrix.config.launch_command }} --dry-run
       #  working-directory: ./application
 
       #- name: "[Test] Multi/Scatter/Parachute"
-      #  run: echo "1" "1" "2" "1" "exit" | ${{ matrix.config.launch_command }} --dry-run
+      #  run: echo "1" "1" "2" "1" | ${{ matrix.config.launch_command }} --dry-run
       #  working-directory: ./application

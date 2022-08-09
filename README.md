@@ -1,12 +1,12 @@
 # Prologue
 
-単段 / 多段式ロケットの軌道解析シミュレーターです。
+単段 / 多段式ハイブリッドロケットの軌道シミュレーターです。
 
 ## Download
 
-Latest Update: 2022/08/05
+Latest Update: 2022/08/09
 
-Version: 1.8.11
+Version: 1.9.0
 
 [**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)
 
@@ -28,7 +28,7 @@ Version: 1.8.11
 4. `Prologue` を起動<br>
    macOS, Linux の場合はターミナル上でのみ実行可能
 
-5. 指示に従ってシミュレーションを行う
+5. 指示に従ってシミュレーションを実行
 
 6. `result/` フォルダ下に結果が格納される
 
