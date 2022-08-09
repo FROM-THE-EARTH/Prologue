@@ -19,13 +19,17 @@ namespace SimulatorFactory {
 
     namespace _internal {
         std::string setSpecFile() {
-            std::cout << "<!===Set Specification File===!>" << std::endl;
-
             std::vector<std::string> specificationFiles;
 
             for (const std::filesystem::directory_entry& x : std::filesystem::directory_iterator(specDirectoryPath)) {
                 specificationFiles.push_back(x.path().filename().string());
             }
+
+            if (specificationFiles.size() == 0) {
+                throw std::runtime_error{"Specification file not found in input/spec/."};
+            }
+
+            std::cout << "<!===Set Specification File===!>" << std::endl;
 
             for (size_t i = 0; i < specificationFiles.size(); i++) {
                 std::cout << i + 1 << ": " << specificationFiles[i] << std::endl;

@@ -41,10 +41,6 @@ class Solver {
     size_t m_currentBodyIndex = 0;  // index of the body being solved
     size_t m_detachCount      = 0;
 
-    // calc
-    double m_maxAltitude    = 0;
-    double m_detectPeakTime = 0;
-
     // Simulation
     size_t m_steps = 0;
 

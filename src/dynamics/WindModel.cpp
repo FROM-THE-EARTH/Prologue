@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
@@ -171,11 +172,8 @@ double WindModel::getTemperature() {
         }
     }
 
-    CommandLine::PrintInfo(PrintInfoType::Error,
-                           "Current height is " + std::to_string(m_height) + "m",
-                           "Wind model is not defined above 32000m");
-
-    exit(1);
+    throw std::runtime_error{"Current height is " + std::to_string(m_height) + " m. "
+                             + "Wind model is not defined above 32000 m."};
 }
 
 // Formula from: https://pigeon-poppo.com/standard-atmosphere/#i-4
@@ -191,19 +189,15 @@ double WindModel::getPressure() {
             } else if (i == 2) {
                 k = pow(216.65 / (m_temperature - Constant::AbsoluteZero), 34.163);
             } else {
-                CommandLine::PrintInfo(PrintInfoType::Error, "In WindModel::getPressure()", "Index out of range");
-                exit(1);
+                throw std::runtime_error{"WindModel::getPressure(): Detected unhandled layer."};
             }
 
             return Atmospehre::Layers[i].basePressure * k;
         }
     }
 
-    CommandLine::PrintInfo(PrintInfoType::Error,
-                           "Current height is " + std::to_string(m_height) + "m",
-                           "Wind model is not defined above 32000m");
-
-    exit(1);
+    throw std::runtime_error{"Current height is " + std::to_string(m_height) + " m. "
+                             + "Wind model is not defined above 32000 m."};
 }
 
 // Formula from: https://pigeon-poppo.com/standard-atmosphere/#i-5

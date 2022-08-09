@@ -30,11 +30,13 @@ struct Body {
     Vector3D moment_b;
 
     // status
-    double elapsedTime    = 0.0;  // [s]
-    size_t parachuteIndex = 0;
-    bool parachuteOpened  = false;
-    bool waitForOpenPara  = false;
-    bool detectPeak       = false;
+    double elapsedTime     = 0.0;  // [s]
+    size_t parachuteIndex  = 0;
+    bool parachuteOpened   = false;
+    bool waitForOpenPara   = false;
+    bool detectPeak        = false;
+    double maxAltitude     = 0;  // [m]
+    double maxAltitudeTime = 0;  // [s]
 
     // calculated
     Vector3D airSpeed_b;  // [m/s]
