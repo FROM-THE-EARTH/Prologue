@@ -11,7 +11,7 @@
 #include "app/Option.hpp"
 #include "simulator/SimulatorFactory.hpp"
 
-const auto VERSION = "1.9.0";
+const auto VERSION = "1.9.1";
 
 void ShowSettingInfo();
 
