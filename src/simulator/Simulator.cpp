@@ -96,7 +96,7 @@ bool Simulator::initialize() {
         m_outputDirName += "_para";
         break;
     case TrajectoryMode::Trajectory:
-        m_outputDirName += "_trajectory";
+        m_outputDirName += "_traj";
         break;
     }
 
