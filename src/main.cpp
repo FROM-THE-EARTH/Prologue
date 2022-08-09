@@ -7,30 +7,17 @@
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
+#include "app/Option.hpp"
 #include "simulator/SimulatorFactory.hpp"
 
 const auto VERSION = "1.8.11";
-
-// Comamnd line option
-struct Option {
-    // Whether to save the result
-    bool saveResult = true;
-
-    // Whether to plot the result
-    bool plotResult = true;
-
-    // false: Neither save nor plot
-    bool dryRun = false;
-};
-
-Option GetOption(int argc, char* argv[]);
 
 void ShowSettingInfo();
 
 int main(int argc, char* argv[]) {
     std::cout << "Prologue v" << VERSION << std::endl << std::endl;
 
-    const auto option = GetOption(argc, argv);
+    const auto option = CommandLineOption::ParseArgs(argc, argv);
 
     ShowSettingInfo();
 
@@ -57,24 +44,6 @@ int main(int argc, char* argv[]) {
     }
 
     return 0;
-}
-
-Option GetOption(int argc, char* argv[]) {
-    Option option;
-
-    for (int i = 0; i < argc; i++) {
-        const std::string opt = argv[i];
-
-        if (opt == "--no-save") {
-            option.saveResult = false;
-        } else if (opt == "--no-plot") {
-            option.plotResult = false;
-        } else if (opt == "--dry-run") {
-            option.dryRun = true;
-        }
-    }
-
-    return option;
 }
 
 void ShowSettingInfo() {
