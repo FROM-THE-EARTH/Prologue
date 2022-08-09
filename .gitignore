@@ -2,14 +2,14 @@
 application/Prologue*
 application/result/*
 application/input/aero_coef/*
-application/input/json/*
+application/input/spec/*
 application/input/thrust/*
 application/input/wind/*
 build/
 !application/prologue.settings.json
 !application/input/aero_coef/sample.csv
-!application/input/json/spec_multi.json
-!application/input/json/spec_single.json
+!application/input/spec/spec_multi.json
+!application/input/spec/spec_single.json
 !application/input/thrust/Sample_G40-4W.txt
 !application/input/thrust/Sample_K240.txt
 !application/input/wind/sample.csv
