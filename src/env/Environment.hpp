@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <boost/property_tree/ptree.hpp>
 #include <optional>
 #include <string>
 
@@ -14,5 +15,5 @@ struct Environment {
     double railAzimuth;
     double railElevation;
 
-    void initialize(const std::string& filename);
+    void initialize(const boost::property_tree::ptree& specJson);
 };

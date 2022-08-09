@@ -57,7 +57,7 @@ public:
     bool run(bool output);
 
 protected:
-    Simulator(const std::string& jsonFile, SimulationMode simulationMode, double dt) :
+    explicit Simulator(const std::string& jsonFile, SimulationMode simulationMode, double dt) :
         m_jsonFile(jsonFile), m_simulationMode(simulationMode), m_dt(dt) {}
 
     virtual bool simulate() = 0;

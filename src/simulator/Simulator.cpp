@@ -4,6 +4,8 @@
 
 #include "Simulator.hpp"
 
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
@@ -14,6 +16,8 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "env/Map.hpp"
+
+#define PATH_SPEC_DIR "input/spec/"
 
 std::unique_ptr<Simulator> Simulator::New(double dt) {
     const auto jsonFile = SetJSONFile();
@@ -33,15 +37,19 @@ std::unique_ptr<Simulator> Simulator::New(double dt) {
 }
 
 bool Simulator::initialize() {
-    // settings on commandline
+    // Settings on commandline
     setTrajectoryMode();
+
+    // Raad specification
+    boost::property_tree::ptree json;
+    boost::property_tree::read_json(m_jsonFile, json);
 
     if (m_simulationMode == SimulationMode::Detail && AppSetting::WindModel::type != WindModelType::Real
         && AppSetting::WindModel::type != WindModelType::NoWind) {
         setWindCondition();
     }
 
-    if (RocketSpecification::IsMultipleRocket(m_jsonFile)) {
+    if (RocketSpecification::IsMultipleRocket(json)) {
         CommandLine::PrintInfo(PrintInfoType::Information, "This is Multiple Rocket");
         m_rocketType = RocketType::Multi;
         setDetachType();
@@ -55,11 +63,12 @@ bool Simulator::initialize() {
     std::cout << "----------------------------------------------------------" << std::endl;
 
     // read json
-    m_environment.initialize(m_jsonFile);
-    m_rocketSpec = std::make_unique<RocketSpecification>(m_jsonFile);
+    m_environment.initialize(json);
+    m_rocketSpec = std::make_unique<RocketSpecification>(json);
 
     // output
     m_outputDirName = m_jsonFile;
+    m_outputDirName.erase(0, std::string(PATH_SPEC_DIR).size());
     m_outputDirName.erase(m_outputDirName.size() - 5, 5);
     m_outputDirName += "[";
 
@@ -171,9 +180,10 @@ bool Simulator::run(bool output) {
 
 std::string Simulator::SetJSONFile() {
     std::cout << "<!===Set Specification File===!>" << std::endl;
+
     std::vector<std::string> specificationFiles;
 
-    for (const std::filesystem::directory_entry& x : std::filesystem::directory_iterator("input/spec")) {
+    for (const std::filesystem::directory_entry& x : std::filesystem::directory_iterator(PATH_SPEC_DIR)) {
         specificationFiles.push_back(x.path().filename().string());
     }
 
@@ -182,7 +192,7 @@ std::string Simulator::SetJSONFile() {
     }
 
     const size_t inputIndex = CommandLine::InputIndex<size_t>(specificationFiles.size());
-    return specificationFiles[inputIndex - 1];
+    return PATH_SPEC_DIR + specificationFiles[inputIndex - 1];
 }
 
 SimulationMode Simulator::SetSimulationMode() {
