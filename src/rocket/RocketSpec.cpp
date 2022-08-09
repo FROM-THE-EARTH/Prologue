@@ -22,7 +22,7 @@ double CalcParachuteCd(double massFinal, double terminalVelocity) {
 
 RocketSpecification::RocketSpecification(const std::string& specFileName) {
     boost::property_tree::ptree pt;
-    boost::property_tree::read_json("input/json/" + specFileName, pt);
+    boost::property_tree::read_json("input/spec/" + specFileName, pt);
 
     m_existInfCd = false;
 
@@ -115,6 +115,6 @@ void RocketSpecification::setInfParachuteCd() {
 
 bool RocketSpecification::IsMultipleRocket(const std::string& specFileName) {
     boost::property_tree::ptree pt;
-    boost::property_tree::read_json("input/json/" + specFileName, pt);
+    boost::property_tree::read_json("input/spec/" + specFileName, pt);
     return JsonUtils::Exist(pt, BodyList[1]);
 }

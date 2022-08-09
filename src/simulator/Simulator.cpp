@@ -170,19 +170,19 @@ bool Simulator::run(bool output) {
 }
 
 std::string Simulator::SetJSONFile() {
-    std::cout << "<!===Set JSON File===!>" << std::endl;
-    std::vector<std::string> existJSONs;
+    std::cout << "<!===Set Specification File===!>" << std::endl;
+    std::vector<std::string> specificationFiles;
 
-    for (const std::filesystem::directory_entry& x : std::filesystem::directory_iterator("input/json")) {
-        existJSONs.push_back(x.path().filename().string());
+    for (const std::filesystem::directory_entry& x : std::filesystem::directory_iterator("input/spec")) {
+        specificationFiles.push_back(x.path().filename().string());
     }
 
-    for (size_t i = 0; i < existJSONs.size(); i++) {
-        std::cout << i + 1 << ": " << existJSONs[i] << std::endl;
+    for (size_t i = 0; i < specificationFiles.size(); i++) {
+        std::cout << i + 1 << ": " << specificationFiles[i] << std::endl;
     }
 
-    const size_t jsonIndex = CommandLine::InputIndex<size_t>(existJSONs.size());
-    return existJSONs[jsonIndex - 1];
+    const size_t inputIndex = CommandLine::InputIndex<size_t>(specificationFiles.size());
+    return specificationFiles[inputIndex - 1];
 }
 
 SimulationMode Simulator::SetSimulationMode() {

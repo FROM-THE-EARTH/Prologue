@@ -10,7 +10,7 @@
 
 void Environment::initialize(const std::string& filename) {
     boost::property_tree::ptree pt;
-    boost::property_tree::read_json("input/json/" + filename, pt);
+    boost::property_tree::read_json("input/spec/" + filename, pt);
 
     place               = JsonUtils::GetValue<std::string>(pt, "environment.place");
     magneticDeclination = JsonUtils::GetOptional<double>(pt, "environment.magnetic_declination");
