@@ -67,20 +67,20 @@ jobs:
 
       ## Test saving and plotting for and detail simulation
       - name: "[Test] Single/Detail/Trajectry/0[m]/0[deg]"
-        run: echo "2" "2" "1" "0" "0" "exit" | ${{ matrix.config.launch_command }}
+        run: echo "2" "2" "1" "0" "0" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       ## Test saving and plotting for scatter simulation
       - name: "[Test] Single/Scatter/Trajectry"
-        run: echo "2" "1" "1" "exit" | ${{ matrix.config.launch_command }}
+        run: echo "2" "1" "1" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       - name: "[Test] Single/Detail/Parachute/0[m]/0[deg]"
-        run: echo "2" "2" "2" "0" "0" "exit" | ${{ matrix.config.launch_command }} --dry-run
+        run: echo "2" "2" "2" "0" "0" | ${{ matrix.config.launch_command }} --dry-run
         working-directory: ./application
 
       - name: "[Test] Single/Scatter/Parachute"
-        run: echo "2" "1" "2" "exit" | ${{ matrix.config.launch_command }} --dry-run
+        run: echo "2" "1" "2" | ${{ matrix.config.launch_command }} --dry-run
         working-directory: ./application
 
       # -------------------------------------------------------
@@ -89,18 +89,18 @@ jobs:
 
       ## Test saving and plotting for and detail simulation
       - name: "[Test] Multi/Detail/Trajectry/0[m]/0[deg]"
-        run: echo "1" "2" "1" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }}
+        run: echo "1" "2" "1" "0" "0" "1" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       ## Test saving and plotting for and scatter simulation
       - name: "[Test] Multi/Scatter/Trajectry"
-        run: echo "1" "1" "1" "1" "exit" | ${{ matrix.config.launch_command }}
+        run: echo "1" "1" "1" "1" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
       #- name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
-      #  run: echo "1" "2" "2" "0" "0" "1" "exit" | ${{ matrix.config.launch_command }} --dry-run
+      #  run: echo "1" "2" "2" "0" "0" "1" | ${{ matrix.config.launch_command }} --dry-run
       #  working-directory: ./application
 
       #- name: "[Test] Multi/Scatter/Parachute"
-      #  run: echo "1" "1" "2" "1" "exit" | ${{ matrix.config.launch_command }} --dry-run
+      #  run: echo "1" "1" "2" "1" | ${{ matrix.config.launch_command }} --dry-run
       #  working-directory: ./application
