@@ -3,6 +3,7 @@
 // ------------------------------------------------
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 #include "app/AppSetting.hpp"
@@ -27,13 +28,17 @@ int main(int argc, char* argv[]) {
 
     // インスタンスの生成に失敗したかどうか（simulator == nullptrと同値）
     if (!simulator) {
-        CommandLine::PrintInfo(PrintInfoType::Error, "Failed to initialize simulator");
+        CommandLine::PrintInfo(PrintInfoType::Error, "Failed to initialize simulator.");
         return 1;
     }
 
     // シミュレーション実行
-    if (!simulator->run(option.saveResult && !option.dryRun)) {
-        CommandLine::PrintInfo(PrintInfoType::Error, "Failed to simulate");
+    try {
+        if (!simulator->run(option.saveResult && !option.dryRun)) {
+            throw std::runtime_error{"Failed to simulate."};
+        }
+    } catch (const std::exception& e) {
+        CommandLine::PrintInfo(PrintInfoType::Error, e.what());
         return 1;
     }
 
