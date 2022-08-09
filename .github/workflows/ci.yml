@@ -97,10 +97,10 @@ jobs:
         run: echo "1" "1" "1" "1" | ${{ matrix.config.launch_command }}
         working-directory: ./application
 
-      #- name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
-      #  run: echo "1" "2" "2" "0" "0" "1" | ${{ matrix.config.launch_command }} --dry-run
-      #  working-directory: ./application
+      - name: "[Test] Multi/Detail/Parachute/0[m]/0[deg]"
+        run: echo "1" "2" "2" "0" "0" "1" | ${{ matrix.config.launch_command }} --dry-run
+        working-directory: ./application
 
-      #- name: "[Test] Multi/Scatter/Parachute"
-      #  run: echo "1" "1" "2" "1" | ${{ matrix.config.launch_command }} --dry-run
-      #  working-directory: ./application
+      - name: "[Test] Multi/Scatter/Parachute"
+        run: echo "1" "1" "2" "1" | ${{ matrix.config.launch_command }} --dry-run
+        working-directory: ./application
