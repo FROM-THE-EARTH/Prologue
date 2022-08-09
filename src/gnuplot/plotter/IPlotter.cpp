@@ -62,6 +62,9 @@ void IPlotter::initializePlot() const {
     m_gnuplot.send("set xlabel \"Distance[m](+: East, -: West)\"");
     m_gnuplot.send("set ylabel \"Distance[m](+: North, -: South)\"");
     m_gnuplot.send("set zlabel \"Height[m]\"");
+
+    // Font
+    m_gnuplot.send("set terminal " GNUPLOT_TERMINAL " font \"Arial,9\"");
 }
 
 void IPlotter::saveLaunchPoint() const {
