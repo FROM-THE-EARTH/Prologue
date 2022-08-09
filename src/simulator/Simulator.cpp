@@ -37,12 +37,11 @@ std::unique_ptr<Simulator> Simulator::New(double dt) {
 }
 
 bool Simulator::initialize() {
-    // Settings on commandline
-    setTrajectoryMode();
-
-    // Raad specification
+    // Read specification file
     boost::property_tree::ptree json;
     boost::property_tree::read_json(m_jsonFile, json);
+
+    setTrajectoryMode();
 
     if (m_simulationMode == SimulationMode::Detail && AppSetting::WindModel::type != WindModelType::Real
         && AppSetting::WindModel::type != WindModelType::NoWind) {
@@ -62,62 +61,11 @@ bool Simulator::initialize() {
 
     std::cout << "----------------------------------------------------------" << std::endl;
 
-    // read json
+    // Read specification
     m_environment.initialize(json);
     m_rocketSpec = std::make_unique<RocketSpecification>(json);
 
-    // output
-    m_outputDirName = m_jsonFile;
-    m_outputDirName.erase(0, std::string(PATH_SPEC_DIR).size());
-    m_outputDirName.erase(m_outputDirName.size() - 5, 5);
-    m_outputDirName += "[";
-
-    const std::filesystem::path realWindFile = AppSetting::WindModel::realdataFilename;
-
-    switch (AppSetting::WindModel::type) {
-    case WindModelType::Real:
-        m_outputDirName += "(" + realWindFile.stem().string() + ")";
-        break;
-    case WindModelType::Original:
-        m_outputDirName += "original";
-        break;
-    case WindModelType::OnlyPowerLow:
-        m_outputDirName += "powerlow";
-        break;
-    case WindModelType::NoWind:
-        m_outputDirName += "nowind";
-        break;
-    }
-
-    if (AppSetting::WindModel::type != WindModelType::Real) {
-        switch (m_simulationMode) {
-        case SimulationMode::Scatter:
-            m_outputDirName += "_scatter";
-            break;
-        case SimulationMode::Detail:
-            m_outputDirName += "_detail";
-            break;
-        }
-    }
-
-    switch (m_trajectoryMode) {
-    case TrajectoryMode::Parachute:
-        m_outputDirName += "_para";
-        break;
-    case TrajectoryMode::Trajectory:
-        m_outputDirName += "_traj";
-        break;
-    }
-
-    m_outputDirName += "]";
-
-    if (m_simulationMode == SimulationMode::Detail && AppSetting::WindModel::type != WindModelType::Real
-        && AppSetting::WindModel::type != WindModelType::NoWind) {
-        std::ostringstream out;
-        out.precision(2);
-        out << std::fixed << m_windSpeed << "ms, " << m_windDirection << "deg";
-        m_outputDirName += "[" + out.str() + "]";
-    }
+    setOutputDirectoryName();
 
     return true;
 }
@@ -240,5 +188,60 @@ void Simulator::createResultDirectory() {
         if (!std::filesystem::create_directory(output)) {
             CommandLine::PrintInfo(PrintInfoType::Error, "Failed to create result directory");
         }
+    }
+}
+
+void Simulator::setOutputDirectoryName() {
+    m_outputDirName = m_jsonFile;
+    m_outputDirName.erase(0, std::string(PATH_SPEC_DIR).size());
+    m_outputDirName.erase(m_outputDirName.size() - 5, 5);
+
+    m_outputDirName += "[";
+
+    const std::filesystem::path realWindFile = AppSetting::WindModel::realdataFilename;
+
+    switch (AppSetting::WindModel::type) {
+    case WindModelType::Real:
+        m_outputDirName += "(" + realWindFile.stem().string() + ")";
+        break;
+    case WindModelType::Original:
+        m_outputDirName += "original";
+        break;
+    case WindModelType::OnlyPowerLow:
+        m_outputDirName += "powerlow";
+        break;
+    case WindModelType::NoWind:
+        m_outputDirName += "nowind";
+        break;
+    }
+
+    if (AppSetting::WindModel::type != WindModelType::Real) {
+        switch (m_simulationMode) {
+        case SimulationMode::Scatter:
+            m_outputDirName += "_scatter";
+            break;
+        case SimulationMode::Detail:
+            m_outputDirName += "_detail";
+            break;
+        }
+    }
+
+    switch (m_trajectoryMode) {
+    case TrajectoryMode::Parachute:
+        m_outputDirName += "_para";
+        break;
+    case TrajectoryMode::Trajectory:
+        m_outputDirName += "_traj";
+        break;
+    }
+
+    m_outputDirName += "]";
+
+    if (m_simulationMode == SimulationMode::Detail && AppSetting::WindModel::type != WindModelType::Real
+        && AppSetting::WindModel::type != WindModelType::NoWind) {
+        std::ostringstream out;
+        out.precision(2);
+        out << std::fixed << m_windSpeed << "ms, " << m_windDirection << "deg";
+        m_outputDirName += "[" + out.str() + "]";
     }
 }

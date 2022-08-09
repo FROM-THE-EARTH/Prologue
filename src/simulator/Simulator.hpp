@@ -80,4 +80,6 @@ private:
     void setDetachTime();
 
     void createResultDirectory();
+
+    void setOutputDirectoryName();
 };
