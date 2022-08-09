@@ -95,7 +95,10 @@ private:
     SimuResultSummary m_result;
 
 public:
-    SimuResultLogger(const RocketSpecification& rocketSpec, const MapData& map, double windSpeed, double windDirection);
+    explicit SimuResultLogger(const RocketSpecification& rocketSpec,
+                              const MapData& map,
+                              double windSpeed,
+                              double windDirection);
 
     SimuResultSummary getResult() const;
 

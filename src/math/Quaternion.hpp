@@ -15,7 +15,7 @@ struct Quaternion {
 
     constexpr Quaternion(double _x, double _y, double _z, double _w) : x(_x), y(_y), z(_z), w(_w) {}
 
-    Quaternion(double angle, double direction);
+    explicit Quaternion(double angle, double direction);
 
     /*========================method=============================*/
 
