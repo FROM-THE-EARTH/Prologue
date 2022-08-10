@@ -20,17 +20,17 @@
 ```json
 {
   "processing": {
-    "multi_thread": false,  // マルチスレッドによる処理の高速化。Scatterモードでのみ有効。
-    "multi_thread_count": 4 // スレッド数
+    "multi_thread": true,	// マルチスレッドによる処理の高速化。Scatterモードでのみ有効。
+    "multi_thread_count": 4	// スレッド数
   },
 
   "simulation": {
-    "dt": 0.001,                   // 1 ステップで経過する時間。小さければより精度が上がるが計算に時間がかかる。
-    "detect_peak_threshold": 15.0, // 頂点検知によるパラシュート開傘時、最高高度から何m落下したら開傘するかどうか[m]
+    "dt": 0.0001,                  // 1 ステップで経過する時間。小さければより精度が上がるが計算に時間がかかる。[s]
+    "detect_peak_threshold": 15.0, // 頂点検知によるパラシュート開傘時、最高高度から何メートル落下したら開傘するか[m]
 
     "scatter": {
-      "wind_speed_min": 0.0,    // Scatterモード時、シミュレーション対象の風速の最小値[m]
-      "wind_speed_max": 7.0,    // Scatterモード時、シミュレーション対象の風速の最大値[m]
+      "wind_speed_min": 0.0,    // Scatterモード時、シミュレーション対象の風速の最小値[m/s]
+      "wind_speed_max": 7.0,    // Scatterモード時、シミュレーション対象の風速の最大値[m/s]
       "wind_dir_interval": 30.0 // Scatterモード時、風向を何度ずつ変更してシミュレーションするか[deg]
     }
   },
@@ -48,8 +48,8 @@
   },
 
   "atmosphere": {
-    "base_pressure_pascal": 101325, // 高度 0 [m] における気圧（正確にはジオポテンシャル高度 0 [m]）
-    "base_temperature_celsius": 15  // 高度 0 [m] における気温（正確にはジオポテンシャル高度 0 [m]）
+    "base_pressure_pascal": 101325, // 高度 0 [m] における気圧[Pa]（正確にはジオポテンシャル高度 0 [m]）
+    "base_temperature_celsius": 15  // 高度 0 [m] における気温[°C]（正確にはジオポテンシャル高度 0 [m]）
   }
 }
 ```
@@ -57,7 +57,7 @@
 ## 機体諸元
 
 機体諸元を記述します。<br>
-**保存フォルダ**: `input/json/`<br>
+**保存フォルダ**: `input/spec/`<br>
 **拡張子**: `json`<br>
 **形式**:
 
@@ -101,10 +101,10 @@
 
 	"environment": {
 		"place": "マップ名称: nosiro_sea nosiro_land izu_sea izu_land",
-		"magnetic_declination": "磁気偏角[deg] nullまたは数値（nullの場合はマップごとのデフォルト値を使用 DYNAMICS.md参照）"
+		"magnetic_declination": "磁気偏角[deg] nullまたは数値（nullの場合はマップごとのデフォルト値を使用 DYNAMICS.md参照）",
 		"rail_len": "ランチャレール長[m]",
-		"rail_azi": "ランチャ方位角[degree]　北から右回り",
-		"rail_elev": "ランチャ迎角[degree]"
+		"rail_azi": "ランチャ方位角[deg]　北から右回り",
+		"rail_elev": "ランチャ迎角[deg]"
 	}
 }
 ```
