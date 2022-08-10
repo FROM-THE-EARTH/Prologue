@@ -20,6 +20,8 @@ namespace CommandLineOption {
                 option.plotResult = false;
             } else if (opt == "--dry-run") {
                 option.dryRun = true;
+            } else if (opt == "--open-result") {
+                option.openResultFolder = true;
             }
         }
 
