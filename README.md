@@ -37,6 +37,7 @@ Version: 1.9.1
 - `--no-save`: 結果を保存しない
 - `--no-plot`: 結果をプロットしない
 - `--dry-run`: 結果を保存もプロットしない（`--no-save --no-plot`と同値）
+- `--open-result`: シミュレーション実行後に結果のフォルダをエクスプローラーなどで開く
 
 ## For Developers
 
