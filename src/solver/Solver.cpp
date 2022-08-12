@@ -19,17 +19,18 @@ Solver::Solver(MapData mapData,
                const Environment& env,
                const RocketSpecification& spec) :
     m_dt(AppSetting::Simulation::dt),
+    m_rocketSpec(spec),
+    m_environment(env),
+    m_mapData(mapData),
     m_rocketType(rocketType),
     m_trajectoryMode(mode),
     m_detachType(detachType),
-    m_detachTime(detachTime),
-    m_rocketSpec(spec),
-    m_environment(env),
-    m_mapData(mapData) {
+    m_detachTime(detachTime) {
     m_rocket.bodies.resize(m_rocketSpec.bodyCount());
 }
 
 std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDirection) {
+    // Initialize wind model
     switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
         m_windModel = std::make_unique<WindModel>(m_mapData.magneticDeclination);
@@ -45,13 +46,13 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
         return nullptr;
     }
 
-    // initialize result
+    // Initialize result
     m_resultLogger = std::make_shared<SimuResultLogger>(m_rocketSpec, m_mapData, windSpeed, windDirection);
     m_resultLogger->pushBody();
 
-    // loop until all rockets are solved
-    // single rocket: solve once
-    // multi rokcet : every rockets including after detachment
+    // Loop until all rockets are solved
+    // Single rocket: solve once
+    // Multi rokcet : every rockets including after detachment
     size_t solvedBodyCount = 0;
     do {
         m_steps = 0;

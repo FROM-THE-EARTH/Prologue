@@ -18,33 +18,25 @@ enum class RocketType : int { Single = 1, Multi };
 enum class DetachType : int { BurningFinished = 1, Time, SyncPara, DoNotDeatch };
 
 class Solver {
-    // config
+    // Setting
     const double m_dt;
+    const RocketSpecification m_rocketSpec;
+    const Environment m_environment;
+    const MapData m_mapData;
     const RocketType m_rocketType;
     const TrajectoryMode m_trajectoryMode;
     const DetachType m_detachType;
     const double m_detachTime;
 
-    // spec
-    const RocketSpecification m_rocketSpec;
-
-    // rocket
+    // Simulation
     Rocket m_rocket;
     Body m_bodyDelta;
-
-    // env
     std::unique_ptr<WindModel> m_windModel;
-    Environment m_environment;
-    MapData m_mapData;
-
-    // stastus
-    size_t m_currentBodyIndex = 0;  // index of the body being solved
+    size_t m_currentBodyIndex = 0;  // Index of the body being solved
     size_t m_detachCount      = 0;
+    size_t m_steps            = 0;
 
-    // Simulation
-    size_t m_steps = 0;
-
-    // result
+    // Result
     std::shared_ptr<SimuResultLogger> m_resultLogger = nullptr;
 
 public:
@@ -79,6 +71,6 @@ private:
 
     void organizeResult();
 
-    // prepare the next rocket (multi rocket)
+    // Prepare the next rocket (multi rocket)
     void nextRocket();
 };
