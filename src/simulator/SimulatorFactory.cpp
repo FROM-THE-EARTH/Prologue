@@ -85,7 +85,10 @@ namespace SimulatorFactory {
         SimulatorBase::SimulationSetting SetupSimulator(const boost::property_tree::ptree& specJson) {
             SimulatorBase::SimulationSetting setting;
 
-            setting.simulationMode = _internal::setSimulationMode();
+            if (AppSetting::WindModel::type != WindModelType::Real) {
+                setting.simulationMode = _internal::setSimulationMode();
+            }
+
             setting.trajectoryMode = _internal::setTrajectoryMode();
 
             // Set wind condition if need
