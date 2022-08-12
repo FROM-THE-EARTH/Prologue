@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 #elif PLATFORM_MACOS
         system(("open " + path.string()).c_str());
 #else
-        system(("nautilus " + path.string()).c_str());
+        system(("nautilus -w \"" + path.string() + "\" &").c_str());
 #endif
     }
 
