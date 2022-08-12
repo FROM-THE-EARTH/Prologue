@@ -2,6 +2,7 @@
 // int main()を含む、プログラムの開始関数
 // ------------------------------------------------
 
+#include <filesystem>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -9,6 +10,7 @@
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "app/Option.hpp"
+#include "misc/Platform.hpp"
 #include "simulator/SimulatorFactory.hpp"
 
 const auto VERSION = "1.9.1";
@@ -46,6 +48,18 @@ int main(int argc, char* argv[]) {
     if (option.plotResult && !option.dryRun) {
         CommandLine::PrintInfo(PrintInfoType::Information, "Plotting result...");
         simulator->plotToGnuplot();
+    }
+
+    // 結果フォルダを開く
+    if (option.openResultFolder) {
+        const auto path = std::filesystem::current_path() / "result" / simulator->getOutputDirectory();
+#if PLATFORM_WINDOWS
+        system(("explorer " + path.string()).c_str());
+#elif PLATFORM_MACOS
+        system(("open " + path.string()).c_str());
+#else
+        system(("nautilus -w \"" + path.string() + "\" &").c_str());
+#endif
     }
 
     return 0;

@@ -55,6 +55,10 @@ public:
     // シミュレーション実行
     bool run(bool output);
 
+    std::string getOutputDirectory() const {
+        return m_outputDirName;
+    }
+
 protected:
     virtual bool simulate() = 0;
 
