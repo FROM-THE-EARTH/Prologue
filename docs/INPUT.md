@@ -3,6 +3,7 @@
 シミュレーションを行う際に設定する以下の項目について、ファイルの形式を示します。
 
 - シミュレータの設定 [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/prologue.settings.json)
+- マップ設定 [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/map/config.json)
 - 機体諸元 [単段サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/json/spec_single.json) [多段サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/json/spec_multi.json)
 - エンジン [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/thrust/Sample_G40-4W.txt)
 - 風向風速 [サンプル](https://github.com/FROM-THE-EARTH/Prologue/blob/main/application/input/wind/sample.csv)
@@ -52,6 +53,40 @@
     "base_temperature_celsius": 15  // 高度 0 [m] における気温[°C]（正確にはジオポテンシャル高度 0 [m]）
   }
 }
+```
+
+## マップ設定
+
+マップの磁気偏角及び緯度経度を設定します。<br>
+`izu_land`, `izu_sea`, `nosiro_land`, `izu_sea`のみ設定可能です<br>
+**保存フォルダ**: `input/map/config.json`<br>
+**拡張子**: `json`<br>
+**形式**:
+
+```json
+{
+  "izu_land": {
+    "magnetic_declination": 7.53,	// 磁気偏角 [deg]
+    "latitude": 34.735972,			// 緯度 [deg]
+    "longitude": 139.420944			// 経度 [deg]
+  },
+  "izu_sea": {
+    "magnetic_declination": 7.53,
+    "latitude": 34.680197,
+    "longitude": 139.43909
+  },
+  "nosiro_land": {
+    "magnetic_declination": 8.9,
+    "latitude": 40.138624,
+    "longitude": 139.984906
+  },
+  "nosiro_sea": {
+    "magnetic_declination": 8.94,
+    "latitude": 40.242865,
+    "longitude": 140.01045
+  }
+}
+
 ```
 
 ## 機体諸元
