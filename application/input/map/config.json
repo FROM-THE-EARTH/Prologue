@@ -1,0 +1,22 @@
+{
+  "izu_land": {
+    "magnetic_declination": 7.53,
+    "latitude": 34.735972,
+    "longitude": 139.420944
+  },
+  "izu_sea": {
+    "magnetic_declination": 7.53,
+    "latitude": 34.680197,
+    "longitude": 139.43909
+  },
+  "nosiro_land": {
+    "magnetic_declination": 8.9,
+    "latitude": 40.138624,
+    "longitude": 139.984906
+  },
+  "nosiro_sea": {
+    "magnetic_declination": 8.94,
+    "latitude": 40.242865,
+    "longitude": 140.01045
+  }
+}
