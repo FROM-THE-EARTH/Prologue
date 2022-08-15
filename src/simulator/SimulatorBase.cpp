@@ -126,24 +126,12 @@ std::string SimulatorBase::getOutputDirectoryName() {
 }
 
 MapData SimulatorBase::getMapData() {
-    MapData map;
-
     // Get / Set place
     std::string place = m_environment.place;
     std::transform(place.begin(), place.end(), place.begin(), [](int c) { return static_cast<char>(::tolower(c)); });
-    if (const auto m = Map::GetMap(place); m.has_value()) {
-        map = m.value();
+    if (const auto map = Map::GetMap(place); map.has_value()) {
+        return map.value();
     } else {
         throw std::runtime_error{"This map is invalid."};
     }
-
-    // Set magnetic declination if need
-    if (m_environment.magneticDeclination.has_value()) {
-        CommandLine::PrintInfo(PrintInfoType::Information,
-                               "Magnetic declination is set to "
-                                   + std::to_string(m_environment.magneticDeclination.value()) + "[deg] by json");
-        map.magneticDeclination = m_environment.magneticDeclination.value();
-    }
-
-    return map;
 }
