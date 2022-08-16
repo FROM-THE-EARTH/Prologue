@@ -13,7 +13,7 @@
 #include "misc/Platform.hpp"
 #include "simulator/SimulatorFactory.hpp"
 
-const auto VERSION = "1.9.5";
+const auto VERSION = "1.9.6";
 
 void ShowSettingInfo();
 
