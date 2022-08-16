@@ -5,7 +5,6 @@
 #include "WindModel.hpp"
 
 #include <fstream>
-#include <iostream>
 #include <stdexcept>
 
 #include "app/AppSetting.hpp"
@@ -201,7 +200,6 @@ double WindModel::getPressure() {
 }
 
 // Formula from: https://pigeon-poppo.com/standard-atmosphere/#i-5
-// But behavior becomes strange when M_0 is applied
 double WindModel::getAirDensity() {
     return m_pressure / ((m_temperature - Constant::AbsoluteZero) * Constant::GasConstant);
 }
