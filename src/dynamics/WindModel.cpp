@@ -175,23 +175,15 @@ double WindModel::getTemperature() {
                              + "Wind model is not defined above 32000 m."};
 }
 
-// Formula from: https://pigeon-poppo.com/standard-atmosphere/#i-4
+// Formula from: https://keisan.casio.jp/exec/system/1203469826
+// はじめに記載した参考文献はおそらく間違っている
+// https://pigeon-poppo.com/standard-atmosphere/#i-4
 double WindModel::getPressure() {
     for (size_t i = 0; i < Atmospehre::LayerCount; i++) {
         if (m_geopotentialHeight <= Atmospehre::LayerThresholds[i + 1]) {
-            double k = 0.0;
-
-            if (i == 0) {
-                k = pow(288.15 / (m_temperature - Constant::AbsoluteZero), -5.256);
-            } else if (i == 1) {
-                k = exp(-0.1577 * (m_geopotentialHeight - Atmospehre::LayerThresholds[i]));
-            } else if (i == 2) {
-                k = pow(216.65 / (m_temperature - Constant::AbsoluteZero), 34.163);
-            } else {
-                throw std::runtime_error{"WindModel::getPressure(): Detected unhandled layer."};
-            }
-
-            return Atmospehre::Layers[i].basePressure * k;
+            const auto k = Atmospehre::Layers[i].lapseRate * m_height;
+            return Atmospehre::Layers[i].basePressure
+                   * pow(1 + k / (m_temperature - Constant::AbsoluteZero - k), 5.257);
         }
     }
 
