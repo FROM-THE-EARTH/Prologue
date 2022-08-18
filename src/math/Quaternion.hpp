@@ -20,26 +20,26 @@ struct Quaternion {
     /*========================method=============================*/
 
     // return the length of quaternion
-    double length() {
+    double length() const {
         return sqrt(x * x + y * y + z * z + w * w);
     }
 
     // return the quaternion normalized
-    Quaternion normalized() {
-        return {x / length(), y / length(), z / length(), w / length()};
+    Quaternion normalized() const {
+        return Quaternion{x, y, z, w} / length();
     }
 
     // to angle
-    double toAngle() {
-        Quaternion q(1, 0, 0, 0);
-        q = *this * q * conjugated();
-        return acos(sqrt(q.x * q.x + q.y * q.y) / sqrt(q.x * q.x + q.y * q.y + q.z * q.z)) * 180 / Constant::PI;
+    double toAngle() const {
+        Vector3D v1(1, 0, 0);
+        Vector3D v2 = v1.rotate(*this);
+        return acos((v1 ^ v2) / (v1.length() * v2.length())) * 180.0 / Constant::PI;
     }
 
     /*=======================method================================*/
 
     // return the quaternion angular velocity applied
-    Quaternion angularVelocityApplied(const Vector3D& v);
+    Quaternion angularVelocityApplied(const Vector3D& v) const;
 
     // return the conjugate quaternion
     Quaternion conjugated() const {
@@ -66,27 +66,27 @@ struct Quaternion {
         return {x * value, y * value, z * value, w * value};
     }
 
+    constexpr Quaternion operator/(double value) const {
+        return {x / value, y / value, z / value, w / value};
+    }
+
     constexpr Quaternion& operator+=(const Quaternion& q) {
-        x += q.x;
-        y += q.y;
-        z += q.z;
-        w += q.w;
+        *this = *this + q;
         return *this;
     }
 
     constexpr Quaternion& operator*=(const Quaternion& q) {
-        x = w * q.x - z * q.y + y * q.z + x * q.w;
-        y = z * q.x + w * q.y - x * q.z + y * q.w;
-        z = -y * q.x + x * q.y + w * q.z + z * q.w;
-        w = -x * q.x - y * q.y - z * q.z + w * q.w;
+        *this = *this * q;
         return *this;
     }
 
     constexpr Quaternion operator*=(double value) {
-        x *= value;
-        y *= value;
-        z *= value;
-        w *= value;
+        *this = *this * value;
+        return *this;
+    }
+
+    constexpr Quaternion operator/=(double value) {
+        *this = *this / value;
         return *this;
     }
 };
