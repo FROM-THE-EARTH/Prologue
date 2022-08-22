@@ -15,6 +15,29 @@ env:
   DISPLAY: ":99"
 
 jobs:
+  unit-test:
+    name: Unit test
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Ninja
+        run: sudo apt install ninja-build
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake -GNinja ..
+
+      - name: Build
+        run: ninja
+        working-directory: ./build
+
+      - name: Test
+        run: ctest -C debug --test-dir test/
+        working-directory: ./build
+
   build:
     strategy:
       matrix:
@@ -25,7 +48,7 @@ jobs:
             { os: ubuntu-20.04, launch_command: "./Prologue", move_option: "" },
           ]
 
-    name: CI for ${{ matrix.config.os }}
+    name: Simulation on ${{ matrix.config.os }}
     runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v2
