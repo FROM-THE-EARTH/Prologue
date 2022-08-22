@@ -35,7 +35,7 @@ jobs:
         working-directory: ./build
 
       - name: Test
-        run: ctest -C debug --test-dir test/
+        run: ctest -C debug --test-dir test/ --output-on-failure
         working-directory: ./build
 
   build:
