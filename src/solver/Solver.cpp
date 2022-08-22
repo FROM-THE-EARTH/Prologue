@@ -250,7 +250,7 @@ void Solver::updateRocketProperties() {
             (THIS_BODY_SPEC.CGLengthFinal - THIS_BODY_SPEC.CGLengthInitial) / THIS_BODY_SPEC.engine.combustionTime();
         m_bodyDelta.iyz = (THIS_BODY_SPEC.rollingMomentInertiaFinal - THIS_BODY_SPEC.rollingMomentInertiaInitial)
                           / THIS_BODY_SPEC.engine.combustionTime();
-        m_bodyDelta.ix = (0.02 - 0.01) / 3;
+        m_bodyDelta.ix = (0.01 - 0.02) / THIS_BODY_SPEC.engine.combustionTime();
     } else {
         m_bodyDelta.mass       = 0;
         m_bodyDelta.reflLength = 0;
