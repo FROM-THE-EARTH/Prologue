@@ -25,7 +25,7 @@ jobs:
             { os: ubuntu-20.04, launch_command: "./Prologue", move_option: "" },
           ]
 
-    name: Simulation on ${{ matrix.config.os }}
+    name: CI for ${{ matrix.config.os }}
     runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v2
