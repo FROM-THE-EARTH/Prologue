@@ -26,7 +26,7 @@ struct Vector3D {
         return *this / length();
     }
 
-    Vector3D applyQuaternion(const Quaternion& q);
+    Vector3D rotated(const Quaternion& q) const;
 
     /*======================operator==========================*/
     constexpr bool operator==(const Vector3D& v) const {

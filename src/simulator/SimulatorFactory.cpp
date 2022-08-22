@@ -85,7 +85,8 @@ namespace SimulatorFactory {
         SimulatorBase::SimulationSetting SetupSimulator(const boost::property_tree::ptree& specJson) {
             SimulatorBase::SimulationSetting setting;
 
-            if (AppSetting::WindModel::type != WindModelType::Real) {
+            if (AppSetting::WindModel::type != WindModelType::Real
+                && AppSetting::WindModel::type != WindModelType::NoWind) {
                 setting.simulationMode = _internal::setSimulationMode();
             }
 
@@ -126,7 +127,8 @@ namespace SimulatorFactory {
             const auto simulationSetting = _internal::SetupSimulator(specJson);
 
             // Create simulator instance
-            if (AppSetting::WindModel::type == WindModelType::Real) {
+            if (AppSetting::WindModel::type == WindModelType::Real
+                || AppSetting::WindModel::type == WindModelType::NoWind) {
                 return std::make_unique<DetailSimulator>(specName, specJson, simulationSetting);
             } else {
                 switch (simulationSetting.simulationMode) {

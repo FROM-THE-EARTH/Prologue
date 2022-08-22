@@ -221,11 +221,7 @@ bool Solver::updateDetachment() {
 }
 
 void Solver::updateAerodynamicParameters() {
-    if ((THIS_BODY.velocity - m_windModel->wind()).length() != 0) {
-        THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).applyQuaternion(THIS_BODY.quat.conjugated());
-    } else {
-        THIS_BODY.airSpeed_b = Vector3D();
-    }
+    THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).rotated(THIS_BODY.quat.conjugated());
 
     THIS_BODY.attackAngle =
         atan(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z)
@@ -254,7 +250,7 @@ void Solver::updateRocketProperties() {
             (THIS_BODY_SPEC.CGLengthFinal - THIS_BODY_SPEC.CGLengthInitial) / THIS_BODY_SPEC.engine.combustionTime();
         m_bodyDelta.iyz = (THIS_BODY_SPEC.rollingMomentInertiaFinal - THIS_BODY_SPEC.rollingMomentInertiaInitial)
                           / THIS_BODY_SPEC.engine.combustionTime();
-        m_bodyDelta.ix = (0.02 - 0.01) / 3;
+        m_bodyDelta.ix = (0.01 - 0.02) / THIS_BODY_SPEC.engine.combustionTime();
     } else {
         m_bodyDelta.mass       = 0;
         m_bodyDelta.reflLength = 0;
@@ -290,7 +286,7 @@ void Solver::updateExternalForce() {
 
         // Gravity
         THIS_BODY.force_b +=
-            Vector3D(0, 0, -m_windModel->gravity()).applyQuaternion(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
+            Vector3D(0, 0, -m_windModel->gravity()).rotated(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
     }
 }
 
@@ -306,7 +302,7 @@ void Solver::updateRocketDelta() {
             THIS_BODY.force_b.z = 0;
             m_bodyDelta.pos     = THIS_BODY.velocity;
 
-            m_bodyDelta.velocity = THIS_BODY.force_b.applyQuaternion(THIS_BODY.quat) / THIS_BODY.mass;
+            m_bodyDelta.velocity = THIS_BODY.force_b.rotated(THIS_BODY.quat) / THIS_BODY.mass;
 
             m_bodyDelta.omega_b = Vector3D();
             m_bodyDelta.quat    = Quaternion();
@@ -336,13 +332,13 @@ void Solver::updateRocketDelta() {
         }
 
         m_bodyDelta.pos      = THIS_BODY.velocity;
-        m_bodyDelta.velocity = THIS_BODY.force_b.applyQuaternion(THIS_BODY.quat) / THIS_BODY.mass;
+        m_bodyDelta.velocity = THIS_BODY.force_b.rotated(THIS_BODY.quat) / THIS_BODY.mass;
 
         m_bodyDelta.omega_b.x = THIS_BODY.moment_b.x / THIS_BODY.ix;
         m_bodyDelta.omega_b.y = THIS_BODY.moment_b.y / THIS_BODY.iyz;
         m_bodyDelta.omega_b.z = THIS_BODY.moment_b.z / THIS_BODY.iyz;
 
-        m_bodyDelta.quat = THIS_BODY.quat.angularVelocityApplied(m_bodyDelta.omega_b);
+        m_bodyDelta.quat = THIS_BODY.quat.angularVelocityApplied(THIS_BODY.omega_b);
     }
 }
 
