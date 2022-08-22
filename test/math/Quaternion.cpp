@@ -50,17 +50,18 @@ TEST_CASE("Quaternion", "[math]") {
         REQUIRE(q * Quaternion(v.x, v.y, v.z, 0) * 0.5 == q.angularVelocityApplied(v));
     }
     SECTION("Vector3D::rotated()") {
-        const Vector3D v1 = Vector3D(1, 0, 0).rotated(Quaternion(90, 0));
-        REQUIRE(v1.x == Approx(0));
-        REQUIRE(v1.y == Approx(0));
-        REQUIRE(v1.z == Approx(1));
+        const double margin = 1e-15;
+        const Vector3D v1   = Vector3D(1, 0, 0).rotated(Quaternion(90, 0));
+        REQUIRE(v1.x == Approx(0).margin(margin));
+        REQUIRE(v1.y == Approx(0).margin(margin));
+        REQUIRE(v1.z == Approx(1).margin(margin));
         const Vector3D v2 = Vector3D(1, 0, 0).rotated(Quaternion(180, 0));
-        REQUIRE(v2.x == Approx(-1));
-        REQUIRE(v2.y == Approx(0));
-        REQUIRE(v2.z == Approx(0).margin(1e-15));
+        REQUIRE(v2.x == Approx(-1).margin(margin));
+        REQUIRE(v2.y == Approx(0).margin(margin));
+        REQUIRE(v2.z == Approx(0).margin(margin));
         const Vector3D v3 = Vector3D(1, 0, 0).rotated(Quaternion(45, 45));
-        REQUIRE(v3.x == Approx(0.5));
-        REQUIRE(v3.y == Approx(0.5));
-        REQUIRE(v3.z == Approx(1 / sqrt(2)));
+        REQUIRE(v3.x == Approx(0.5).margin(margin));
+        REQUIRE(v3.y == Approx(0.5).margin(margin));
+        REQUIRE(v3.z == Approx(1 / sqrt(2)).margin(margin));
     }
 }
