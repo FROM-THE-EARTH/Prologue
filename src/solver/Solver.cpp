@@ -221,7 +221,7 @@ bool Solver::updateDetachment() {
 }
 
 void Solver::updateAerodynamicParameters() {
-    THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).rotate(THIS_BODY.quat.conjugated());
+    THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).rotated(THIS_BODY.quat.conjugated());
 
     THIS_BODY.attackAngle =
         atan(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z)
@@ -286,7 +286,7 @@ void Solver::updateExternalForce() {
 
         // Gravity
         THIS_BODY.force_b +=
-            Vector3D(0, 0, -m_windModel->gravity()).rotate(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
+            Vector3D(0, 0, -m_windModel->gravity()).rotated(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
     }
 }
 
@@ -302,7 +302,7 @@ void Solver::updateRocketDelta() {
             THIS_BODY.force_b.z = 0;
             m_bodyDelta.pos     = THIS_BODY.velocity;
 
-            m_bodyDelta.velocity = THIS_BODY.force_b.rotate(THIS_BODY.quat) / THIS_BODY.mass;
+            m_bodyDelta.velocity = THIS_BODY.force_b.rotated(THIS_BODY.quat) / THIS_BODY.mass;
 
             m_bodyDelta.omega_b = Vector3D();
             m_bodyDelta.quat    = Quaternion();
@@ -332,7 +332,7 @@ void Solver::updateRocketDelta() {
         }
 
         m_bodyDelta.pos      = THIS_BODY.velocity;
-        m_bodyDelta.velocity = THIS_BODY.force_b.rotate(THIS_BODY.quat) / THIS_BODY.mass;
+        m_bodyDelta.velocity = THIS_BODY.force_b.rotated(THIS_BODY.quat) / THIS_BODY.mass;
 
         m_bodyDelta.omega_b.x = THIS_BODY.moment_b.x / THIS_BODY.ix;
         m_bodyDelta.omega_b.y = THIS_BODY.moment_b.y / THIS_BODY.iyz;

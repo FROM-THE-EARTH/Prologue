@@ -6,7 +6,7 @@
 
 #include "Quaternion.hpp"
 
-Vector3D Vector3D::rotate(const Quaternion &q) const {
+Vector3D Vector3D::rotated(const Quaternion &q) const {
     if (length() == 0) {
         return Vector3D(0, 0, 0);
     } else {

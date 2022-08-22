@@ -32,7 +32,7 @@ struct Quaternion {
     // to angle
     double toAngle() const {
         Vector3D v1(1, 0, 0);
-        Vector3D v2 = v1.rotate(*this);
+        Vector3D v2 = v1.rotated(*this);
         return acos((v1 ^ v2) / (v1.length() * v2.length())) * 180.0 / Constant::PI;
     }
 
