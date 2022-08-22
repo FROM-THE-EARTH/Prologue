@@ -338,7 +338,7 @@ void Solver::updateRocketDelta() {
         m_bodyDelta.omega_b.y = THIS_BODY.moment_b.y / THIS_BODY.iyz;
         m_bodyDelta.omega_b.z = THIS_BODY.moment_b.z / THIS_BODY.iyz;
 
-        m_bodyDelta.quat = THIS_BODY.quat.angularVelocityApplied(m_bodyDelta.omega_b);
+        m_bodyDelta.quat = THIS_BODY.quat.angularVelocityApplied(THIS_BODY.omega_b);
     }
 }
 
