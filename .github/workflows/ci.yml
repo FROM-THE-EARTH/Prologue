@@ -15,29 +15,6 @@ env:
   DISPLAY: ":99"
 
 jobs:
-  unit-test:
-    name: Unit test
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install Ninja
-        run: sudo apt install ninja-build
-
-      - name: Configure
-        run: |
-          mkdir build
-          cd build
-          cmake -GNinja ..
-
-      - name: Build
-        run: ninja
-        working-directory: ./build
-
-      - name: Test
-        run: ctest -C debug --test-dir test/ --output-on-failure
-        working-directory: ./build
-
   build:
     strategy:
       matrix:
@@ -61,6 +38,10 @@ jobs:
 
       - name: Build
         run: cmake --build . --config Debug
+        working-directory: ./build
+
+      - name: Unit test
+        run: ctest -C debug --test-dir test/ --output-on-failure
         working-directory: ./build
 
       - name: Install gnuplot
