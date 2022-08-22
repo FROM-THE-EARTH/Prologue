@@ -19,16 +19,5 @@ Quaternion::Quaternion(double angle, double direction) {
 }
 
 Quaternion Quaternion::angularVelocityApplied(const Vector3D& v) const {
-    return {
-        0.5 * (y * v.z - z * v.y + w * v.x),
-        0.5 * (-x * v.z + z * v.x + w * v.y),
-        0.5 * (x * v.y - y * v.x + w * v.z),
-        0.5 * (-x * v.x - y * v.y - z * v.z)
-
-        // こっちの式が妥当な気がしてる https://arxiv.org/abs/0811.2889
-        /*0.5 * (-v.z * y + v.y * z + v.x * w),
-        0.5 * (v.z * x - v.x * z + v.y * w),
-        0.5 * (-v.y * x + v.x * y + v.z * w),
-        0.5 * (-v.x * x - v.y * y - v.z * z)*/
-    };
+    return *this * Quaternion(v.x, v.y, v.z, 0) * 0.5;
 }
