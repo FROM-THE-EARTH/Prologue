@@ -4,9 +4,9 @@
 
 ## Download
 
-Latest Update: 2022/08/22
+Latest Update: 2022/08/25
 
-Version: 1.9.7
+Version: 1.9.8
 
 [**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)
 

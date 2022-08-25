@@ -85,7 +85,8 @@ AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackA
         };
     }
 
-    return AeroCoefficient{.Cp  = spec.Cp + spec.Cp_a * attackAngle,
-                           .Cd  = (combustionEnded ? spec.Cd_f : spec.Cd_i) + spec.Cd_a2 * attackAngle * attackAngle,
-                           .Cna = spec.Cna};
+    return AeroCoefficient{
+        .Cp  = m_constant.Cp + spec.Cp + spec.Cp_a * attackAngle,
+        .Cd  = m_constant.Cd + (combustionEnded ? spec.Cd_f : spec.Cd_i) + spec.Cd_a2 * attackAngle * attackAngle,
+        .Cna = m_constant.Cna + spec.Cna};
 }

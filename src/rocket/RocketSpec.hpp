@@ -27,6 +27,12 @@ struct Parachute {
     double Cd = 0;
 };
 
+struct Transition {
+    double time;
+    double mass;
+    double Cd;
+};
+
 struct BodySpecification {
     double length;      // [m]
     double diameter;    // [m]
@@ -47,6 +53,8 @@ struct BodySpecification {
 
     Engine engine;
     AeroCoefficientStorage aeroCoefStorage;
+
+    std::vector<Transition> transitions;
 };
 
 class RocketSpecification {
@@ -66,6 +74,10 @@ public:
     }
 
     const BodySpecification& bodySpec(size_t bodyIndex) const {
+        return m_bodySpecs[bodyIndex];
+    }
+
+    BodySpecification& bodySpec(size_t bodyIndex) {
         return m_bodySpecs[bodyIndex];
     }
 

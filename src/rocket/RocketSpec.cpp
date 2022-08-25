@@ -98,6 +98,16 @@ void RocketSpecification::setBodySpecification(const boost::property_tree::ptree
                                   JsonUtils::GetValue<double>(pt, key + ".Cd_alpha2"),
                                   JsonUtils::GetValueExc<double>(pt, key + ".Cna"));
     }
+
+    // Transition
+    try {
+        for (const auto& child : pt.get_child(key + ".transitions")) {
+            spec.transitions.emplace_back(Transition{.time = JsonUtils::GetValueExc<double>(child.second, "time"),
+                                                     .mass = JsonUtils::GetValueExc<double>(child.second, "mass"),
+                                                     .Cd   = JsonUtils::GetValueExc<double>(child.second, "Cd")});
+        }
+    } catch (...) {
+    }
 }
 
 void RocketSpecification::setInfParachuteCd() {
