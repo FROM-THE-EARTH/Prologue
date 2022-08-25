@@ -66,9 +66,9 @@
 ```json
 {
   "izu_land": {
-    "magnetic_declination": 7.53,	// 磁気偏角 [deg]
-    "latitude": 34.735972,			// 緯度 [deg]
-    "longitude": 139.420944			// 経度 [deg]
+    "magnetic_declination": 7.53, // 磁気偏角 [deg]
+    "latitude": 34.735972,        // 緯度 [deg]
+    "longitude": 139.420944       // 経度 [deg]
   },
   "izu_sea": {
     "magnetic_declination": 7.53,
@@ -98,56 +98,57 @@
 
 ```json
 {
-	"rocket1": {
-		"ref_len": "Rocket length[m]",
-		"diam": "Rocket diameter[m]",
-		"CGlen_i": "Initial CG place from nose[m] 重心",
-		"CGlen_f": "Final CG place from nose[m]　重心",
-		"mass_i": "Initial mass[kg] 乾燥質量+酸化剤質量」",
-		"mass_f": "Final mass[kg] 乾燥質量",
-		"Iyz_i": "Initial inertia moment of rolling[kg*m^2]　ピッチ/ヨー",
-		"Iyz_f": "Final inertia moment of rolling[kg*m^2] ピッチ/ヨー",
-		"Cmq": "Pitch damping moment coefficient ピッチ減衰モーメント係数",
-		"vel_1st": "Terminal velocity of 1st parachute",
-		"op_type_1st": "0:detect-peak, 1:fixed-time 2:time-from-detect-peak",
-		"op_time_1st": "open time",
-		"delay_time_1st": "パラシュートが開くのにかかる時間",
+  "rocket1": {
+    "ref_len": 2.01,  // 機体全長 [m]
+    "diam": 0.091,    // 機体直径 [m]
+    "mass_i": 8.243,  // 燃焼前機体質量 [kg]
+    "mass_f": 7.867,  // 燃焼後機体質量 [kg]
+    "CGlen_i": 1.074, // 先端からの燃焼前重心 [kg]
+    "CGlen_f": 1.051, // 先端からの燃焼後重心 [kg]
+    "Iyz_i": 1.971,   // 燃焼前ピッチヨー慣性モーメント [kg*m^2]
+    "Iyz_f": 1.863,   // 燃焼後ピッチヨー慣性モーメント [kg*m^2]
+    "Cmq": -3.0,      // ピッチ減衰モーメント係数
 
-		"motor_file": "エンジンの推力履歴ファイル名　分離後1段目などの場合は空白にする",
-		"thrust_measured_pressure": "推力測定時の気圧[Pa]　キーが存在しない場合はデフォルト値101325[Pa]",
-		"engine_nozzle_diameter": "ノズル直径[m]　キーが存在しない場合はデフォルト値0[m]",
+    "vel_1st": 10,        // 一段目パラシュートの終端速度 [m/s]
+    "op_type_1st": 0,     // 一段目パラシュートの開傘タイプ　0:頂点検知, 1:時刻 2:頂点検知からの時刻
+		"op_time_1st": 0,     // 一段目パラシュートの開傘時刻 [s]
+    "delay_time_1st": 0,  // 一段目パラシュートの開傘遅延 [s]
 
-		"CPlen": "CP place from nose[m] 圧力中心(aero_coef_fileがある場合は無効)",
-		"Cp_alpha": "圧力中心傾斜[m/rad] from nose(aero_coef_fileがある場合は無効)",
-		"Cd_i": "燃焼終了前の Drag coefficient 抗力係数(aero_coef_fileがある場合は無効)",
-		"Cd_f": "燃焼終了後の Drag coefficient 抗力係数(aero_coef_fileがある場合は無効)",
-		"Cd_alpha2": "抗力係数傾斜[/rad^2](aero_coef_fileがある場合は無効)",
-		"Cna": "Normal force coefficient 法線力整数(aero_coef_fileがある場合は無効)",
-		"aero_coef_file": "圧力中心（傾斜），抗力係数（傾斜），法線力係数 vs 機体速度　のcsvファイル名",
-    
-    "transitions": [ // 指定した時刻に値を加算 / 減算する。配列で複数指定可能。必要ない場合は削除する。
+    "motor_file": "Sample_K240.txt",    // エンジンの推力履歴ファイル名
+    "thrust_measured_pressure": 101325, // 推力測定時の気圧 [Pa]　キーが存在しない場合はデフォルト値101325
+    "engine_nozzle_diameter": 0,        // ノズル直径 [m]　キーが存在しない場合はデフォルト値0
+
+    "CPlen": 1.38,                  // 先端からの圧力中心 [m] (aero_coef_fileがある場合は無効)
+		"Cp_alpha": 0,                  // 先端からの圧力中心傾斜 [m/rad] (aero_coef_fileがある場合は無効)
+    "Cd_i": 0.5,                    // 燃焼終了前の抗力係数 (aero_coef_fileがある場合は無効)
+    "Cd_f": 0.1,                    // 燃焼終了後の抗力係数 (aero_coef_fileがある場合は無効)
+		"Cd_alpha2": 0,                 // 抗力係数傾斜 [/rad^2] (aero_coef_fileがある場合は無効),
+    "Cna": 11.747,                  // 法線力整数 (aero_coef_fileがある場合は無効)
+    "aero_coef_file": "sample.csv", // 圧力中心(傾斜), 抗力係数(傾斜), 法線力係数 vs 機体速度　のcsvファイル名
+
+    "transitions": [  // 指定した時刻に値を加算 / 減算する。配列で複数指定可能。
       {
-        "time": "値を更新する時刻 [s]",
-        "mass": "加算する質量 [kg]",
-        "Cd": "加算する抗力係数"
+        "time": 5.0,  // 時刻 [s]
+        "mass": -0.2, // 質量 [kg]
+        "Cd": -0.01   // 抗力係数
       },
+      {
+        "time": 10.0,
+        "mass": -0.3,
+        "Cd": -0.01
+      }
     ]
-	},
+  },
 
-	"rocket2": {
-		"": "分離後下段。中身は上と同じ。不要な場合はrocket2を削除する。"
-	},
+	"rocket2": {},  // 分離後下段。中身はrocket1と同じ。不要な場合は削除する。
+	"rocket2": {},  // 分離後上段。中身はrocket1と同じ。不要な場合は削除する。
 
-	"rocket3": {
-		"": "分離後上段。中身は上と同じ。不要な場合はrocket3を削除する。"
-	},
-
-	"environment": {
-		"place": "マップ名称: nosiro_sea nosiro_land izu_sea izu_land",
-		"rail_len": "ランチャレール長[m]",
-		"rail_azi": "ランチャ方位角[deg]　北から右回り",
-		"rail_elev": "ランチャ迎角[deg]"
-	}
+  "environment": {
+    "place": "nosiro_sea",  // マップ名称: "nosiro_sea", "nosiro_land", "izu_sea", "izu_land"
+    "rail_len": 5.0,        // ランチャレール長 [m]
+    "rail_azi": -60.0,      // ランチャ方位角 [deg]　北から右回り
+    "rail_elev": 70         // ランチャ迎角 [deg]
+  }
 }
 ```
 
