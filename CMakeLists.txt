@@ -5,6 +5,7 @@ if (APPLE)
 endif()
 
 enable_language(CXX)
+enable_testing()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -65,3 +66,5 @@ set(SOURCE_FILES
 )
 
 add_executable(Prologue ${SOURCE_FILES})
+
+add_subdirectory("test")

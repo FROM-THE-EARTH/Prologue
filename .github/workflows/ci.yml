@@ -40,6 +40,10 @@ jobs:
         run: cmake --build . --config Debug
         working-directory: ./build
 
+      - name: Unit test
+        run: ctest -C debug --test-dir test/ --output-on-failure
+        working-directory: ./build
+
       - name: Install gnuplot
         if: runner.os == 'macOS'
         run: brew install gnuplot
