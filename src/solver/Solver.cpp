@@ -125,6 +125,15 @@ void Solver::initializeRocket() {
 
 void Solver::update() {
     m_windModel->update(THIS_BODY.pos.z);
+
+    if (!THIS_BODY_SPEC.transitions.empty()) {
+        const auto& transition = THIS_BODY_SPEC.transitions[0];
+        if (transition.time <= THIS_BODY.elapsedTime) {
+            THIS_BODY.mass += transition.mass;
+            THIS_BODY_SPEC.aeroCoefStorage.setConstant(0, transition.Cd, 0);
+            THIS_BODY_SPEC.transitions.erase(THIS_BODY_SPEC.transitions.begin());
+        }
+    }
 }
 
 void Solver::updateParachute() {

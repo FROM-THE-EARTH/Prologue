@@ -20,13 +20,13 @@ enum class DetachType : int { BurningFinished = 1, Time, SyncPara, DoNotDeatch }
 class Solver {
     // Setting
     const double m_dt;
-    const RocketSpecification m_rocketSpec;
     const Environment m_environment;
     const MapData m_mapData;
     const RocketType m_rocketType;
     const TrajectoryMode m_trajectoryMode;
     const DetachType m_detachType;
     const double m_detachTime;
+    RocketSpecification m_rocketSpec;
 
     // Simulation
     Rocket m_rocket;
