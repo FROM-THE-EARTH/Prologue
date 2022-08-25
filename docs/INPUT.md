@@ -111,7 +111,7 @@
 
     "vel_1st": 10,        // 一段目パラシュートの終端速度 [m/s]
     "op_type_1st": 0,     // 一段目パラシュートの開傘タイプ　0:頂点検知, 1:時刻 2:頂点検知からの時刻
-		"op_time_1st": 0,     // 一段目パラシュートの開傘時刻 [s]
+    "op_time_1st": 0,     // 一段目パラシュートの開傘時刻 [s]
     "delay_time_1st": 0,  // [未実装 Issues#14] 一段目パラシュートの開傘遅延 [s]
 
     "motor_file": "Sample_K240.txt",    // エンジンの推力履歴ファイル名
@@ -119,10 +119,10 @@
     "engine_nozzle_diameter": 0,        // ノズル直径 [m]　キーが存在しない場合はデフォルト値0
 
     "CPlen": 1.38,                  // 先端からの圧力中心 [m] (aero_coef_fileがある場合は無効)
-		"Cp_alpha": 0,                  // 先端からの圧力中心傾斜 [m/rad] (aero_coef_fileがある場合は無効)
+    "Cp_alpha": 0,                  // 先端からの圧力中心傾斜 [m/rad] (aero_coef_fileがある場合は無効)
     "Cd_i": 0.5,                    // 燃焼終了前の抗力係数 (aero_coef_fileがある場合は無効)
     "Cd_f": 0.1,                    // 燃焼終了後の抗力係数 (aero_coef_fileがある場合は無効)
-		"Cd_alpha2": 0,                 // 抗力係数傾斜 [/rad^2] (aero_coef_fileがある場合は無効),
+    "Cd_alpha2": 0,                 // 抗力係数傾斜 [/rad^2] (aero_coef_fileがある場合は無効),
     "Cna": 11.747,                  // 法線力整数 (aero_coef_fileがある場合は無効)
     "aero_coef_file": "sample.csv", // 圧力中心(傾斜), 抗力係数(傾斜), 法線力係数 vs 機体速度　のcsvファイル名
 
@@ -139,9 +139,9 @@
       }
     ]
   },
-
-	"rocket2": {},  // 分離後下段。中身はrocket1と同じ。不要な場合は削除する。
-	"rocket2": {},  // 分離後上段。中身はrocket1と同じ。不要な場合は削除する。
+  
+  "rocket2": {},  // 分離後下段。中身はrocket1と同じ。不要な場合は削除する。
+  "rocket2": {},  // 分離後上段。中身はrocket1と同じ。不要な場合は削除する。
 
   "environment": {
     "place": "nosiro_sea",  // マップ名称: "nosiro_sea", "nosiro_land", "izu_sea", "izu_land"
