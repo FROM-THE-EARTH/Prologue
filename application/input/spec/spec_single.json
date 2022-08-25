@@ -19,7 +19,19 @@
     "motor_file": "Sample_K240.txt",
     "thrust_measured_pressure": 101325,
     "engine_nozzle_diameter": 0,
-    "aero_coef_file": ""
+    "aero_coef_file": "",
+    "transitions": [
+      {
+        "time": 5.0,
+        "mass": -0.2,
+        "Cd": -0.01
+      },
+      {
+        "time": 10.0,
+        "mass": -0.3,
+        "Cd": -0.01
+      }
+    ]
   },
 
   "environment": {

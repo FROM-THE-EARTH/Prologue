@@ -123,7 +123,15 @@
 		"Cd_f": "燃焼終了後の Drag coefficient 抗力係数(aero_coef_fileがある場合は無効)",
 		"Cd_alpha2": "抗力係数傾斜[/rad^2](aero_coef_fileがある場合は無効)",
 		"Cna": "Normal force coefficient 法線力整数(aero_coef_fileがある場合は無効)",
-		"aero_coef_file": "圧力中心（傾斜），抗力係数（傾斜），法線力係数 vs 機体速度　のcsvファイル名"
+		"aero_coef_file": "圧力中心（傾斜），抗力係数（傾斜），法線力係数 vs 機体速度　のcsvファイル名",
+    
+    "transitions": [ // 指定した時刻に値を加算 / 減算する。配列で複数指定可能。必要ない場合は削除する。
+      {
+        "time": "値を更新する時刻 [s]",
+        "mass": "加算する質量 [kg]",
+        "Cd": "加算する抗力係数"
+      },
+    ]
 	},
 
 	"rocket2": {

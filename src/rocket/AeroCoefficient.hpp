@@ -28,6 +28,8 @@ struct AeroCoefficient {
 class AeroCoefficientStorage {
     std::vector<Internal::AeroCoefSpec> m_aeroCoefSpec;
 
+    AeroCoefficient m_constant;
+
     bool m_isTimeSeries = false;
 
 public:
@@ -42,5 +44,9 @@ public:
 
     void init(double Cp, double Cp_a, double Cd_i, double Cd_f, double Cd_a2, double Cna) {
         m_aeroCoefSpec.emplace_back(Internal::AeroCoefSpec{0, Cp, Cp_a, Cd_i, Cd_f, Cd_a2, Cna});
+    }
+
+    void setConstant(double Cp, double Cd, double Cna) {
+        m_constant = {Cp, Cd, Cna};
     }
 };
