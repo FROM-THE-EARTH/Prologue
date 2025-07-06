@@ -233,16 +233,15 @@ void Solver::updateAerodynamicParameters() {
     THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).rotated(THIS_BODY.quat.conjugated());
 
     THIS_BODY.attackAngle =
-        atan(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z)
-             / (THIS_BODY.airSpeed_b.x + 1e-16));
+		atan2(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z), (THIS_BODY.airSpeed_b.x));
 
     THIS_BODY.aeroCoef =
         THIS_BODY_SPEC.aeroCoefStorage.valuesIn(THIS_BODY.airSpeed_b.length(),
                                                 THIS_BODY.attackAngle,
                                                 THIS_BODY_SPEC.engine.didCombustion(THIS_BODY.elapsedTime));
 
-    const double alpha = atan(THIS_BODY.airSpeed_b.z / (THIS_BODY.airSpeed_b.x + 1e-16));
-    const double beta  = atan(THIS_BODY.airSpeed_b.y / (THIS_BODY.airSpeed_b.x + 1e-16));
+    const double alpha = atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.x);
+    const double beta  = atan2(THIS_BODY.airSpeed_b.y, THIS_BODY.airSpeed_b.x);
 
     THIS_BODY.Cnp = THIS_BODY.aeroCoef.Cna * alpha;
     THIS_BODY.Cny = THIS_BODY.aeroCoef.Cna * beta;
