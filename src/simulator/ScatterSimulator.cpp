@@ -35,13 +35,14 @@ bool ScatterSimulator::simulate() {
 }
 
 std::shared_ptr<SimuResultLogger> ScatterSimulator::solve(double windSpeed, double windDir) {
+	RocketSpecification rocektSpecCopy = m_rocketSpec; // deep copy
     Solver solver(m_mapData,
                   m_rocketType,
                   m_setting.trajectoryMode,
                   m_setting.detachType,
                   m_setting.detachTime,
                   m_environment,
-                  m_rocketSpec);
+                  rocektSpecCopy);
 
     // Wind direction is based on launch azimuth
     if (const auto result = solver.solve(windSpeed, windDir + m_environment.railAzimuth); result) {
