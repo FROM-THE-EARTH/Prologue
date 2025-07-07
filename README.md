@@ -6,7 +6,7 @@
 
 Latest Update: 2025/07/07
 
-Version: 1.9.8.4
+Version: 1.9.9
 
 [**Download**](https://github.com/kuma003/Prologue/releases/latest)
 
