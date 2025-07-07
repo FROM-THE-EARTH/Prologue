@@ -20,7 +20,7 @@
 #define BOOST_FUNCTION_MAX_ARGS_DEFINED 0
 #endif
 
-#include <functional> // unary_function, binary_function
+#include <functional> // __unary_function, binary_function
 
 #include <boost/preprocessor/iterate.hpp>
 #include <boost/config/workaround.hpp>

@@ -83,7 +83,7 @@ private:
 
 /// \internal_
 template<class Arg, class Result>
-struct unary_function
+struct __unary_function
 {
     typedef Arg argument_type;
     typedef Result result_type;
@@ -112,7 +112,7 @@ struct ternary_function
 ///
 /// \see not1()
 template<class Predicate>
-class unary_negate : public unary_function<void, int>
+class unary_negate : public __unary_function<void, int>
 {
 public:
     explicit unary_negate(Predicate pred)
@@ -189,7 +189,7 @@ inline binary_negate<Predicate> not2(const Predicate &predicate)
 ///
 /// \see not1(), not2()
 template<class T>
-struct logical_not : public unary_function<T, int>
+struct logical_not : public __unary_function<T, int>
 {
     /// \internal_
     template<class Expr>

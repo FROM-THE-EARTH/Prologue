@@ -19,7 +19,7 @@
 #include <boost/phoenix/core/actor.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/embedded_string_type.hpp>
-#include <boost/log/detail/unary_function_terminal.hpp>
+#include <boost/log/detail/__unary_function_terminal.hpp>
 #include <boost/log/detail/attribute_predicate.hpp>
 #include <boost/log/expressions/attr_fwd.hpp>
 #include <boost/log/expressions/keyword_fwd.hpp>
@@ -85,11 +85,11 @@ public:
  * is in the specified range. The range must be half-open, that is the predicate will be equivalent to <tt>least <= attr < most</tt>.
  */
 template< typename T, typename FallbackPolicyT, typename TagT, template< typename > class ActorT, typename BoundaryT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< attribute_is_in_range< T, typename boost::log::aux::make_embedded_string_type< BoundaryT >::type, FallbackPolicyT > > >
+BOOST_FORCEINLINE ActorT< aux::__unary_function_terminal< attribute_is_in_range< T, typename boost::log::aux::make_embedded_string_type< BoundaryT >::type, FallbackPolicyT > > >
 is_in_range(attribute_actor< T, FallbackPolicyT, TagT, ActorT > const& attr, BoundaryT const& least, BoundaryT const& most)
 {
     typedef typename boost::log::aux::make_embedded_string_type< BoundaryT >::type boundary_type;
-    typedef aux::unary_function_terminal< attribute_is_in_range< T, boundary_type, FallbackPolicyT > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_is_in_range< T, boundary_type, FallbackPolicyT > > terminal_type;
     ActorT< terminal_type > act = {{ terminal_type(attr.get_name(), std::pair< boundary_type, boundary_type >(least, most), attr.get_fallback_policy()) }};
     return act;
 }
@@ -99,11 +99,11 @@ is_in_range(attribute_actor< T, FallbackPolicyT, TagT, ActorT > const& attr, Bou
  * is in the specified range. The range must be half-open, that is the predicate will be equivalent to <tt>least <= attr < most</tt>.
  */
 template< typename DescriptorT, template< typename > class ActorT, typename BoundaryT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< attribute_is_in_range< typename DescriptorT::value_type, typename boost::log::aux::make_embedded_string_type< BoundaryT >::type > > >
+BOOST_FORCEINLINE ActorT< aux::__unary_function_terminal< attribute_is_in_range< typename DescriptorT::value_type, typename boost::log::aux::make_embedded_string_type< BoundaryT >::type > > >
 is_in_range(attribute_keyword< DescriptorT, ActorT > const&, BoundaryT const& least, BoundaryT const& most)
 {
     typedef typename boost::log::aux::make_embedded_string_type< BoundaryT >::type boundary_type;
-    typedef aux::unary_function_terminal< attribute_is_in_range< typename DescriptorT::value_type, boundary_type > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_is_in_range< typename DescriptorT::value_type, boundary_type > > terminal_type;
     ActorT< terminal_type > act = {{ terminal_type(DescriptorT::get_name(), std::pair< boundary_type, boundary_type >(least, most)) }};
     return act;
 }
@@ -113,11 +113,11 @@ is_in_range(attribute_keyword< DescriptorT, ActorT > const&, BoundaryT const& le
  * is in the specified range. The range must be half-open, that is the predicate will be equivalent to <tt>least <= attr < most</tt>.
  */
 template< typename T, typename BoundaryT >
-BOOST_FORCEINLINE phoenix::actor< aux::unary_function_terminal< attribute_is_in_range< T, typename boost::log::aux::make_embedded_string_type< BoundaryT >::type > > >
+BOOST_FORCEINLINE phoenix::actor< aux::__unary_function_terminal< attribute_is_in_range< T, typename boost::log::aux::make_embedded_string_type< BoundaryT >::type > > >
 is_in_range(attribute_name const& name, BoundaryT const& least, BoundaryT const& most)
 {
     typedef typename boost::log::aux::make_embedded_string_type< BoundaryT >::type boundary_type;
-    typedef aux::unary_function_terminal< attribute_is_in_range< T, boundary_type > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_is_in_range< T, boundary_type > > terminal_type;
     phoenix::actor< terminal_type > act = {{ terminal_type(name, std::pair< boundary_type, boundary_type >(least, most)) }};
     return act;
 }

@@ -363,11 +363,11 @@ namespace boost {
   };
 
   template <class Arg, class Return>
-  class unary_function_archetype {
+  class __unary_function_archetype {
   private:
-    unary_function_archetype() { }
+    __unary_function_archetype() { }
   public:
-    unary_function_archetype(detail::dummy_constructor) { }
+    __unary_function_archetype(detail::dummy_constructor) { }
     const Return& operator()(const Arg&) const {
       return static_object<Return>::get(); 
     }

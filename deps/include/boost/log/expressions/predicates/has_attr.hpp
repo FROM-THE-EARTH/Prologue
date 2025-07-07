@@ -22,7 +22,7 @@
 #include <boost/log/attributes/attribute_value_set.hpp>
 #include <boost/log/attributes/value_visitation.hpp>
 #include <boost/log/expressions/keyword_fwd.hpp>
-#include <boost/log/detail/unary_function_terminal.hpp>
+#include <boost/log/detail/__unary_function_terminal.hpp>
 #include <boost/log/utility/functional/nop.hpp>
 #include <boost/log/detail/header.hpp>
 
@@ -131,9 +131,9 @@ public:
  * presence in a log record. The node will also check that the attribute value has the specified type, if present.
  */
 template< typename AttributeValueT >
-BOOST_FORCEINLINE phoenix::actor< aux::unary_function_terminal< has_attribute< AttributeValueT > > > has_attr(attribute_name const& name)
+BOOST_FORCEINLINE phoenix::actor< aux::__unary_function_terminal< has_attribute< AttributeValueT > > > has_attr(attribute_name const& name)
 {
-    typedef aux::unary_function_terminal< has_attribute< AttributeValueT > > terminal_type;
+    typedef aux::__unary_function_terminal< has_attribute< AttributeValueT > > terminal_type;
     phoenix::actor< terminal_type > act = {{ terminal_type(name) }};
     return act;
 }
@@ -142,9 +142,9 @@ BOOST_FORCEINLINE phoenix::actor< aux::unary_function_terminal< has_attribute< A
  * The function generates a terminal node in a template expression. The node will check for the attribute value
  * presence in a log record.
  */
-BOOST_FORCEINLINE phoenix::actor< aux::unary_function_terminal< has_attribute< void > > > has_attr(attribute_name const& name)
+BOOST_FORCEINLINE phoenix::actor< aux::__unary_function_terminal< has_attribute< void > > > has_attr(attribute_name const& name)
 {
-    typedef aux::unary_function_terminal< has_attribute< void > > terminal_type;
+    typedef aux::__unary_function_terminal< has_attribute< void > > terminal_type;
     phoenix::actor< terminal_type > act = {{ terminal_type(name) }};
     return act;
 }
@@ -154,9 +154,9 @@ BOOST_FORCEINLINE phoenix::actor< aux::unary_function_terminal< has_attribute< v
  * presence in a log record. The node will also check that the attribute value has the specified type, if present.
  */
 template< typename DescriptorT, template< typename > class ActorT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< has_attribute< typename DescriptorT::value_type > > > has_attr(attribute_keyword< DescriptorT, ActorT > const&)
+BOOST_FORCEINLINE ActorT< aux::__unary_function_terminal< has_attribute< typename DescriptorT::value_type > > > has_attr(attribute_keyword< DescriptorT, ActorT > const&)
 {
-    typedef aux::unary_function_terminal< has_attribute< typename DescriptorT::value_type > > terminal_type;
+    typedef aux::__unary_function_terminal< has_attribute< typename DescriptorT::value_type > > terminal_type;
     ActorT< terminal_type > act = {{ terminal_type(DescriptorT::get_name()) }};
     return act;
 }

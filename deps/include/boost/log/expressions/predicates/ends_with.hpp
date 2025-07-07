@@ -18,7 +18,7 @@
 #include <boost/phoenix/core/actor.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/embedded_string_type.hpp>
-#include <boost/log/detail/unary_function_terminal.hpp>
+#include <boost/log/detail/__unary_function_terminal.hpp>
 #include <boost/log/detail/attribute_predicate.hpp>
 #include <boost/log/expressions/attr_fwd.hpp>
 #include <boost/log/expressions/keyword_fwd.hpp>
@@ -84,10 +84,10 @@ public:
  * which is assumed to be a string, ends with the specified substring.
  */
 template< typename T, typename FallbackPolicyT, typename TagT, template< typename > class ActorT, typename SubstringT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< attribute_ends_with< T, typename boost::log::aux::make_embedded_string_type< SubstringT >::type, FallbackPolicyT > > >
+BOOST_FORCEINLINE ActorT< aux::__unary_function_terminal< attribute_ends_with< T, typename boost::log::aux::make_embedded_string_type< SubstringT >::type, FallbackPolicyT > > >
 ends_with(attribute_actor< T, FallbackPolicyT, TagT, ActorT > const& attr, SubstringT const& substring)
 {
-    typedef aux::unary_function_terminal< attribute_ends_with< T, typename boost::log::aux::make_embedded_string_type< SubstringT >::type, FallbackPolicyT > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_ends_with< T, typename boost::log::aux::make_embedded_string_type< SubstringT >::type, FallbackPolicyT > > terminal_type;
     ActorT< terminal_type > act = {{ terminal_type(attr.get_name(), substring, attr.get_fallback_policy()) }};
     return act;
 }
@@ -97,10 +97,10 @@ ends_with(attribute_actor< T, FallbackPolicyT, TagT, ActorT > const& attr, Subst
  * which is assumed to be a string, ends with the specified substring.
  */
 template< typename DescriptorT, template< typename > class ActorT, typename SubstringT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< attribute_ends_with< typename DescriptorT::value_type, typename boost::log::aux::make_embedded_string_type< SubstringT >::type > > >
+BOOST_FORCEINLINE ActorT< aux::__unary_function_terminal< attribute_ends_with< typename DescriptorT::value_type, typename boost::log::aux::make_embedded_string_type< SubstringT >::type > > >
 ends_with(attribute_keyword< DescriptorT, ActorT > const&, SubstringT const& substring)
 {
-    typedef aux::unary_function_terminal< attribute_ends_with< typename DescriptorT::value_type, typename boost::log::aux::make_embedded_string_type< SubstringT >::type > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_ends_with< typename DescriptorT::value_type, typename boost::log::aux::make_embedded_string_type< SubstringT >::type > > terminal_type;
     ActorT< terminal_type > act = {{ terminal_type(DescriptorT::get_name(), substring) }};
     return act;
 }
@@ -110,10 +110,10 @@ ends_with(attribute_keyword< DescriptorT, ActorT > const&, SubstringT const& sub
  * which is assumed to be a string, ends with the specified substring.
  */
 template< typename T, typename SubstringT >
-BOOST_FORCEINLINE phoenix::actor< aux::unary_function_terminal< attribute_ends_with< T, typename boost::log::aux::make_embedded_string_type< SubstringT >::type > > >
+BOOST_FORCEINLINE phoenix::actor< aux::__unary_function_terminal< attribute_ends_with< T, typename boost::log::aux::make_embedded_string_type< SubstringT >::type > > >
 ends_with(attribute_name const& name, SubstringT const& substring)
 {
-    typedef aux::unary_function_terminal< attribute_ends_with< T, typename boost::log::aux::make_embedded_string_type< SubstringT >::type > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_ends_with< T, typename boost::log::aux::make_embedded_string_type< SubstringT >::type > > terminal_type;
     phoenix::actor< terminal_type > act = {{ terminal_type(name, substring) }};
     return act;
 }

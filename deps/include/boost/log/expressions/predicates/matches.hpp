@@ -17,7 +17,7 @@
 
 #include <boost/phoenix/core/actor.hpp>
 #include <boost/log/detail/config.hpp>
-#include <boost/log/detail/unary_function_terminal.hpp>
+#include <boost/log/detail/__unary_function_terminal.hpp>
 #include <boost/log/detail/attribute_predicate.hpp>
 #include <boost/log/expressions/attr_fwd.hpp>
 #include <boost/log/expressions/keyword_fwd.hpp>
@@ -74,10 +74,10 @@ public:
  * which is assumed to be a string, matches the specified regular expression.
  */
 template< typename T, typename FallbackPolicyT, typename TagT, template< typename > class ActorT, typename RegexT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< attribute_matches< T, RegexT, FallbackPolicyT > > >
+BOOST_FORCEINLINE ActorT< aux::__unary_function_terminal< attribute_matches< T, RegexT, FallbackPolicyT > > >
 matches(attribute_actor< T, FallbackPolicyT, TagT, ActorT > const& attr, RegexT const& rex)
 {
-    typedef aux::unary_function_terminal< attribute_matches< T, RegexT, FallbackPolicyT > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_matches< T, RegexT, FallbackPolicyT > > terminal_type;
     ActorT< terminal_type > act = {{ terminal_type(attr.get_name(), rex, attr.get_fallback_policy()) }};
     return act;
 }
@@ -87,10 +87,10 @@ matches(attribute_actor< T, FallbackPolicyT, TagT, ActorT > const& attr, RegexT 
  * which is assumed to be a string, matches the specified regular expression.
  */
 template< typename DescriptorT, template< typename > class ActorT, typename RegexT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< attribute_matches< typename DescriptorT::value_type, RegexT > > >
+BOOST_FORCEINLINE ActorT< aux::__unary_function_terminal< attribute_matches< typename DescriptorT::value_type, RegexT > > >
 matches(attribute_keyword< DescriptorT, ActorT > const&, RegexT const& rex)
 {
-    typedef aux::unary_function_terminal< attribute_matches< typename DescriptorT::value_type, RegexT > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_matches< typename DescriptorT::value_type, RegexT > > terminal_type;
     ActorT< terminal_type > act = {{ terminal_type(DescriptorT::get_name(), rex) }};
     return act;
 }
@@ -100,10 +100,10 @@ matches(attribute_keyword< DescriptorT, ActorT > const&, RegexT const& rex)
  * which is assumed to be a string, matches the specified regular expression.
  */
 template< typename T, typename RegexT >
-BOOST_FORCEINLINE phoenix::actor< aux::unary_function_terminal< attribute_matches< T, RegexT > > >
+BOOST_FORCEINLINE phoenix::actor< aux::__unary_function_terminal< attribute_matches< T, RegexT > > >
 matches(attribute_name const& name, RegexT const& rex)
 {
-    typedef aux::unary_function_terminal< attribute_matches< T, RegexT > > terminal_type;
+    typedef aux::__unary_function_terminal< attribute_matches< T, RegexT > > terminal_type;
     phoenix::actor< terminal_type > act = {{ terminal_type(name, rex) }};
     return act;
 }
