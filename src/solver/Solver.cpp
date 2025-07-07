@@ -233,7 +233,7 @@ void Solver::updateAerodynamicParameters() {
     THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).rotated(THIS_BODY.quat.conjugated());
 
     THIS_BODY.attackAngle =
-		atan2(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z), (THIS_BODY.airSpeed_b.x));
+		abs(atan2(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z), (THIS_BODY.airSpeed_b.x)));
 
     THIS_BODY.aeroCoef =
         THIS_BODY_SPEC.aeroCoefStorage.valuesIn(THIS_BODY.airSpeed_b.length(),
@@ -250,11 +250,11 @@ void Solver::updateAerodynamicParameters() {
     }
 
     // NOTE:
-    // Normal force is given by Cna * attackAngle
-    // Since angle of attack is calculated by atan2, though y argument of the atan2 is length of y and z components,
-    // the normal force is mostly positive and lose its sign at one sight.
-    // Otherwise, the contribution of pitch and yaw angle is given by beta (called side slip angle),
-    // the sign of the normal force is not lost.
+    // We use absolute value of angle of attack when calculating aerodynamic coefficients.
+    // While this may seem counterintuitive at first, but it is necessary for calculating the contribution of pitch and yaw angles.
+    // The term Cna * |attackAngle| represents the magnitude of normal force coefficient,
+    // allowing the pitch and yaw contributions—represented by the sideslip angle (beta)—
+    // to be separated and used to compute Cnp and Cny accurately.
     THIS_BODY.Cnp = THIS_BODY.aeroCoef.Cna * THIS_BODY.attackAngle * sin(beta);
     THIS_BODY.Cny = THIS_BODY.aeroCoef.Cna * THIS_BODY.attackAngle * cos(beta);
 
