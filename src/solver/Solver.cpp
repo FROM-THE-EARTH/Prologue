@@ -284,7 +284,7 @@ void Solver::updateExternalForce() {
         // Aero
         const double preForceCalc = 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
                                     * THIS_BODY.airSpeed_b.length() * THIS_BODY_SPEC.bottomArea;
-        THIS_BODY.force_b.x -= THIS_BODY.aeroCoef.Cd * preForceCalc * THIS_BODY.attackAngle;
+        THIS_BODY.force_b.x -= THIS_BODY.aeroCoef.Cd * preForceCalc;
         THIS_BODY.force_b.y -= THIS_BODY.Cny * preForceCalc;
         THIS_BODY.force_b.z -= THIS_BODY.Cnp * preForceCalc;
 
