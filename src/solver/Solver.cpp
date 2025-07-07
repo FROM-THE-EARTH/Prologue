@@ -239,9 +239,15 @@ void Solver::updateAerodynamicParameters() {
         THIS_BODY_SPEC.aeroCoefStorage.valuesIn(THIS_BODY.airSpeed_b.length(),
                                                 THIS_BODY.attackAngle,
                                                 THIS_BODY_SPEC.engine.didCombustion(THIS_BODY.elapsedTime));
-
-    const double alpha = atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.x);
-    const double beta  = atan2(THIS_BODY.airSpeed_b.y, THIS_BODY.airSpeed_b.x);
+    
+    double alpha, beta;
+    if (THIS_BODY.airSpeed_b.length() <= 1e-6) {
+        alpha = 0;
+        beta  = 0;
+    }else{
+        alpha = atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.x);
+        beta  = asin(THIS_BODY.airSpeed_b.y / THIS_BODY.airSpeed_b.length());
+    }
 
     THIS_BODY.Cnp = THIS_BODY.aeroCoef.Cna * alpha;
     THIS_BODY.Cny = THIS_BODY.aeroCoef.Cna * beta;
@@ -278,7 +284,7 @@ void Solver::updateExternalForce() {
         // Aero
         const double preForceCalc = 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
                                     * THIS_BODY.airSpeed_b.length() * THIS_BODY_SPEC.bottomArea;
-        THIS_BODY.force_b.x -= THIS_BODY.aeroCoef.Cd * preForceCalc * cos(THIS_BODY.attackAngle);
+        THIS_BODY.force_b.x -= THIS_BODY.aeroCoef.Cd * preForceCalc * THIS_BODY.attackAngle;
         THIS_BODY.force_b.y -= THIS_BODY.Cny * preForceCalc;
         THIS_BODY.force_b.z -= THIS_BODY.Cnp * preForceCalc;
 
@@ -289,8 +295,8 @@ void Solver::updateExternalForce() {
         THIS_BODY.moment_b.y = preMomentCalc * THIS_BODY.Cmqp * THIS_BODY.omega_b.y;
         THIS_BODY.moment_b.z = preMomentCalc * THIS_BODY.Cmqy * THIS_BODY.omega_b.z;
 
-        THIS_BODY.moment_b.y += THIS_BODY.force_b.z * (THIS_BODY.aeroCoef.Cp - THIS_BODY.reflLength);
-        THIS_BODY.moment_b.z -= THIS_BODY.force_b.y * (THIS_BODY.aeroCoef.Cp - THIS_BODY.reflLength);
+        // THIS_BODY.moment_b.y += THIS_BODY.force_b.z * (THIS_BODY.aeroCoef.Cp - THIS_BODY.reflLength);
+        // THIS_BODY.moment_b.z -= THIS_BODY.force_b.y * (THIS_BODY.aeroCoef.Cp - THIS_BODY.reflLength);
 
         // Gravity
         THIS_BODY.force_b +=
