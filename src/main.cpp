@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     // SimulatorBaseインスタンスの生成
     // SimulatorBase抽象クラスのポインタを受け取っているが、実際の中身はDetailSimulator型またはScatterSimulator型
-    const auto simulator = SimulatorFactory::Create();
+    const auto simulator = SimulatorFactory::Create(option);
 
     // インスタンスの生成に失敗したかどうか（simulator == nullptrと同値）
     if (!simulator) {
