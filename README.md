@@ -6,13 +6,13 @@
 
 ## Download
 
-Latest Update: 2025/09/06
+Latest Update: 2025/10/17
 
 Version: 1.9.10
 
-[**Download**](https://github.com/kuma003/Prologue/releases/latest)
+[**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)
 
-[過去のバージョン、更新履歴](https://github.com/kuma003/Prologue/releases)
+[過去のバージョン、更新履歴](https://github.com/FROM-THE-EARTH/Prologue/releases)
 
 ## 利用方法
 
