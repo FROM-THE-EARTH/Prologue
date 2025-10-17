@@ -29,7 +29,7 @@ namespace SimulatorFactory {
                                          "Using specified spec file: " + option.specFilePath);
                 return specDirectoryPath + option.specFilePath;
             }
-            
+
             std::vector<std::string> specificationFiles;
 
             for (const std::filesystem::directory_entry& x : std::filesystem::directory_iterator(specDirectoryPath)) {
@@ -39,6 +39,9 @@ namespace SimulatorFactory {
             if (specificationFiles.size() == 0) {
                 throw std::runtime_error{"Specification file not found in input/spec/."};
             }
+
+			// Sort files by ascending order
+			std::sort(specificationFiles.begin(), specificationFiles.end());
 
             std::cout << "<!===Set Specification File===!>" << std::endl;
 
