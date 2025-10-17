@@ -2,8 +2,6 @@
 
 単段 / 多段式ハイブリッドロケットの軌道シミュレーターです。
 
-これは、FROM THE EARTH のシミュレータ [Prologue](https://github.com/FROM-THE-EARTH/Prologue) を fork したものであり、空力計算周りに修正を加えています。
-
 ## Download
 
 Latest Update: 2025/10/17
