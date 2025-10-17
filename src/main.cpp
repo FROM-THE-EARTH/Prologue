@@ -19,7 +19,6 @@ void ShowSettingInfo();
 
 int main(int argc, char* argv[]) {
     std::cout << "Prologue v" << VERSION << std::endl;
-	std::cout << "modified by Sato Kuma" << std::endl << std::endl;
 
     const auto option = CommandLineOption::ParseArgs(argc, argv);
 
