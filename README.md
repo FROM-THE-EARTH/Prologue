@@ -6,9 +6,9 @@
 
 ## Download
 
-Latest Update: 2025/07/07
+Latest Update: 2025/09/06
 
-Version: 1.9.9.1
+Version: 1.9.10
 
 [**Download**](https://github.com/kuma003/Prologue/releases/latest)
 

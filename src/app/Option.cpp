@@ -25,6 +25,15 @@ namespace CommandLineOption {
                     option.dryRun = true;
                 } else if (opt == "open-result") {
                     option.openResultFolder = true;
+                } else if (opt == "spec-file") {
+                    option.specifySpecFile = true;
+                    if (i + 1 < argc) {
+                        option.specFilePath = argv[i + 1];
+                        i++; // Skip the next argument as it is the spec file path
+                    } else {
+                        CommandLine::PrintInfo(PrintInfoType::Error, "No spec file path provided after --spec-file.");
+                        option.specifySpecFile = false; // Reset to false if no path is provided
+                    }
                 } else {
                     CommandLine::PrintInfo(PrintInfoType::Warning,
                                            "Specified option \"" + opt + "\" is not available.");
