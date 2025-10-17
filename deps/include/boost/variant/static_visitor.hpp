@@ -28,7 +28,7 @@ namespace boost {
 // class template static_visitor
 //
 // An empty base class that typedefs the return type of a deriving static
-// visitor. The class is analogous to std::unary_function in this role.
+// visitor. The class is analogous to std::__unary_function in this role.
 //
 
 namespace detail {

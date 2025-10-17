@@ -116,7 +116,7 @@ public:
     typedef typename super_type::reference reference;
     typedef typename super_type::base_type base_type;
     typedef typename super_type::difference_type difference_type;
-    typedef UnaryFunction unary_function;
+    typedef UnaryFunction __unary_function;
 
     transform_iterator(InputIterator iterator, UnaryFunction transform)
         : super_type(iterator),

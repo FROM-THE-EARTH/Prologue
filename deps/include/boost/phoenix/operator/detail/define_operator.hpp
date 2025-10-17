@@ -25,7 +25,7 @@
     {};                                                                         \
 /**/
 
-#define BOOST_PHOENIX_UNARY_FUNCTIONAL(__, ___, name)                           \
+#define BOOST_PHOENIX___unary_functionAL(__, ___, name)                           \
     namespace functional                                                        \
     {                                                                           \
         typedef                                                                 \
@@ -107,7 +107,7 @@
         BOOST_PP_SEQ_FOR_EACH(BOOST_PHOENIX_UNARY_RULE, _, ops)                 \
     }                                                                           \
     BOOST_PP_SEQ_FOR_EACH(BOOST_PHOENIX_GRAMMAR, _, ops)                        \
-    BOOST_PP_SEQ_FOR_EACH(BOOST_PHOENIX_UNARY_FUNCTIONAL, _, ops)               \
+    BOOST_PP_SEQ_FOR_EACH(BOOST_PHOENIX___unary_functionAL, _, ops)               \
 /**/
 
 

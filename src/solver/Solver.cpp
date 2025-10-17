@@ -233,19 +233,30 @@ void Solver::updateAerodynamicParameters() {
     THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).rotated(THIS_BODY.quat.conjugated());
 
     THIS_BODY.attackAngle =
-        atan(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z)
-             / (THIS_BODY.airSpeed_b.x + 1e-16));
+		abs(atan2(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z), (THIS_BODY.airSpeed_b.x)));
 
     THIS_BODY.aeroCoef =
         THIS_BODY_SPEC.aeroCoefStorage.valuesIn(THIS_BODY.airSpeed_b.length(),
                                                 THIS_BODY.attackAngle,
                                                 THIS_BODY_SPEC.engine.didCombustion(THIS_BODY.elapsedTime));
+    
+    double alpha, beta;
+    if (THIS_BODY.airSpeed_b.length() <= 1e-6) {
+        alpha = 0;
+        beta  = 0;
+    }else{
+        alpha = atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.x);
+        beta  = atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.y);
+    }
 
-    const double alpha = atan(THIS_BODY.airSpeed_b.z / (THIS_BODY.airSpeed_b.x + 1e-16));
-    const double beta  = atan(THIS_BODY.airSpeed_b.y / (THIS_BODY.airSpeed_b.x + 1e-16));
-
-    THIS_BODY.Cnp = THIS_BODY.aeroCoef.Cna * alpha;
-    THIS_BODY.Cny = THIS_BODY.aeroCoef.Cna * beta;
+    // NOTE:
+    // We use absolute value of angle of attack when calculating aerodynamic coefficients.
+    // While this may seem counterintuitive at first, but it is necessary for calculating the contribution of pitch and yaw angles.
+    // The term Cna * |attackAngle| represents the magnitude of normal force coefficient,
+    // allowing the pitch and yaw contributions—represented by the sideslip angle (beta)—
+    // to be separated and used to compute Cnp and Cny accurately.
+    THIS_BODY.Cnp = THIS_BODY.aeroCoef.Cna * THIS_BODY.attackAngle * sin(beta);
+    THIS_BODY.Cny = THIS_BODY.aeroCoef.Cna * THIS_BODY.attackAngle * cos(beta);
 
     THIS_BODY.Cmqp = THIS_BODY_SPEC.Cmq;
     THIS_BODY.Cmqy = THIS_BODY_SPEC.Cmq;
@@ -259,7 +270,7 @@ void Solver::updateRocketProperties() {
             (THIS_BODY_SPEC.CGLengthFinal - THIS_BODY_SPEC.CGLengthInitial) / THIS_BODY_SPEC.engine.combustionTime();
         m_bodyDelta.iyz = (THIS_BODY_SPEC.rollingMomentInertiaFinal - THIS_BODY_SPEC.rollingMomentInertiaInitial)
                           / THIS_BODY_SPEC.engine.combustionTime();
-        m_bodyDelta.ix = (0.01 - 0.02) / THIS_BODY_SPEC.engine.combustionTime();
+        // m_bodyDelta.ix = (0.01 - 0.02) / THIS_BODY_SPEC.engine.combustionTime();
     } else {
         m_bodyDelta.mass       = 0;
         m_bodyDelta.reflLength = 0;
@@ -279,9 +290,12 @@ void Solver::updateExternalForce() {
         // Aero
         const double preForceCalc = 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
                                     * THIS_BODY.airSpeed_b.length() * THIS_BODY_SPEC.bottomArea;
-        THIS_BODY.force_b.x -= THIS_BODY.aeroCoef.Cd * preForceCalc * cos(THIS_BODY.attackAngle);
-        THIS_BODY.force_b.y -= THIS_BODY.Cny * preForceCalc;
-        THIS_BODY.force_b.z -= THIS_BODY.Cnp * preForceCalc;
+        const double drag = THIS_BODY.aeroCoef.Cd * preForceCalc;
+        const double normal = THIS_BODY.Cnp * preForceCalc;
+        const double side = THIS_BODY.Cny * preForceCalc;
+        THIS_BODY.force_b.x -= drag;
+        THIS_BODY.force_b.y -= side;
+        THIS_BODY.force_b.z -= normal;
 
         // Moment
         const double preMomentCalc = 0.25 * m_windModel->density() * THIS_BODY.airSpeed_b.length()

@@ -5,15 +5,15 @@
  *          http://www.boost.org/LICENSE_1_0.txt)
  */
 /*!
- * \file   unary_function_terminal.hpp
+ * \file   __unary_function_terminal.hpp
  * \author Andrey Semashev
  * \date   21.07.2012
  *
  * The header contains attribute value extractor adapter for constructing expression template terminals.
  */
 
-#ifndef BOOST_LOG_DETAIL_UNARY_FUNCTION_TERMINAL_HPP_INCLUDED_
-#define BOOST_LOG_DETAIL_UNARY_FUNCTION_TERMINAL_HPP_INCLUDED_
+#ifndef BOOST_LOG_DETAIL___unary_function_TERMINAL_HPP_INCLUDED_
+#define BOOST_LOG_DETAIL___unary_function_TERMINAL_HPP_INCLUDED_
 
 #include <boost/mpl/bool.hpp>
 #include <boost/utility/result_of.hpp>
@@ -47,13 +47,13 @@ namespace aux {
  * from the original call. This allows to embed value extractors in template expressions.
  */
 template< typename FunT >
-class unary_function_terminal
+class __unary_function_terminal
 {
 private:
     //! Adopted function type
     typedef FunT function_type;
     //! Self type
-    typedef unary_function_terminal< function_type > this_type;
+    typedef __unary_function_terminal< function_type > this_type;
 
 public:
     //! Internal typedef for type categorization
@@ -81,18 +81,18 @@ private:
 
 public:
     //! Default constructor
-    BOOST_DEFAULTED_FUNCTION(unary_function_terminal(), {})
+    BOOST_DEFAULTED_FUNCTION(__unary_function_terminal(), {})
     //! Copy constructor
-    unary_function_terminal(unary_function_terminal const& that) : m_fun(that.m_fun) {}
+    __unary_function_terminal(__unary_function_terminal const& that) : m_fun(that.m_fun) {}
     //! Initializing constructor
     template< typename ArgT1 >
-    explicit unary_function_terminal(ArgT1 const& arg1) : m_fun(arg1) {}
+    explicit __unary_function_terminal(ArgT1 const& arg1) : m_fun(arg1) {}
     //! Initializing constructor
     template< typename ArgT1, typename ArgT2 >
-    unary_function_terminal(ArgT1 const& arg1, ArgT2 const& arg2) : m_fun(arg1, arg2) {}
+    __unary_function_terminal(ArgT1 const& arg1, ArgT2 const& arg2) : m_fun(arg1, arg2) {}
     //! Initializing constructor
     template< typename ArgT1, typename ArgT2, typename ArgT3 >
-    unary_function_terminal(ArgT1 const& arg1, ArgT2 const& arg2, ArgT3 const& arg3) : m_fun(arg1, arg2, arg3) {}
+    __unary_function_terminal(ArgT1 const& arg1, ArgT2 const& arg2, ArgT3 const& arg3) : m_fun(arg1, arg2, arg3) {}
 
     //! The operator forwards the call to the base function
     template< typename ContextT >
@@ -124,7 +124,7 @@ namespace phoenix {
 namespace result_of {
 
 template< typename FunT >
-struct is_nullary< custom_terminal< boost::log::expressions::aux::unary_function_terminal< FunT > > > :
+struct is_nullary< custom_terminal< boost::log::expressions::aux::__unary_function_terminal< FunT > > > :
     public mpl::false_
 {
 };
@@ -139,4 +139,4 @@ struct is_nullary< custom_terminal< boost::log::expressions::aux::unary_function
 
 #include <boost/log/detail/footer.hpp>
 
-#endif // BOOST_LOG_DETAIL_UNARY_FUNCTION_TERMINAL_HPP_INCLUDED_
+#endif // BOOST_LOG_DETAIL___unary_function_TERMINAL_HPP_INCLUDED_

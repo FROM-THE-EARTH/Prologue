@@ -438,7 +438,7 @@ class is_convertible
 #endif
 
 //////////////////////////////////////
-//       is_unary_function
+//       is___unary_function
 //////////////////////////////////////
 #if defined(BOOST_MSVC) || defined(__BORLANDC_)
 #define BOOST_MOVE_TT_DECL __cdecl
@@ -451,86 +451,86 @@ class is_convertible
 #endif
 
 template <typename T>
-struct is_unary_function_impl
+struct is___unary_function_impl
 {  static const bool value = false; };
 
-// avoid duplicate definitions of is_unary_function_impl
+// avoid duplicate definitions of is___unary_function_impl
 #ifndef BOOST_MOVE_TT_TEST_MSC_FUNC_SIGS
 
 template <typename R>
-struct is_unary_function_impl<R (*)()>
+struct is___unary_function_impl<R (*)()>
 {  static const bool value = true;  };
 
 template <typename R>
-struct is_unary_function_impl<R (*)(...)>
+struct is___unary_function_impl<R (*)(...)>
 {  static const bool value = true;  };
 
 #else // BOOST_MOVE_TT_TEST_MSC_FUNC_SIGS
 
 template <typename R>
-struct is_unary_function_impl<R (__stdcall*)()>
+struct is___unary_function_impl<R (__stdcall*)()>
 {  static const bool value = true;  };
 
 #ifndef _MANAGED
 
 template <typename R>
-struct is_unary_function_impl<R (__fastcall*)()>
+struct is___unary_function_impl<R (__fastcall*)()>
 {  static const bool value = true;  };
 
 #endif
 
 template <typename R>
-struct is_unary_function_impl<R (__cdecl*)()>
+struct is___unary_function_impl<R (__cdecl*)()>
 {  static const bool value = true;  };
 
 template <typename R>
-struct is_unary_function_impl<R (__cdecl*)(...)>
+struct is___unary_function_impl<R (__cdecl*)(...)>
 {  static const bool value = true;  };
 
 #endif
 
-// avoid duplicate definitions of is_unary_function_impl
+// avoid duplicate definitions of is___unary_function_impl
 #ifndef BOOST_MOVE_TT_TEST_MSC_FUNC_SIGS
 
 template <typename R, class T0>
-struct is_unary_function_impl<R (*)(T0)>
+struct is___unary_function_impl<R (*)(T0)>
 {  static const bool value = true;  };
 
 template <typename R, class T0>
-struct is_unary_function_impl<R (*)(T0...)>
+struct is___unary_function_impl<R (*)(T0...)>
 {  static const bool value = true;  };
 
 #else // BOOST_MOVE_TT_TEST_MSC_FUNC_SIGS
 
 template <typename R, class T0>
-struct is_unary_function_impl<R (__stdcall*)(T0)>
+struct is___unary_function_impl<R (__stdcall*)(T0)>
 {  static const bool value = true;  };
 
 #ifndef _MANAGED
 
 template <typename R, class T0>
-struct is_unary_function_impl<R (__fastcall*)(T0)>
+struct is___unary_function_impl<R (__fastcall*)(T0)>
 {  static const bool value = true;  };
 
 #endif
 
 template <typename R, class T0>
-struct is_unary_function_impl<R (__cdecl*)(T0)>
+struct is___unary_function_impl<R (__cdecl*)(T0)>
 {  static const bool value = true;  };
 
 template <typename R, class T0>
-struct is_unary_function_impl<R (__cdecl*)(T0...)>
+struct is___unary_function_impl<R (__cdecl*)(T0...)>
 {  static const bool value = true;  };
 
 #endif
 
 template <typename T>
-struct is_unary_function_impl<T&>
+struct is___unary_function_impl<T&>
 {  static const bool value = false; };
 
 template<typename T>
-struct is_unary_function
-{  static const bool value = is_unary_function_impl<T>::value;   };
+struct is___unary_function
+{  static const bool value = is___unary_function_impl<T>::value;   };
 
 //////////////////////////////////////
 //       has_virtual_destructor

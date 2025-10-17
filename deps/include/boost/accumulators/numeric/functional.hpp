@@ -50,7 +50,7 @@ namespace std
 {
     /// INTERNAL ONLY
     ///
-    template<class Arg, class Ret> struct unary_function {};
+    template<class Arg, class Ret> struct __unary_function {};
     /// INTERNAL ONLY
     ///
     template<class Left, class Right, class Ret> struct binary_function {};

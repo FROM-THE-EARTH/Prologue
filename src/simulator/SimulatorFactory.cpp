@@ -11,6 +11,7 @@
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
+#include "app/Option.hpp"
 #include "simulator/DetailSimulator.hpp"
 #include "simulator/ScatterSimulator.hpp"
 
@@ -18,7 +19,17 @@ namespace SimulatorFactory {
     const std::string specDirectoryPath = "input/spec/";
 
     namespace _internal {
-        std::string setSpecFile() {
+        std::string setSpecFile(const CommandLineOption::Option& option) {
+            if (option.specifySpecFile) {
+                if (!std::filesystem::exists(specDirectoryPath + option.specFilePath)) {
+                    // Terminate if the specified file does not exist
+                    throw std::runtime_error{"Specified spec file does not exist: " + option.specFilePath};
+                }
+                CommandLine::PrintInfo(PrintInfoType::Information,
+                                         "Using specified spec file: " + option.specFilePath);
+                return specDirectoryPath + option.specFilePath;
+            }
+
             std::vector<std::string> specificationFiles;
 
             for (const std::filesystem::directory_entry& x : std::filesystem::directory_iterator(specDirectoryPath)) {
@@ -28,6 +39,9 @@ namespace SimulatorFactory {
             if (specificationFiles.size() == 0) {
                 throw std::runtime_error{"Specification file not found in input/spec/."};
             }
+
+			// Sort files by ascending order
+			std::sort(specificationFiles.begin(), specificationFiles.end());
 
             std::cout << "<!===Set Specification File===!>" << std::endl;
 
@@ -111,10 +125,10 @@ namespace SimulatorFactory {
         }
     }
 
-    std::unique_ptr<SimulatorBase> Create() {
+    std::unique_ptr<SimulatorBase> Create(const CommandLineOption::Option& option) {
         try {
             // Specification json file
-            const auto specFilePath = _internal::setSpecFile();
+            const auto specFilePath = _internal::setSpecFile(option);
             boost::property_tree::ptree specJson;
             boost::property_tree::read_json(specFilePath, specJson);
 

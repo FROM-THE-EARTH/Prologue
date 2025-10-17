@@ -9,7 +9,7 @@ on:
 jobs:
   windows:
     name: Release for Windows
-    runs-on: windows-2022
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -71,7 +71,7 @@ jobs:
 
   linux:
     name: Release for Linux
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 

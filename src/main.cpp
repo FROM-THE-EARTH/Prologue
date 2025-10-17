@@ -13,12 +13,13 @@
 #include "misc/Platform.hpp"
 #include "simulator/SimulatorFactory.hpp"
 
-const auto VERSION = "1.9.8";
+const auto VERSION = "1.9.10";
 
 void ShowSettingInfo();
 
 int main(int argc, char* argv[]) {
-    std::cout << "Prologue v" << VERSION << std::endl << std::endl;
+    std::cout << "Prologue v" << VERSION << std::endl;
+	std::cout << "modified by Sato Kuma" << std::endl << std::endl;
 
     const auto option = CommandLineOption::ParseArgs(argc, argv);
 
@@ -26,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     // SimulatorBaseインスタンスの生成
     // SimulatorBase抽象クラスのポインタを受け取っているが、実際の中身はDetailSimulator型またはScatterSimulator型
-    const auto simulator = SimulatorFactory::Create();
+    const auto simulator = SimulatorFactory::Create(option);
 
     // インスタンスの生成に失敗したかどうか（simulator == nullptrと同値）
     if (!simulator) {
