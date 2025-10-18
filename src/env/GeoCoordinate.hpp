@@ -20,8 +20,8 @@ public:
     GeoCoordinate() = default;
 
     explicit GeoCoordinate(double latitude, double longitude) : m_latitude(latitude), m_longitude(longitude) {
-        m_degPerLen_latitude  = 31.0 / 0.00027778;
-        m_degPerLen_longitude = 6378150.0 * std::cos(latitude / 180.0 * Constant::PI) * 2.0 * Constant::PI / 360.0;
+        m_degPerLen_latitude  = 6356752.0 * 2.0 * Constant::PI / 360.0;
+        m_degPerLen_longitude = 6378137.0 * std::cos(latitude / 180.0 * Constant::PI) * 2.0 * Constant::PI / 360.0;
     }
 
     double latitude() const {
