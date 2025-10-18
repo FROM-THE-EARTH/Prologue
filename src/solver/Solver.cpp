@@ -239,7 +239,7 @@ void Solver::updateAerodynamicParameters() {
         THIS_BODY_SPEC.aeroCoefStorage.valuesIn(THIS_BODY.airSpeed_b.length(),
                                                 THIS_BODY.attackAngle,
                                                 THIS_BODY_SPEC.engine.didCombustion(THIS_BODY.elapsedTime));
-    
+
     double alpha, beta;
     if (THIS_BODY.airSpeed_b.length() <= 1e-6) {
         alpha = 0;
@@ -331,16 +331,12 @@ void Solver::updateRocketDelta() {
             m_bodyDelta.quat    = Quaternion();
         }
     } else if (THIS_BODY.parachuteOpened) {  // parachute opened
-        const Vector3D paraSpeed = THIS_BODY.velocity;
-        const double drag        = 0.5 * m_windModel->density() * paraSpeed.z * paraSpeed.z * 1.0
+		const double airspeed_normal = THIS_BODY.airSpeed_b.length();
+        Vector3D drag        = - 0.5 * m_windModel->density() * airspeed_normal * THIS_BODY.airSpeed_b
                             * THIS_BODY_SPEC.parachutes[THIS_BODY.parachuteIndex].Cd;
 
-        m_bodyDelta.velocity.z = drag / THIS_BODY.mass - m_windModel->gravity();
-        m_bodyDelta.velocity.x = 0;
-        m_bodyDelta.velocity.y = 0;
-
-        THIS_BODY.velocity.x = m_windModel->wind().x;
-        THIS_BODY.velocity.y = m_windModel->wind().y;
+        m_bodyDelta.velocity = drag.rotated(THIS_BODY.quat) / THIS_BODY.mass;
+		m_bodyDelta.velocity.z -= m_windModel->gravity(); // add gravity
 
         m_bodyDelta.pos = THIS_BODY.velocity;
 
