@@ -18,10 +18,10 @@ Version: 1.9.11
 
    - Gnuplot の導入
 
-     - **Windows**: [ここ](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)からインストール<br>
+     - **Windows**: [ここ](https://sourceforge.net/projects/gnuplot/files/gnuplot/)からインストール<br>
        gnuplot のデフォルト出力形式の選択で **wxt** を選択
 
-     - **macOS**: [Homebrew](https://brew.sh/index_ja)をインストール後、ターミナルで `brew install gnuplot`
+     - **macOS**: [Homebrew](https://brew.sh/ja/)をインストール後、ターミナルで `brew install gnuplot`
 
      - **Linux**: ターミナルで `sudo apt install gnuplot`
 
@@ -55,3 +55,4 @@ Version: 1.9.11
 必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOPMENT.md)を読んでください。
 
 やることがなかったら [Issues](https://github.com/FROM-THE-EARTH/Prologue/issues) にあるものを消化するといいと思います。
+
