@@ -115,13 +115,13 @@
       {
         "op_time_from_peak": 0,   // [任意] 頂点到達からの時刻 [s]　
         "op_time_from_launch": 0, // [任意] 離床からの時刻 [s]
-        "fall": 0,                // [任意] 頂点到達後、何メートルしたら開傘するか [m]
+        "op_height": 0,           // [任意] 頂点到達後、何メートルしたら開傘するか [m]
         "CdS": 7.0                // パラシュートのCdS
       },
       {
         "op_time_from_peak": 0,
         "op_time_from_launch": 0,
-        "fall": 0,
+        "op_height": 0,
         "CdS": 2.0 // 複数のパラシュートが開傘する場合、CdSは単純に加算されます
       }
     ],

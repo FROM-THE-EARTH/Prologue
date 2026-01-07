@@ -138,7 +138,7 @@ void Solver::update() {
 
 void Solver::updateParachute() {
     const bool detectpeakConditon =
-        THIS_BODY.maxAltitude > THIS_BODY.pos.z + AppSetting::Simulation::detectPeakThreshold;
+        THIS_BODY.maxAltitude > THIS_BODY.pos.z + THIS_BODY_SPEC.parachutes[0].openingHeight;
 
     if (detectpeakConditon && !THIS_BODY.detectPeak) {
         THIS_BODY.detectPeak = true;
@@ -148,13 +148,14 @@ void Solver::updateParachute() {
         return;
     }
 
-    const bool detectpeak = THIS_BODY_SPEC.parachutes[0].openingType == ParachuteOpeningType::DetectPeak;
+    const bool detectpeak = THIS_BODY_SPEC.parachutes[0].openingType & PARACHUTE_OPENING_TYPE_DETECT_PEAK;
 
-    const bool fixedtime          = THIS_BODY_SPEC.parachutes[0].openingType == ParachuteOpeningType::FixedTime;
+    const bool fixedtime          = THIS_BODY_SPEC.parachutes[0].openingType & PARACHUTE_OPENING_TYPE_FIXED_TIME;
+
     const bool fixedtimeCondition = THIS_BODY.elapsedTime > THIS_BODY_SPEC.parachutes[0].openingTime;
 
     const bool time_from_detect_peak =
-        THIS_BODY_SPEC.parachutes[0].openingType == ParachuteOpeningType::TimeFromDetectPeak;
+        THIS_BODY_SPEC.parachutes[0].openingType & PARACHUTE_OPENING_TYPE_TIME_FROM_DETECT_PEAK;
 
     if ((detectpeak && detectpeakConditon) || (fixedtime && fixedtimeCondition)) {
         THIS_BODY.parachuteOpened = true;
@@ -333,7 +334,7 @@ void Solver::updateRocketDelta() {
     } else if (THIS_BODY.parachuteOpened) {  // parachute opened
 		const double airspeed_normal = THIS_BODY.airSpeed_b.length();
         Vector3D drag        = - 0.5 * m_windModel->density() * airspeed_normal * THIS_BODY.airSpeed_b
-                            * THIS_BODY_SPEC.parachutes[THIS_BODY.parachuteIndex].Cd;
+                            * THIS_BODY_SPEC.parachutes[THIS_BODY.parachuteIndex].CdS;
 
         m_bodyDelta.velocity = drag.rotated(THIS_BODY.quat) / THIS_BODY.mass;
 		m_bodyDelta.velocity.z -= m_windModel->gravity(); // add gravity
