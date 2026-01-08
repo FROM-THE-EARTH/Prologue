@@ -119,6 +119,7 @@ void Solver::initializeRocket() {
     m_bodyDelta.omega_b    = Vector3D(0, 0, 0);
     m_bodyDelta.quat =
         Quaternion(m_environment.railElevation, -(m_environment.railAzimuth - m_mapData.magneticDeclination) + 90);
+	m_bodyDelta.parachuteOpenedList.resize(THIS_BODY_SPEC.parachutes.size(), false);
 
     THIS_BODY = m_bodyDelta;
 }
@@ -153,16 +154,19 @@ void Solver::updateParachute() {
 		if (para.openingType & PARACHUTE_OPENING_TYPE_DETECT_PEAK) {
 			if (THIS_BODY.detectPeak && THIS_BODY.maxAltitude - THIS_BODY.pos.z >= para.openingHeight) {
 				THIS_BODY.parachuteOpenedList[i] = true;
+				THIS_BODY.anyParachuteOpened = true;
 			}
 		}
 		if (para.openingType & PARACHUTE_OPENING_TYPE_FIXED_TIME) {
 			if (THIS_BODY.elapsedTime >= para.openingTime) {
 				THIS_BODY.parachuteOpenedList[i] = true;
+				THIS_BODY.anyParachuteOpened = true;
 			}
 		}
 		if (para.openingType & PARACHUTE_OPENING_TYPE_TIME_FROM_DETECT_PEAK) {
 			if (THIS_BODY.detectPeak && (THIS_BODY.elapsedTime - THIS_BODY.maxAltitudeTime) >= para.openingTime) {
 				THIS_BODY.parachuteOpenedList[i] = true;
+				THIS_BODY.anyParachuteOpened = true;
 			}
 		}
 	}

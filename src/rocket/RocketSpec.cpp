@@ -62,19 +62,19 @@ void RocketSpecification::setBodySpecification(const boost::property_tree::ptree
 
     spec.Cmq = JsonUtils::GetValueExc<double>(pt, key + ".Cmq");
 
-    if (pt.count(key + ".parachutes") > 0) { // parachute
+    if (pt.get_child(key + ".parachutes").size() > 0) { // parachute
         for (const auto& child : pt.get_child(key + ".parachutes")) {
             double openingTime   = JsonUtils::GetValueWithDefault<double>(child.second, "op_time_from_launch", -1.0);
             double delayTime     = JsonUtils::GetValueWithDefault<double>(child.second, "op_time_from_peak", -1.0);
             double openingHeight = JsonUtils::GetValueWithDefault<double>(child.second, "op_height", -1.0);
-            
-            unsigned char openingType = 
+
+            unsigned char openingType =
                 (openingTime >= 0.0 ? PARACHUTE_OPENING_TYPE_FIXED_TIME : 0x00) |
                 (delayTime >= 0.0 ? PARACHUTE_OPENING_TYPE_TIME_FROM_DETECT_PEAK : 0x00) |
                 (openingHeight >= 0.0 ? PARACHUTE_OPENING_TYPE_DETECT_PEAK : 0x00);
-            
+
             double CdS = JsonUtils::GetValueExc<double>(child.second, "CdS");
-            
+
             spec.parachutes.emplace_back(Parachute{
                 .openingType   = openingType,
                 .openingTime   = openingTime,
@@ -87,6 +87,7 @@ void RocketSpecification::setBodySpecification(const boost::property_tree::ptree
 
     if (spec.parachutes.size() == 0) {
         // For backward compatibility
+
         spec.parachutes.emplace_back(Parachute());
         double terminalVelocity = JsonUtils::GetValue<double>(pt, key + ".vel_1st");
         unsigned char op_type = JsonUtils::GetValue<unsigned char>(pt, key + ".op_type_1st");
@@ -112,7 +113,7 @@ void RocketSpecification::setBodySpecification(const boost::property_tree::ptree
             spec.parachutes[0].CdS = CalcParachuteCd(spec.massFinal, terminalVelocity);
         }
     }
-    
+
     // Initialize Engine
     spec.engine.loadThrustData(JsonUtils::GetValue<std::string>(pt, key + ".motor_file"));
     if (const auto result = JsonUtils::GetValueOpt<double>(pt, key + ".thrust_measured_pressure"); result.has_value()) {
