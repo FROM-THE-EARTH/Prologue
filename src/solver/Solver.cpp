@@ -286,7 +286,23 @@ void Solver::updateExternalForce() {
     // Thrust
     THIS_BODY.force_b.x += THIS_BODY_SPEC.engine.thrustAt(THIS_BODY.elapsedTime, m_windModel->pressure());
 
-    if (!THIS_BODY.anyParachuteOpened) {
+    if (THIS_BODY.anyParachuteOpened) { // parachute opened
+		double CdS = 0.0;
+		for (auto idx = 0; idx < THIS_BODY_SPEC.parachutes.size(); idx++) {
+			if (THIS_BODY.parachuteOpenedList[idx]) {
+				CdS += THIS_BODY_SPEC.parachutes[idx].CdS;
+			}
+		}
+		Vector3D drag = - 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length() * THIS_BODY.airSpeed_b * CdS;
+
+		THIS_BODY.force_b = drag;
+		THIS_BODY.moment_b = Vector3D(0, 0, 0);  // no moment from parachute
+
+		// Gravity
+		THIS_BODY.force_b +=
+			Vector3D(0, 0, -m_windModel->gravity()).rotated(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
+
+	} else { // before parachute opened
         // Aero
         const double preForceCalc = 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
                                     * THIS_BODY.airSpeed_b.length() * THIS_BODY_SPEC.bottomArea;
@@ -330,23 +346,6 @@ void Solver::updateRocketDelta() {
             m_bodyDelta.omega_b = Vector3D();
             m_bodyDelta.quat    = Quaternion();
         }
-    } else if (THIS_BODY.anyParachuteOpened) {  // parachute opened
-		const double airspeed_normal = THIS_BODY.airSpeed_b.length();
-		double CdS = 0.0;
-		for (auto idx = 0; idx < THIS_BODY_SPEC.parachutes.size(); idx++) {
-			if (THIS_BODY.parachuteOpenedList[idx]) {
-				CdS += THIS_BODY_SPEC.parachutes[idx].CdS;
-			}
-		}
-        Vector3D drag        = - 0.5 * m_windModel->density() * airspeed_normal * THIS_BODY.airSpeed_b * CdS;
-
-        m_bodyDelta.velocity = drag.rotated(THIS_BODY.quat) / THIS_BODY.mass;
-		m_bodyDelta.velocity.z -= m_windModel->gravity(); // add gravity
-
-        m_bodyDelta.pos = THIS_BODY.velocity;
-
-        m_bodyDelta.omega_b = Vector3D();
-        m_bodyDelta.quat    = Quaternion();
     } else if (THIS_BODY.pos.z < -10) {  // stop simulation
         m_bodyDelta.velocity = Vector3D();
     } else {  // flight
@@ -374,9 +373,10 @@ void Solver::applyDelta() {
     THIS_BODY.ix += m_bodyDelta.ix * m_dt;
     THIS_BODY.pos += m_bodyDelta.pos * m_dt;
     THIS_BODY.velocity += m_bodyDelta.velocity * m_dt;
-    THIS_BODY.omega_b += m_bodyDelta.omega_b * m_dt;
-    THIS_BODY.quat += m_bodyDelta.quat * m_dt;
-
+	if (!THIS_BODY.anyParachuteOpened) {
+		THIS_BODY.omega_b += m_bodyDelta.omega_b * m_dt;
+		THIS_BODY.quat += m_bodyDelta.quat * m_dt;
+	}
     THIS_BODY.quat = THIS_BODY.quat.normalized();
 
     THIS_BODY.elapsedTime += m_dt;
