@@ -137,42 +137,35 @@ void Solver::update() {
 }
 
 void Solver::updateParachute() {
-    const bool detectpeakConditon =
-        THIS_BODY.maxAltitude > THIS_BODY.pos.z + THIS_BODY_SPEC.parachutes[0].openingHeight;
+	// update max altitude
+    if (THIS_BODY.maxAltitude <= THIS_BODY.pos.z) {
+        THIS_BODY.maxAltitude     = THIS_BODY.pos.z;
+        THIS_BODY.maxAltitudeTime = THIS_BODY.elapsedTime;
+    } else {
+		THIS_BODY.detectPeak = true;
+	}
 
-    if (detectpeakConditon && !THIS_BODY.detectPeak) {
-        THIS_BODY.detectPeak = true;
-    }
 
-    if (THIS_BODY.parachuteOpened) {
-        return;
-    }
+	for (size_t i = 0; i < THIS_BODY_SPEC.parachutes.size(); i++) {
+		if (THIS_BODY.parachuteOpenedList[i]) continue;
+		Parachute para = THIS_BODY_SPEC.parachutes[i];
 
-    const bool detectpeak = THIS_BODY_SPEC.parachutes[0].openingType & PARACHUTE_OPENING_TYPE_DETECT_PEAK;
-
-    const bool fixedtime          = THIS_BODY_SPEC.parachutes[0].openingType & PARACHUTE_OPENING_TYPE_FIXED_TIME;
-
-    const bool fixedtimeCondition = THIS_BODY.elapsedTime > THIS_BODY_SPEC.parachutes[0].openingTime;
-
-    const bool time_from_detect_peak =
-        THIS_BODY_SPEC.parachutes[0].openingType & PARACHUTE_OPENING_TYPE_TIME_FROM_DETECT_PEAK;
-
-    if ((detectpeak && detectpeakConditon) || (fixedtime && fixedtimeCondition)) {
-        THIS_BODY.parachuteOpened = true;
-    }
-
-    const bool time_from_detect_peakCondition =
-        THIS_BODY.elapsedTime - THIS_BODY.maxAltitudeTime > THIS_BODY_SPEC.parachutes[0].openingTime;
-
-    if (time_from_detect_peak) {
-        if (!THIS_BODY.waitForOpenPara && detectpeakConditon) {
-            THIS_BODY.waitForOpenPara = true;
-        }
-        if (THIS_BODY.waitForOpenPara && time_from_detect_peakCondition) {
-            THIS_BODY.parachuteOpened = true;
-            THIS_BODY.waitForOpenPara = false;
-        }
-    }
+		if (para.openingType & PARACHUTE_OPENING_TYPE_DETECT_PEAK) {
+			if (THIS_BODY.detectPeak && THIS_BODY.maxAltitude - THIS_BODY.pos.z >= para.openingHeight) {
+				THIS_BODY.parachuteOpenedList[i] = true;
+			}
+		}
+		if (para.openingType & PARACHUTE_OPENING_TYPE_FIXED_TIME) {
+			if (THIS_BODY.elapsedTime >= para.openingTime) {
+				THIS_BODY.parachuteOpenedList[i] = true;
+			}
+		}
+		if (para.openingType & PARACHUTE_OPENING_TYPE_TIME_FROM_DETECT_PEAK) {
+			if (THIS_BODY.detectPeak && (THIS_BODY.elapsedTime - THIS_BODY.maxAltitudeTime) >= para.openingTime) {
+				THIS_BODY.parachuteOpenedList[i] = true;
+			}
+		}
+	}
 }
 
 bool Solver::updateDetachment() {
@@ -186,7 +179,7 @@ bool Solver::updateDetachment() {
         detachCondition = THIS_BODY.elapsedTime >= m_detachTime;
         break;
     case DetachType::SyncPara:
-        detachCondition = THIS_BODY.parachuteOpened == true;
+        detachCondition = THIS_BODY.anyParachuteOpened == true;
         break;
     case DetachType::DoNotDeatch:
         return false;
@@ -287,7 +280,7 @@ void Solver::updateExternalForce() {
     // Thrust
     THIS_BODY.force_b.x += THIS_BODY_SPEC.engine.thrustAt(THIS_BODY.elapsedTime, m_windModel->pressure());
 
-    if (!THIS_BODY.parachuteOpened) {
+    if (!THIS_BODY.anyParachuteOpened) {
         // Aero
         const double preForceCalc = 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
                                     * THIS_BODY.airSpeed_b.length() * THIS_BODY_SPEC.bottomArea;
@@ -331,10 +324,15 @@ void Solver::updateRocketDelta() {
             m_bodyDelta.omega_b = Vector3D();
             m_bodyDelta.quat    = Quaternion();
         }
-    } else if (THIS_BODY.parachuteOpened) {  // parachute opened
+    } else if (THIS_BODY.anyParachuteOpened) {  // parachute opened
 		const double airspeed_normal = THIS_BODY.airSpeed_b.length();
-        Vector3D drag        = - 0.5 * m_windModel->density() * airspeed_normal * THIS_BODY.airSpeed_b
-                            * THIS_BODY_SPEC.parachutes[THIS_BODY.parachuteIndex].CdS;
+		double CdS = 0.0;
+		for (auto idx = 0; idx < THIS_BODY_SPEC.parachutes.size(); idx++) {
+			if (THIS_BODY.parachuteOpenedList[idx]) {
+				CdS += THIS_BODY_SPEC.parachutes[idx].CdS;
+			}
+		}
+        Vector3D drag        = - 0.5 * m_windModel->density() * airspeed_normal * THIS_BODY.airSpeed_b * CdS;
 
         m_bodyDelta.velocity = drag.rotated(THIS_BODY.quat) / THIS_BODY.mass;
 		m_bodyDelta.velocity.z -= m_windModel->gravity(); // add gravity
@@ -385,11 +383,6 @@ void Solver::organizeResult() {
                            THIS_BODY,
                            *m_windModel.get(),
                            THIS_BODY_SPEC.engine.isCombusting(THIS_BODY.elapsedTime));
-
-    if (THIS_BODY.maxAltitude < THIS_BODY.pos.z) {
-        THIS_BODY.maxAltitude     = THIS_BODY.pos.z;
-        THIS_BODY.maxAltitudeTime = THIS_BODY.elapsedTime;
-    }
 }
 
 void Solver::nextRocket() {
