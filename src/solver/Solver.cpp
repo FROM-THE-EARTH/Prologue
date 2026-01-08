@@ -232,32 +232,26 @@ bool Solver::updateDetachment() {
 void Solver::updateAerodynamicParameters() {
     THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).rotated(THIS_BODY.quat.conjugated());
 
-    THIS_BODY.attackAngle =
+	double alpha =
 		abs(atan2(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z), (THIS_BODY.airSpeed_b.x)));
+
+	double beta = (THIS_BODY.airSpeed_b.length() <= 1e-6) ? 0 : atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.y);
 
     THIS_BODY.aeroCoef =
         THIS_BODY_SPEC.aeroCoefStorage.valuesIn(THIS_BODY.airSpeed_b.length(),
-                                                THIS_BODY.attackAngle,
+                                                alpha,
                                                 THIS_BODY_SPEC.engine.didCombustion(THIS_BODY.elapsedTime));
-
-    double alpha, beta;
-    if (THIS_BODY.airSpeed_b.length() <= 1e-6) {
-        alpha = 0;
-        beta  = 0;
-    }else{
-        alpha = atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.x);
-        beta  = atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.y);
-    }
 
     // NOTE:
     // We use absolute value of angle of attack when calculating aerodynamic coefficients.
-    // While this may seem counterintuitive at first, but it is necessary for calculating the contribution of pitch and yaw angles.
-    // The term Cna * |attackAngle| represents the magnitude of normal force coefficient,
+    // It is necessary for calculating the contribution of pitch and yaw angles.
+	// This value is not exact angle of attack, so that we represent it as alpha.
+    // The term Cna * |alpha| represents the magnitude of normal force coefficient,
     // allowing the pitch and yaw contributions—represented by the sideslip angle (beta)—
     // to be separated and used to compute Cnp and Cny accurately.
-    THIS_BODY.Cnp = THIS_BODY.aeroCoef.Cna * THIS_BODY.attackAngle * sin(beta);
-    THIS_BODY.Cny = THIS_BODY.aeroCoef.Cna * THIS_BODY.attackAngle * cos(beta);
-
+	THIS_BODY.attackAngle = -atan2(THIS_BODY.airSpeed_b.z, THIS_BODY.airSpeed_b.x); // By definition, only for logging
+    THIS_BODY.Cnp = THIS_BODY.aeroCoef.Cna * alpha * sin(beta);
+    THIS_BODY.Cny = THIS_BODY.aeroCoef.Cna * alpha * cos(beta);
     THIS_BODY.Cmqp = THIS_BODY_SPEC.Cmq;
     THIS_BODY.Cmqy = THIS_BODY_SPEC.Cmq;
 }
