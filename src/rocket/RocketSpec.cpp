@@ -62,7 +62,7 @@ void RocketSpecification::setBodySpecification(const boost::property_tree::ptree
 
     spec.Cmq = JsonUtils::GetValueExc<double>(pt, key + ".Cmq");
 
-    if (pt.count(key + ".parachutes") > 0) { // parachute
+    if (pt.get_child_optional(key + ".parachutes")) { // parachute
         for (const auto& child : pt.get_child(key + ".parachutes")) {
             double openingTime   = JsonUtils::GetValueWithDefault<double>(child.second, "op_time_from_launch", -1.0);
             double delayTime     = JsonUtils::GetValueWithDefault<double>(child.second, "op_time_from_peak", -1.0);
