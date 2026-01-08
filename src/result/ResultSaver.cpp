@@ -19,8 +19,8 @@ std::string Bits2String(const std::vector<bool>& bits) {
 	std::string result ;
 	result.reserve(bits.size() + 2);
 	result.push_back('"');
-	for (auto it = bits.begin(); it != bits.end(); ++it) {
-		result += (*it ? "1" : "0");
+	for (auto it = bits.end(); it != bits.begin(); --it) {
+		result += (*(it - 1) ? "1" : "0");
 	}
 	result.push_back('"');
 	return result;
