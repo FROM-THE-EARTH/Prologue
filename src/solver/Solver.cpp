@@ -204,6 +204,7 @@ bool Solver::updateDetachment() {
             nextBody1.mass       = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).massInitial;
             nextBody1.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).CGLengthInitial;
             nextBody1.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).rollingMomentInertiaInitial;
+			nextBody1.parachuteOpenedList.resize(m_rocketSpec.bodySpec(m_currentBodyIndex + 1).parachutes.size(), false);
 
             // receive power from the engine of the upper body for 0.2 seconds
             /*double sumThrust = 0;
@@ -217,6 +218,7 @@ bool Solver::updateDetachment() {
             nextBody2.mass       = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).massInitial;
             nextBody2.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).CGLengthInitial;
             nextBody2.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).rollingMomentInertiaInitial;
+			nextBody2.parachuteOpenedList.resize(m_rocketSpec.bodySpec(m_currentBodyIndex + 2).parachutes.size(), false);
         }
 
         m_detachCount++;
