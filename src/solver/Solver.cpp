@@ -118,7 +118,7 @@ void Solver::initializeRocket() {
     m_bodyDelta.velocity   = Vector3D(0, 0, 0);
     m_bodyDelta.omega_b    = Vector3D(0, 0, 0);
     m_bodyDelta.quat =
-        Quaternion(m_environment.railElevation, -(m_environment.railAzimuth - m_mapData.magneticDeclination) + 90);
+        Quaternion(m_environment.railElevation, -(m_environment.railAzimuth + m_mapData.magneticDeclination) + 90);
 	m_bodyDelta.parachuteOpenedList.resize(THIS_BODY_SPEC.parachutes.size(), false);
 
     THIS_BODY = m_bodyDelta;
