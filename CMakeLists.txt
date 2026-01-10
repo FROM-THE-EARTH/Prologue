@@ -68,4 +68,21 @@ set(SOURCE_FILES
 
 add_executable(Prologue ${SOURCE_FILES})
 
+if (WIN32)
+	set(KMLBASE_SOURCES
+		"deps/include/kml/base/file.cc"
+		"deps/include/kml/base/file_win32.cc"
+	)
+else()
+	set(KMLBASE_SOURCES
+		"deps/include/kml/base/file.cc"
+		"deps/include/kml/base/file_posix.cc"
+	)
+endif()
+
+add_library(kmlbase STATIC ${KMLBASE_SOURCES})
+target_include_directories(kmlbase PUBLIC "deps/include/")
+target_compile_definitions(kmlbase PRIVATE UNICODE _UNICODE)
+target_link_libraries(Prologue PRIVATE kmlbase)
+
 add_subdirectory("test")
