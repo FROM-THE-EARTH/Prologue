@@ -8,6 +8,7 @@
   "cmake.debugConfig": {
     "console": "integratedTerminal"
   },
+  "cmake.outputLogEncoding": "utf-8",
   "[cpp]": {
     "editor.defaultFormatter": "ms-vscode.cpptools",
     "files.encoding": "utf8bom"
