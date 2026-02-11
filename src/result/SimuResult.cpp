@@ -47,8 +47,9 @@ void SimuResultLogger::setLaunchClear(const Body& body) {
 }
 
 void SimuResultLogger::setBodyFinalPosition(size_t bodyIndex, const Vector3D& pos) {
-    m_result.bodyFinalPositions[bodyIndex] = {.latitude  = m_map.coordinate.latitudeAt(pos.y),
-                                              .longitude = m_map.coordinate.longitudeAt(pos.x)};
+	const auto [lat, lon] = m_map.coordinate.LatLonAt(pos.x, pos.y);
+    m_result.bodyFinalPositions[bodyIndex] = {.latitude  = lat,
+                                              .longitude = lon};
 }
 
 void SimuResultLogger::update(
@@ -93,8 +94,9 @@ void SimuResultLogger::update(
         step.Cna                = body.aeroCoef.Cna;
 
         // Position
-        step.latitude  = m_map.coordinate.latitudeAt(body.pos.y);
-        step.longitude = m_map.coordinate.longitudeAt(body.pos.x);
+		const auto [lat, lon] = m_map.coordinate.LatLonAt(body.pos.x, body.pos.y);
+        step.latitude  = lat;
+        step.longitude = lon;
         step.downrange = sqrt(body.pos.x * body.pos.x + body.pos.y * body.pos.y);
 
         // Calculated
