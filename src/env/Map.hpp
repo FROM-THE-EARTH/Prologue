@@ -26,6 +26,7 @@ struct MapData {
                      double _magneticDeclination,
                      double launchPointLatitude,
                      double launchPointLongitude,
+					 int zone,
                      std::string imageFileNameForGnuplot,
                      double dxForGnuplot,
                      double dyForGnuplot,
@@ -33,7 +34,7 @@ struct MapData {
                      double originYForGnuplot) :
         key(keyForJson),
         type(mapType),
-        coordinate(GeoCoordinate(launchPointLatitude, launchPointLongitude)),
+        coordinate(GeoCoordinate(launchPointLatitude, launchPointLongitude, zone)),
         magneticDeclination(_magneticDeclination),
         imageFileName(imageFileNameForGnuplot),
         gnuplot_dx(dxForGnuplot),

@@ -4,39 +4,33 @@
 
 #pragma once
 
-#include <cmath>
 #include <string>
+#include <optional>
+
+#include <boost/geometry.hpp>
+#include <boost/geometry/srs/transformation.hpp>
 
 #include "misc/Constant.hpp"
+#include "app/CommandLine.hpp"
 
 class GeoCoordinate {
 private:
-    double m_latitude;   // launchpoint [deg N]
-    double m_longitude;  // launchpoint [deg E]
-    double m_degPerLen_latitude;
-    double m_degPerLen_longitude;
+	using ll_point = boost::geometry::model::point<
+			double, 2, boost::geometry::cs::geographic<boost::geometry::degree>
+		>;
+	using xy_point = boost::geometry::model::d2::point_xy<double>;
+
+	ll_point m_ll; // launchpoint [deg]
+	xy_point m_xy; // launchpoint in XY (rectangular coordinate)
+
+	std::optional<boost::geometry::srs::projection<>> m_prj;
 
 public:
-    GeoCoordinate() = default;
+    explicit GeoCoordinate(double latitude, double longitude, int zone = -1);
 
-    explicit GeoCoordinate(double latitude, double longitude) : m_latitude(latitude), m_longitude(longitude) {
-        m_degPerLen_latitude  = 6356752.0 * 2.0 * Constant::PI / 360.0;
-        m_degPerLen_longitude = 6378137.0 * std::cos(latitude / 180.0 * Constant::PI) * 2.0 * Constant::PI / 360.0;
-    }
+    double latitude() const;
 
-    double latitude() const {
-        return m_latitude;
-    }
+    double longitude() const;
 
-    double longitude() const {
-        return m_longitude;
-    }
-
-    double latitudeAt(double length) const {  // length: from here
-        return m_latitude + length / m_degPerLen_latitude;
-    }
-
-    double longitudeAt(double length) const {  // length: from here
-        return m_longitude + length / m_degPerLen_longitude;
-    }
+	std::pair<double, double> LatLonAt(double x, double y) const;
 };

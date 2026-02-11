@@ -20,13 +20,23 @@ namespace Map {
             }
             return JsonUtils::GetValueExc<T>(*pt, key);
         }
-    }
+
+		template <typename T>
+		T GetValueWithDefault(const std::string& key, T defaultValue) {
+			if (!pt) {
+				pt = std::make_unique<boost::property_tree::ptree>();
+				boost::property_tree::read_json("input/map/config.json", *pt);
+			}
+			return JsonUtils::GetValueWithDefault<T>(*pt, key, defaultValue);
+		}
+}
 
     const MapData NoshiroLand("nosiro_land",
                               MapType::NOSIRO_LAND,
                               Internal::GetValue<double>("nosiro_land.magnetic_declination"),
                               Internal::GetValue<double>("nosiro_land.latitude"),
                               Internal::GetValue<double>("nosiro_land.longitude"),
+							  Internal::GetValueWithDefault<int>("nosiro_land.zone", -1),
                               "nosiro_land.png",
                               1.0,
                               1.0,
@@ -38,6 +48,7 @@ namespace Map {
                              Internal::GetValue<double>("nosiro_sea.magnetic_declination"),
                              Internal::GetValue<double>("nosiro_sea.latitude"),
                              Internal::GetValue<double>("nosiro_sea.longitude"),
+							 Internal::GetValueWithDefault<int>("nosiro_sea.zone", -1),
                              "nosiro_sea.png",
                              7.0,
                              7.0,
@@ -49,6 +60,7 @@ namespace Map {
                           Internal::GetValue<double>("izu_land.magnetic_declination"),
                           Internal::GetValue<double>("izu_land.latitude"),
                           Internal::GetValue<double>("izu_land.longitude"),
+						  Internal::GetValueWithDefault<int>("izu_land.zone", -1),
                           "izu_land.png",
                           1.00,
                           1.00,
@@ -60,6 +72,7 @@ namespace Map {
                          Internal::GetValue<double>("izu_sea.magnetic_declination"),
                          Internal::GetValue<double>("izu_sea.latitude"),
                          Internal::GetValue<double>("izu_sea.longitude"),
+						 Internal::GetValueWithDefault<int>("izu_sea.zone", -1),
                          "izu_sea.png",
                          5.77,
                          5.77,
