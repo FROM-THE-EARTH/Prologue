@@ -4,9 +4,14 @@
 
 #include "ResultSaver.hpp"
 
-#include <boost/progress.hpp>
 #include <fstream>
 #include <iomanip>
+
+#include <boost/progress.hpp>
+
+#include <kml/dom.h>
+#include <kml/base/file.h>
+#include <kml/engine.h>
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
@@ -27,6 +32,18 @@ std::string Bits2String(const std::vector<bool>& bits) {
 }
 
 namespace ResultSaver {
+	using kmldom::KmlFactory;
+	using kmldom::CoordinatesPtr;
+	using kmldom::LinearRingPtr;
+	using kmldom::OuterBoundaryIsPtr;
+	using kmldom::PolygonPtr;
+	using kmldom::PlacemarkPtr;
+	using kmldom::DocumentPtr;
+	using kmldom::KmlPtr;
+	using kmldom::StylePtr;
+	using kmldom::LineStylePtr;
+	using kmldom::PolyStylePtr;
+
     const std::vector<std::string> headerDetail = {
         // general
         "time_from_launch[s]",
@@ -164,6 +181,105 @@ namespace ResultSaver {
             file << "\n";
         }
 
+		void WriteScatterKml(const std::string& dir, const std::vector<SimuResultSummary>& results) {
+			// create kml data
+			KmlFactory* factory = KmlFactory::GetFactory();
+
+			// create style url
+			StylePtr style = factory->CreateStyle();
+			style->set_id("scatter_style");
+			LineStylePtr ls = factory->CreateLineStyle();
+			ls->set_width(5.0);
+			ls->set_color(kmlbase::Color32(0xffffffff)); // white
+			style->set_linestyle(ls);
+			PolyStylePtr ps = factory->CreatePolyStyle();
+			ps->set_fill(false);
+			ps->set_outline(true);
+			style->set_polystyle(ps);
+
+			// separate results per wind speed
+			std::map<double, std::list<SimuResultSummary>> windSpeedMap;
+			for (const auto& result : results) {
+				windSpeedMap[result.windSpeed].push_back(result);
+			}
+			// sort each results by wind direction
+			for (auto& [windSpeed, resultList] : windSpeedMap) {
+				resultList.sort([](const SimuResultSummary& a, const SimuResultSummary& b) {
+					return a.windDirection < b.windDirection;
+				});
+			}
+			// close coordinates loop
+			for (auto& [windSpeed, resultList] : windSpeedMap) {
+				if (resultList.size() >= 2) {
+					auto& firstPos = resultList.front().bodyFinalPositions[0];
+					auto& lastPos  = resultList.back().bodyFinalPositions[0];
+					if (firstPos.latitude != lastPos.latitude || firstPos.longitude != lastPos.longitude) {
+						BodyFinalPosition closingPos;
+						closingPos.latitude  = firstPos.latitude;
+						closingPos.longitude = firstPos.longitude;
+						resultList.push_back(SimuResultSummary{ .bodyFinalPositions = {closingPos} });
+					}
+				}
+			}
+			// create coordinates
+			std::map<double, CoordinatesPtr> coordinatesMap;
+			for (const auto& [windSpeed, resultList] : windSpeedMap) {
+				CoordinatesPtr coordinates = factory->CreateCoordinates();
+				for (const auto& result : resultList) {
+					const auto& finalPos = result.bodyFinalPositions[0];
+					coordinates->add_latlngalt(finalPos.latitude, finalPos.longitude, 0.0);
+				}
+				coordinatesMap[windSpeed] = coordinates;
+			}
+			// LinearRing
+			std::map<double, LinearRingPtr> linearRingMap;
+			for (const auto& [windSpeed, coordinates] : coordinatesMap) {
+				LinearRingPtr linearRing = factory->CreateLinearRing();
+				linearRing->set_tessellate(true);
+				linearRing->set_coordinates(coordinates);
+				linearRingMap[windSpeed] = linearRing;
+			}
+			// OuterBoundaryIs
+			std::map<double, OuterBoundaryIsPtr> outerBoundaryIsMap;
+			for (const auto& [windSpeed, linearRing] : linearRingMap) {
+				OuterBoundaryIsPtr outerBoundaryIs = factory->CreateOuterBoundaryIs();
+				outerBoundaryIs->set_linearring(linearRing);
+				outerBoundaryIsMap[windSpeed] = outerBoundaryIs;
+			}
+			// Polygon
+			std::map<double, PolygonPtr> polygonMap;
+			for (const auto& [windSpeed, outerBoundaryIs] : outerBoundaryIsMap) {
+				PolygonPtr polygon = factory->CreatePolygon();
+				polygon->set_outerboundaryis(outerBoundaryIs);
+				polygonMap[windSpeed] = polygon;
+			}
+			// PlaceMark
+			std::map<double, PlacemarkPtr> placemarkMap;
+			for (const auto& [windSpeed, polygon] : polygonMap) {
+				PlacemarkPtr placemark = factory->CreatePlacemark();
+				placemark->set_name("Wind Speed " + std::to_string(windSpeed) + " m/s");
+				placemark->set_geometry(polygon);
+				placemark->set_styleurl("#scatter_style");
+				placemarkMap[windSpeed] = placemark;
+			}
+
+			// Document
+			DocumentPtr doc = factory->CreateDocument();
+			doc->set_name("Scatter Result");
+			for (const auto& [windSpeed, placemark] : placemarkMap) {
+				doc->add_feature(placemark);
+			}
+			doc->add_styleselector(style);
+			// Kml
+			KmlPtr kml = factory->CreateKml();
+			kml->set_feature(doc);
+
+			// save kml data
+			const std::string kml_text = kmldom::SerializePretty(kml);
+			const std::string kml_path = dir + "scatter_result.kml";
+			kmlbase::File::WriteStringToFile(kml_text, kml_path);
+		}
+
         void WriteSummaryScatter(const std::string& dir, const std::vector<SimuResultSummary>& results) {
             std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv");
 
@@ -179,6 +295,9 @@ namespace ResultSaver {
             }
 
             file.close();
+
+			// write kml
+			Internal::WriteScatterKml(dir, results);
         }
 
         void WriteSummaryDetail(const std::string& dir, const SimuResultSummary& result) {
