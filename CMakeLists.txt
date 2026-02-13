@@ -69,21 +69,39 @@ set(SOURCE_FILES
 
 add_executable(Prologue ${SOURCE_FILES})
 
+file(GLOB KMLBASE_SOURCES "deps/include/kml/base/*.cc")
+list(REMOVE_ITEM KMLBASE_SOURCES
+	"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/base/expat_handler_ns.cc"
+	"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/base/expat_parser.cc"
+	"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/base/time_util.cc"
+	"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/base/uri_parser.cc"
+	"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/base/zip_file.cc"
+)
 if (WIN32)
-	set(KMLBASE_SOURCES
-		"deps/include/kml/base/file.cc"
-		"deps/include/kml/base/file_win32.cc"
+	list(REMOVE_ITEM KMLBASE_SOURCES
+		"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/base/file_posix.cc"
 	)
 else()
-	set(KMLBASE_SOURCES
-		"deps/include/kml/base/file.cc"
-		"deps/include/kml/base/file_posix.cc"
+	list(REMOVE_ITEM KMLBASE_SOURCES
+		"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/base/file_win32.cc"
 	)
 endif()
 
+file(GLOB KMLDOM_SOURCES "deps/include/kml/dom/*.cc")
+list(REMOVE_ITEM KMLDOM_SOURCES
+	"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/dom/kml_handler.cc"
+	"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/dom/kml_handler_ns.cc"
+	"${CMAKE_CURRENT_SOURCE_DIR}/deps/include/kml/dom/parser.cc"
+)
+
 add_library(kmlbase STATIC ${KMLBASE_SOURCES})
 target_include_directories(kmlbase PUBLIC "deps/include/")
-target_compile_definitions(kmlbase PRIVATE UNICODE _UNICODE)
-target_link_libraries(Prologue PRIVATE kmlbase)
+target_compile_definitions(kmlbase PRIVATE UNICODE _UNICODE strncasecmp=_strnicmp)
+
+add_library(kmldom STATIC ${KMLDOM_SOURCES})
+target_include_directories(kmldom PUBLIC "deps/include/")
+target_link_libraries(kmldom PRIVATE kmlbase)
+
+target_link_libraries(Prologue PRIVATE kmldom kmlbase)
 
 add_subdirectory("test")
