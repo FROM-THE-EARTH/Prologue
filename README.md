@@ -34,7 +34,7 @@ Version: 1.10.0
 
 2. [ダウンロード](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)した Prologue の zip ファイルを展開
 
-3. [各パラメータの入力形式](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/INPUT.md)に沿ってファイルを作成する
+3. [各パラメータの入力形式](https://github.com/FROM-THE-EARTH/Prologue/blob/main/docs/INPUT.md)に沿ってファイルを作成する
 
 4. Prologue を起動、指示に従ってシミュレーションを実行<br>
    macOS, Linux の場合はターミナル上でのみ実行可能
@@ -52,7 +52,7 @@ Version: 1.10.0
 
 ## For Developers
 
-必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOPMENT.md)を読んでください。
+必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/main/docs/DEVELOPMENT.md)を読んでください。
 
 やることがなかったら [Issues](https://github.com/FROM-THE-EARTH/Prologue/issues) にあるものを消化するといいと思います。
 
