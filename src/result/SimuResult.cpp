@@ -59,7 +59,7 @@ void SimuResultLogger::update(
         SimuResultStep step = {0};
 
         // General
-        step.gen_timeFromLaunch = rocket.timeFromLaunch;
+        step.gen_timeFromLaunch = body.timeFromLaunch;
         step.gen_elapsedTime    = body.elapsedTime;
 
         // Boolean

@@ -159,13 +159,13 @@ void Solver::updateParachute() {
 			}
 		}
 		if (para.openingType & PARACHUTE_OPENING_TYPE_FIXED_TIME) {
-			if (THIS_BODY.elapsedTime >= para.openingTime) {
+			if (THIS_BODY.timeFromLaunch >= para.openingTime) {
 				THIS_BODY.parachuteOpenedList[i] = true;
 				THIS_BODY.anyParachuteOpened = true;
 			}
 		}
 		if (para.openingType & PARACHUTE_OPENING_TYPE_TIME_FROM_DETECT_PEAK) {
-			if (THIS_BODY.detectPeak && (THIS_BODY.elapsedTime - THIS_BODY.maxAltitudeTime) >= para.openingTime) {
+			if (THIS_BODY.detectPeak && (THIS_BODY.elapsedTime - THIS_BODY.maxAltitudeTime) >= para.delayTime) {
 				THIS_BODY.parachuteOpenedList[i] = true;
 				THIS_BODY.anyParachuteOpened = true;
 			}
@@ -206,6 +206,7 @@ bool Solver::updateDetachment() {
             nextBody1.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).CGLengthInitial;
             nextBody1.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).rollingMomentInertiaInitial;
 			nextBody1.parachuteOpenedList.resize(m_rocketSpec.bodySpec(m_currentBodyIndex + 1).parachutes.size(), false);
+			nextBody1.timeFromLaunch = THIS_BODY.timeFromLaunch; // inherit time from launch
 
             // receive power from the engine of the upper body for 0.2 seconds
             /*double sumThrust = 0;
@@ -220,6 +221,7 @@ bool Solver::updateDetachment() {
             nextBody2.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).CGLengthInitial;
             nextBody2.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).rollingMomentInertiaInitial;
 			nextBody2.parachuteOpenedList.resize(m_rocketSpec.bodySpec(m_currentBodyIndex + 2).parachutes.size(), false);
+			nextBody2.timeFromLaunch = THIS_BODY.timeFromLaunch; // inherit time from launch
         }
 
         m_detachCount++;
@@ -377,7 +379,7 @@ void Solver::applyDelta() {
     THIS_BODY.quat = THIS_BODY.quat.normalized();
 
     THIS_BODY.elapsedTime += m_dt;
-    m_rocket.timeFromLaunch += m_dt;
+    THIS_BODY.timeFromLaunch += m_dt;
 }
 
 void Solver::organizeResult() {
