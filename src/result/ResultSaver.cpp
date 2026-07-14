@@ -290,7 +290,7 @@ namespace ResultSaver {
 
 				KmlPtr kml = factory->CreateKml();
 				kml->set_feature(doc);
-				const std::string kmlPath = dir + "scatter_body_" + std::to_string(bodyIndex + 1) + ".kml";
+				const std::string kmlPath = dir + "scatter_body" + std::to_string(bodyIndex + 1) + ".kml";
 				kmlbase::File::WriteStringToFile(kmldom::SerializePretty(kml), kmlPath);
 			}
 		}
