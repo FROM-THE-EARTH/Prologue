@@ -69,22 +69,26 @@
   "izu_land": {
     "magnetic_declination": 7.53, // 磁気偏角 [deg]
     "latitude": 34.735972,        // 緯度 [deg]
-    "longitude": 139.420944       // 経度 [deg]
+    "longitude": 139.420944,      // 経度 [deg]
+    "zone": 9                     // 平面直角座標系の番号 (参考：https://www.gsi.go.jp/sokuchikijun/jpc.html)
   },
   "izu_sea": {
     "magnetic_declination": 7.53,
     "latitude": 34.680197,
-    "longitude": 139.43909
+    "longitude": 139.43909,
+    "zone": 9
   },
   "nosiro_land": {
     "magnetic_declination": 8.9,
     "latitude": 40.138624,
-    "longitude": 139.984906
+    "longitude": 139.984906,
+    "zone": 10
   },
   "nosiro_sea": {
     "magnetic_declination": 8.94,
     "latitude": 40.242865,
-    "longitude": 140.01045
+    "longitude": 140.01045,
+    "zone": 10
   }
 }
 
