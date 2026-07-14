@@ -81,10 +81,14 @@ struct SimuResultSummary {
     Vector3D launchClearVelocity = Vector3D();
 
     // max
-    double maxAltitude = 0, detectPeakTime = 0;
-    double maxVelocity                = 0;
-    double maxAirspeed                = 0;
-    double maxNormalForceDuringRising = 0;
+    double maxAltitude = 0, detectPeakTime = 0, airspeedAtPeak = 0;
+    double maxDynamicPressureDuringRising = 0, maxDynamicPressureTime = 0, maxDynamicPressureAltitude = 0;
+    double maxAirspeed= 0, maxAirspeedTime = 0;
+    double maxLongitudinalAccel = 0, maxLongitudinalAccelTime = 0;
+    // Parachute
+    double firstParachuteOpenTime = 0;
+    double firstParachuteOpenAltitude = 0;
+    double firstParachuteOpenAirspeed = 0;
 };
 
 // ステップごとに結果を格納、出力を行うクラス
@@ -107,6 +111,8 @@ public:
     void pushBody();
 
     void setLaunchClear(const Body& body);
+
+    void setFirstParachuteOpen(const Body& body);
 
     void setBodyFinalPosition(size_t bodyIndex, const Vector3D& pos);
 

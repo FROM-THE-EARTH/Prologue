@@ -46,6 +46,13 @@ void SimuResultLogger::setLaunchClear(const Body& body) {
     m_result.launchClearVelocity = body.velocity;
 }
 
+void SimuResultLogger::setFirstParachuteOpen(const Body& body) {
+    if (m_result.firstParachuteOpenTime) return;  // already set
+    m_result.firstParachuteOpenTime = body.elapsedTime;
+    m_result.firstParachuteOpenAltitude = body.pos.z;
+    m_result.firstParachuteOpenAirspeed = body.airSpeed_b.length();
+}
+
 void SimuResultLogger::setBodyFinalPosition(size_t bodyIndex, const Vector3D& pos) {
     m_result.bodyFinalPositions[bodyIndex] = {.latitude  = m_map.coordinate.latitudeAt(pos.y),
                                               .longitude = m_map.coordinate.longitudeAt(pos.x)};
@@ -113,16 +120,21 @@ void SimuResultLogger::update(
         if (m_result.maxAltitude < body.pos.z) {
             m_result.maxAltitude    = body.pos.z;
             m_result.detectPeakTime = body.elapsedTime;
+            m_result.airspeedAtPeak   = body.airSpeed_b.length();
         }
-        if (const auto velocity = body.velocity.length(); m_result.maxVelocity < velocity) {
-            m_result.maxVelocity = velocity;
+        if (const auto dynamicPressure = rising ? m_result.bodyResults[bodyIndex].steps.back().dynamicPressure : 0.0;
+            m_result.maxDynamicPressureDuringRising < dynamicPressure) {
+            m_result.maxDynamicPressureDuringRising = dynamicPressure;
+            m_result.maxDynamicPressureTime = body.elapsedTime;
+            m_result.maxDynamicPressureAltitude = body.pos.z;
         }
         if (const auto airspeed = body.airSpeed_b.length(); m_result.maxAirspeed < airspeed) {
             m_result.maxAirspeed = airspeed;
+            m_result.maxAirspeedTime = body.elapsedTime;
         }
-        if (const double force = rising ? sqrt(body.force_b.z * body.force_b.z + body.force_b.y * body.force_b.y) : 0.0;
-            m_result.maxNormalForceDuringRising < force) {
-            m_result.maxNormalForceDuringRising = force;
+        if (const auto longitudinalAccel = body.force_b.x / body.mass; m_result.maxLongitudinalAccel < longitudinalAccel) {
+            m_result.maxLongitudinalAccel = longitudinalAccel;
+            m_result.maxLongitudinalAccelTime = body.elapsedTime;
         }
     }
 }

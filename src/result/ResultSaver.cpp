@@ -76,9 +76,18 @@ namespace ResultSaver {
                                                     "launch_clear_vel[m/s]",
                                                     "max_altitude[m]",
                                                     "max_altitude_time[s]",
-                                                    "max_velocity[m/s]",
+                                                    "max_altitude_airspeed[m/s]",
+                                                    "max_dynamic_pressure[N/m2]",
+                                                    "max_dynamic_pressure_time[s]",
+                                                    "max_dynamic_pressure_altitude[m]",
                                                     "max_airspeed[m/s]",
-                                                    "max_normal_force_rising[N]"};
+                                                    "max_airspeed_time[s]",
+                                                    "max_longitudinal_accel[m/s2]",
+                                                    "max_longitudinal_accel_time[s]",
+                                                    "first_parachute_open_time[s]",
+                                                    "first_parachute_open_altitude[m]",
+                                                    "first_parachute_open_airspeed[m/s]"
+                                                    };
 
     namespace Internal {
         std::ofstream OpenResultCSV(const std::string& path) {
@@ -148,9 +157,12 @@ namespace ResultSaver {
         void WriteSummary(std::ofstream& file, const SimuResultSummary& result, size_t bodyCount) {
             file << WITH_COMMA(result.windSpeed) << WITH_COMMA(result.windDirection)
                  << WITH_COMMA(result.launchClearTime) << WITH_COMMA(result.launchClearVelocity.length())
-                 << WITH_COMMA(result.maxAltitude) << WITH_COMMA(result.detectPeakTime)
-                 << WITH_COMMA(result.maxVelocity) << WITH_COMMA(result.maxAirspeed)
-                 << WITH_COMMA(result.maxNormalForceDuringRising);
+                 << WITH_COMMA(result.maxAltitude) << WITH_COMMA(result.detectPeakTime) << WITH_COMMA(result.airspeedAtPeak)
+                 << WITH_COMMA(result.maxDynamicPressureDuringRising) << WITH_COMMA(result.maxDynamicPressureTime) << WITH_COMMA(result.maxDynamicPressureAltitude)
+                 << WITH_COMMA(result.maxAirspeed) << WITH_COMMA(result.maxAirspeedTime)
+                 << WITH_COMMA(result.maxLongitudinalAccel) << WITH_COMMA(result.maxLongitudinalAccelTime)
+                 << WITH_COMMA(result.firstParachuteOpenTime)
+                 << WITH_COMMA(result.firstParachuteOpenAltitude) << WITH_COMMA(result.firstParachuteOpenAirspeed);
 
             for (size_t i = 0; i < bodyCount; i++) {
                 if (i < result.bodyFinalPositions.size()) {

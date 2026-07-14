@@ -380,6 +380,9 @@ void Solver::applyDelta() {
 
     THIS_BODY.elapsedTime += m_dt;
     THIS_BODY.timeFromLaunch += m_dt;
+    if (THIS_BODY.anyParachuteOpened) {
+        m_resultLogger->setFirstParachuteOpen(THIS_BODY);
+    }
 }
 
 void Solver::organizeResult() {
