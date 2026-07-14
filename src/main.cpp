@@ -14,7 +14,7 @@
 #include "misc/Platform.hpp"
 #include "simulator/SimulatorFactory.hpp"
 
-const auto VERSION = "1.10.2";
+const auto VERSION = "1.11.0";
 
 void ShowSettingInfo();
 
