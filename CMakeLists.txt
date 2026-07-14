@@ -96,7 +96,9 @@ list(REMOVE_ITEM KMLDOM_SOURCES
 
 add_library(kmlbase STATIC ${KMLBASE_SOURCES})
 target_include_directories(kmlbase PUBLIC "deps/include/")
-target_compile_definitions(kmlbase PRIVATE UNICODE _UNICODE strncasecmp=_strnicmp)
+if(WIN32)
+    target_compile_definitions(kmlbase PRIVATE UNICODE _UNICODE strncasecmp=_strnicmp)
+endif()
 
 add_library(kmldom STATIC ${KMLDOM_SOURCES})
 target_include_directories(kmldom PUBLIC "deps/include/")
