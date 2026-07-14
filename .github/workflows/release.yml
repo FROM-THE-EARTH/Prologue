@@ -30,6 +30,8 @@ jobs:
           mv .\application\Prologue.exe .\Prologue\
           mv .\application\prologue.settings.json .\Prologue\
           mv .\application\input\ .\Prologue\
+          Copy-Item .\LICENSE .\Prologue\
+          Copy-Item .\deps\license\ .\Prologue\THIRD_PARTY_LICENSES\ -Recurse
           Compress-Archive -Path .\Prologue\ -DestinationPath .\Prologue-Windows.zip
 
       - name: Release assets
@@ -61,6 +63,9 @@ jobs:
           mv ./application/Prologue ./Prologue/
           mv ./application/prologue.settings.json ./Prologue/
           mv ./application/input/ ./Prologue/
+          cp ./LICENSE ./Prologue/
+          mkdir ./Prologue/THIRD_PARTY_LICENSES/
+          cp -R ./deps/license/. ./Prologue/THIRD_PARTY_LICENSES/
           zip Prologue-macOS -r ./Prologue/
 
       - name: Release assets
@@ -92,6 +97,9 @@ jobs:
           mv ./application/Prologue ./Prologue/
           mv ./application/prologue.settings.json ./Prologue/
           mv ./application/input/ ./Prologue/
+          cp ./LICENSE ./Prologue/
+          mkdir ./Prologue/THIRD_PARTY_LICENSES/
+          cp -R ./deps/license/. ./Prologue/THIRD_PARTY_LICENSES/
           zip Prologue-Linux -r ./Prologue/
 
       - name: Release assets
