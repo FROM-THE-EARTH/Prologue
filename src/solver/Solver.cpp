@@ -60,7 +60,7 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
         initializeRocket();
 
         // loop until the rocket lands
-        while (THIS_BODY.pos.z > 0.0 || THIS_BODY.elapsedTime < 0.1) {
+        do {
             update();
 
             if (m_trajectoryMode == TrajectoryMode::Parachute) {
@@ -86,7 +86,8 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
             }
 
             m_steps++;
-        }
+        } while (THIS_BODY.pos.z > 0.0 ||
+			(!m_rocket.launchClear && THIS_BODY.elapsedTime < THIS_BODY_SPEC.engine.combustionTime()));
 
         // Save last if need
         if (m_steps > 0 && (m_steps - 1) % AppSetting::Result::stepSaveInterval != 0) {
@@ -158,13 +159,13 @@ void Solver::updateParachute() {
 			}
 		}
 		if (para.openingType & PARACHUTE_OPENING_TYPE_FIXED_TIME) {
-			if (THIS_BODY.elapsedTime >= para.openingTime) {
+			if (THIS_BODY.timeFromLaunch >= para.openingTime) {
 				THIS_BODY.parachuteOpenedList[i] = true;
 				THIS_BODY.anyParachuteOpened = true;
 			}
 		}
 		if (para.openingType & PARACHUTE_OPENING_TYPE_TIME_FROM_DETECT_PEAK) {
-			if (THIS_BODY.detectPeak && (THIS_BODY.elapsedTime - THIS_BODY.maxAltitudeTime) >= para.openingTime) {
+			if (THIS_BODY.detectPeak && (THIS_BODY.elapsedTime - THIS_BODY.maxAltitudeTime) >= para.delayTime) {
 				THIS_BODY.parachuteOpenedList[i] = true;
 				THIS_BODY.anyParachuteOpened = true;
 			}
@@ -205,6 +206,7 @@ bool Solver::updateDetachment() {
             nextBody1.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).CGLengthInitial;
             nextBody1.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 1).rollingMomentInertiaInitial;
 			nextBody1.parachuteOpenedList.resize(m_rocketSpec.bodySpec(m_currentBodyIndex + 1).parachutes.size(), false);
+			nextBody1.timeFromLaunch = THIS_BODY.timeFromLaunch; // inherit time from launch
 
             // receive power from the engine of the upper body for 0.2 seconds
             /*double sumThrust = 0;
@@ -219,6 +221,7 @@ bool Solver::updateDetachment() {
             nextBody2.reflLength = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).CGLengthInitial;
             nextBody2.iyz        = m_rocketSpec.bodySpec(m_currentBodyIndex + 2).rollingMomentInertiaInitial;
 			nextBody2.parachuteOpenedList.resize(m_rocketSpec.bodySpec(m_currentBodyIndex + 2).parachutes.size(), false);
+			nextBody2.timeFromLaunch = THIS_BODY.timeFromLaunch; // inherit time from launch
         }
 
         m_detachCount++;
@@ -324,22 +327,15 @@ void Solver::updateExternalForce() {
 }
 
 void Solver::updateRocketDelta() {
-    if (THIS_BODY.pos.length() <= m_environment.railLength && THIS_BODY.velocity.z >= 0.0) {  // launch
-        if (THIS_BODY.force_b.x < 0) {
-            m_bodyDelta.pos      = Vector3D();
-            m_bodyDelta.velocity = Vector3D();
-            m_bodyDelta.omega_b  = Vector3D();
-            m_bodyDelta.quat     = Quaternion();
-        } else {
-            THIS_BODY.force_b.y = 0;
-            THIS_BODY.force_b.z = 0;
-            m_bodyDelta.pos     = THIS_BODY.velocity;
+    if (!m_rocket.launchClear && THIS_BODY.pos.length() <= m_environment.railLength) {  // launch
+		THIS_BODY.force_b.y = 0;
+		THIS_BODY.force_b.z = 0;
+		m_bodyDelta.pos     = THIS_BODY.velocity;
 
-            m_bodyDelta.velocity = THIS_BODY.force_b.rotated(THIS_BODY.quat) / THIS_BODY.mass;
+		m_bodyDelta.velocity = THIS_BODY.force_b.rotated(THIS_BODY.quat) / THIS_BODY.mass;
 
-            m_bodyDelta.omega_b = Vector3D();
-            m_bodyDelta.quat    = Quaternion();
-        }
+		m_bodyDelta.omega_b = Vector3D();
+		m_bodyDelta.quat    = Quaternion();
     } else if (THIS_BODY.pos.z < -10) {  // stop simulation
         m_bodyDelta.velocity = Vector3D();
     } else {  // flight
@@ -365,8 +361,17 @@ void Solver::applyDelta() {
     THIS_BODY.reflLength += m_bodyDelta.reflLength * m_dt;
     THIS_BODY.iyz += m_bodyDelta.iyz * m_dt;
     THIS_BODY.ix += m_bodyDelta.ix * m_dt;
-    THIS_BODY.pos += m_bodyDelta.pos * m_dt;
-    THIS_BODY.velocity += m_bodyDelta.velocity * m_dt;
+	const Vector3D nextPos = THIS_BODY.pos + m_bodyDelta.pos * m_dt;
+	const Vector3D nextVelocity = THIS_BODY.velocity + m_bodyDelta.velocity * m_dt;
+	// If the rocket is not cleared from the launch rail and is about to go below ground level, reset its position and velocity to zero.
+	// This is physically equivalent to the constraint condition of the launch rail.
+	if (!m_rocket.launchClear && (nextPos.z < 0.0 || (THIS_BODY.pos.z <= 0.0 && nextVelocity.z < 0.0))) {
+		THIS_BODY.pos = Vector3D();
+		THIS_BODY.velocity = Vector3D();
+	} else {
+		THIS_BODY.pos = nextPos;
+    	THIS_BODY.velocity = nextVelocity;
+	}
 	if (!THIS_BODY.anyParachuteOpened) {
 		THIS_BODY.omega_b += m_bodyDelta.omega_b * m_dt;
 		THIS_BODY.quat += m_bodyDelta.quat * m_dt;
@@ -374,7 +379,10 @@ void Solver::applyDelta() {
     THIS_BODY.quat = THIS_BODY.quat.normalized();
 
     THIS_BODY.elapsedTime += m_dt;
-    m_rocket.timeFromLaunch += m_dt;
+    THIS_BODY.timeFromLaunch += m_dt;
+    if (THIS_BODY.anyParachuteOpened) {
+        m_resultLogger->setFirstParachuteOpen(THIS_BODY);
+    }
 }
 
 void Solver::organizeResult() {

@@ -31,6 +31,7 @@ struct Body {
     Vector3D moment_b;
 
     // status
+	double timeFromLaunch = 0.0;  // [s]
     double elapsedTime     = 0.0;  // [s]
     // size_t parachuteIndex  = 0;
     // bool waitForOpenPara   = false;
@@ -49,6 +50,5 @@ struct Rocket {
     // rocket1, rocket2, rocket3, ...
     std::vector<Body> bodies;
 
-    double timeFromLaunch = 0.0;  // [s]
     bool launchClear      = false;
 };

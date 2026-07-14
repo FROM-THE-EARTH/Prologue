@@ -4,9 +4,9 @@
 
 ## Download
 
-Latest Update: 2025/10/18
+Latest Update: 2026/7/14
 
-Version: 1.9.11
+Version: 1.10.2
 
 [**Download**](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)
 
@@ -18,10 +18,10 @@ Version: 1.9.11
 
    - Gnuplot の導入
 
-     - **Windows**: [ここ](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.2.8/)からインストール<br>
+     - **Windows**: [ここ](https://sourceforge.net/projects/gnuplot/files/gnuplot/)からインストール<br>
        gnuplot のデフォルト出力形式の選択で **wxt** を選択
 
-     - **macOS**: [Homebrew](https://brew.sh/index_ja)をインストール後、ターミナルで `brew install gnuplot`
+     - **macOS**: [Homebrew](https://brew.sh/ja/)をインストール後、ターミナルで `brew install gnuplot`
 
      - **Linux**: ターミナルで `sudo apt install gnuplot`
 
@@ -34,7 +34,7 @@ Version: 1.9.11
 
 2. [ダウンロード](https://github.com/FROM-THE-EARTH/Prologue/releases/latest)した Prologue の zip ファイルを展開
 
-3. [各パラメータの入力形式](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/INPUT.md)に沿ってファイルを作成する
+3. [各パラメータの入力形式](https://github.com/FROM-THE-EARTH/Prologue/blob/main/docs/INPUT.md)に沿ってファイルを作成する
 
 4. Prologue を起動、指示に従ってシミュレーションを実行<br>
    macOS, Linux の場合はターミナル上でのみ実行可能
@@ -52,6 +52,7 @@ Version: 1.9.11
 
 ## For Developers
 
-必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/master/docs/DEVELOPMENT.md)を読んでください。
+必ず[これ](https://github.com/FROM-THE-EARTH/Prologue/blob/main/docs/DEVELOPMENT.md)を読んでください。
 
 やることがなかったら [Issues](https://github.com/FROM-THE-EARTH/Prologue/issues) にあるものを消化するといいと思います。
+

@@ -222,11 +222,8 @@ Vector3D WindModel::getWindFromData() {
 }
 
 Vector3D WindModel::getWindOriginalModel() {
-    if (m_height <= 0) {
-        const double rad          = m_groundWindDirection * Constant::PI / 180;
-        const Vector3D groundWind = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
-
-        return groundWind;
+    if (m_height < 0) {
+        return Vector3D();
     }
 
     if (m_height < Atmospehre::Wind::SurfaceLayerLimit) {  // Surface layer
@@ -256,9 +253,8 @@ Vector3D WindModel::getWindOriginalModel() {
 }
 
 Vector3D WindModel::getWindOnlyPowerLow() {
-    if (m_height <= 0) {
-        const double rad = m_groundWindDirection * Constant::PI / 180;
-        return -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
+    if (m_height < 0) {
+        return Vector3D();
     } else {
         const double rad    = m_groundWindDirection * Constant::PI / 180;
         const Vector3D wind = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
