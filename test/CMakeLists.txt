@@ -30,5 +30,18 @@ set_tests_properties(dynamics-wind-model PROPERTIES
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/wind_model"
 )
 
+set(SOURCE_FILES
+    "dynamics/WindModelOriginal.cpp"
+    "../src/app/AppSetting.cpp"
+    "../src/app/CommandLine.cpp"
+    "../src/dynamics/StandardAtmosphere1976.cpp"
+    "../src/dynamics/WindModel.cpp"
+    "../src/dynamics/WindProfile.cpp"
+)
+test(dynamics-wind-model-original "${SOURCE_FILES}")
+set_tests_properties(dynamics-wind-model-original PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/wind_model_original"
+)
+
 set(SOURCE_FILES "dynamics/StandardAtmosphere1976.cpp" "../src/dynamics/StandardAtmosphere1976.cpp")
 test(dynamics-standard-atmosphere-1976 "${SOURCE_FILES}")

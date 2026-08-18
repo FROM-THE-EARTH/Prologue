@@ -164,8 +164,8 @@ Vector3D WindModel::getWindOriginalModel(double height) const {
 
         const double descentRate = ((Atmospehre::Wind::GeostrophicWind - u) / Atmospehre::Wind::GeostrophicWind);
 
-        return -Vector3D(sin(rad), cos(rad), 0) * borderWindSpeed * descentRate
-               - Vector3D(u * sin(rad), u * cos(rad), v);
+        const Vector3D ekmanWind(u, v, 0);
+        return -Vector3D(sin(rad), cos(rad), 0) * borderWindSpeed * descentRate + ekmanWind;
     } else {  // Free atomosphere
         return Vector3D(Atmospehre::Wind::GeostrophicWind, 0, 0);
     }
