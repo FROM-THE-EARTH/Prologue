@@ -50,11 +50,13 @@
   },
 
   "atmosphere": {
-    "base_pressure_pascal": 101325, // 高度 0 [m] における気圧[Pa]（正確にはジオポテンシャル高度 0 [m]）
-    "base_temperature_celsius": 15  // 高度 0 [m] における気温[°C]（正確にはジオポテンシャル高度 0 [m]）
+    "base_pressure_pascal": 101325, // ジオポテンシャル高度 0 [m] の気圧[Pa]。101325がU.S. Standard Atmosphere, 1976の標準値。
+    "base_temperature_celsius": 15  // ジオポテンシャル高度 0 [m] の気温[°C]。15がU.S. Standard Atmosphere, 1976の標準値。
   }
 }
 ```
+
+`atmosphere` の値を標準値から変更した場合も層境界は連続しますが、計算結果は U.S. Standard Atmosphere, 1976 の標準値から外れます。
 
 ## マップ設定
 
@@ -194,11 +196,15 @@
 **拡張子**: `csv`<br>
 **形式**: 1 行目をヘッダとし、2 行目から値を入力する。
 
-| geopotential_height | wind_speed[m/s] | wind_direction[deg](North:0, East:90) |
+| geometric_height[m] | wind_speed[m/s] | wind_direction[deg](North:0, East:90) |
 | ------------------- | --------------- | ------------------------------------- |
 | 100                 | 4               | 100                                   |
 | 200                 | 6               | 150                                   |
 | 500                 | 6               | 180                                   |
+
+高度には発射点を 0 m とする幾何高度を使用します。データ点は高度の昇順で記述してください。高度 0 m の点を含める場合、風速は 0 m/s としてください。
+地表では風速を 0 m/s とし、地表から最下観測点までは最下観測点と同じ風向を保って水平風ベクトルを線形補間します。
+観測点間も水平風ベクトルを線形補間します。最高観測点より上には外挿せず、シミュレーション高度が風データの範囲を超えた場合は入力エラーとして終了します。
 
 ## 機体速度 vs Cp, Cp_a, Cd_i, Cd_f, Cd_a2, Cna
 

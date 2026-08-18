@@ -10,7 +10,7 @@
     "scatter": {
       "wind_speed_min": 1.0,
       "wind_speed_max": 7.0,
-      "wind_dir_interval": 2.5
+      "wind_dir_interval": 22.5
     }
   },
 
