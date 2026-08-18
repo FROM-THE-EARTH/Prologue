@@ -35,6 +35,7 @@ set(SOURCE_FILES
 	"src/app/Option.cpp"
 
 	"src/dynamics/WindModel.cpp"
+	"src/dynamics/WindProfile.cpp"
 
 	"src/env/Environment.cpp"
 	"src/env/GeoCoordinate.cpp"

@@ -5,7 +5,10 @@
 #include "WindModel.hpp"
 
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
+#include <utility>
+#include <vector>
 
 #include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
@@ -95,31 +98,43 @@ WindModel::WindModel(double groundWindSpeed, double groundWindDirection, double 
 }
 
 WindModel::WindModel(double magneticDeclination) : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
-    std::fstream windfile("input/wind/" + AppSetting::WindModel::realdataFilename);
+    const std::string windFilePath = "input/wind/" + AppSetting::WindModel::realdataFilename;
+    std::ifstream windfile(windFilePath);
+    if (!windfile.is_open()) {
+        throw std::runtime_error{"Failed to open wind data file: " + windFilePath};
+    }
 
-    char header[1024];
-    windfile.getline(header, 1024);
-    size_t i = 1;
-    char c;
-    std::string dummy;
-    m_windData.push_back(WindData());
-    while (!windfile.eof()) {
-        m_windData.push_back(WindData());
-        windfile >> m_windData[i].height >> c >> m_windData[i].speed >> c >> m_windData[i].direction;
-        if (m_windData[i] == WindData()) {
-            break;
+    std::string header;
+    std::getline(windfile, header);
+
+    std::vector<WindData> windData;
+    std::string line;
+    size_t lineNumber = 1;
+    while (std::getline(windfile, line)) {
+        lineNumber++;
+        if (line.empty()) {
+            continue;
         }
-        i++;
-    }
-    if (m_windData[m_windData.size() - 1] == WindData()) {
-        m_windData.pop_back();
+
+        std::istringstream row(line);
+        WindData data;
+        char firstComma, secondComma;
+        if (!(row >> data.geometricHeight >> firstComma >> data.speed >> secondComma >> data.direction)
+            || firstComma != ',' || secondComma != ',') {
+            throw std::runtime_error{"Invalid wind data at line " + std::to_string(lineNumber) + " in: "
+                                     + windFilePath};
+        }
+        row >> std::ws;
+        if (!row.eof()) {
+            throw std::runtime_error{"Unexpected value at line " + std::to_string(lineNumber) + " in: "
+                                     + windFilePath};
+        }
+
+        data.direction += magneticDeclination;
+        windData.push_back(data);
     }
 
-    windfile.close();
-
-    for (auto& wind : m_windData) {
-        wind.direction += magneticDeclination;
-    }
+    m_windProfile.emplace(std::move(windData));
 }
 
 void WindModel::update(double height) {
@@ -197,28 +212,7 @@ double WindModel::getAirDensity() {
 }
 
 Vector3D WindModel::getWindFromData() {
-    size_t index = 0;
-    for (size_t i = 0; i < m_windData.size(); i++) {
-        if (m_height > m_windData[i].height) {
-            index++;
-        }
-    }
-
-    if (index == 0) {
-        return Vector3D(0, 0, 0);
-    }
-
-    const auto& windData1 = m_windData[index - 1];
-    const auto& windData2 = m_windData[index];
-
-    const auto windSpeed =
-        Algorithm::Lerp(m_height, windData1.height, windData2.height, windData1.speed, windData2.speed);
-    const auto direction =
-        Algorithm::Lerp(m_height, windData1.height, windData2.height, windData1.direction, windData2.direction);
-
-    const double rad = direction * Constant::PI / 180;
-
-    return -Vector3D(sin(rad), cos(rad), 0) * windSpeed;
+    return m_windProfile->windAt(m_height);
 }
 
 Vector3D WindModel::getWindOriginalModel() {

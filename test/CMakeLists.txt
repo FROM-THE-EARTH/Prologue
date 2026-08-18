@@ -13,3 +13,6 @@ test(math-quaternion "${SOURCE_FILES}")
 
 set(SOURCE_FILES "math/Vector3D.cpp" "../src/math/Vector3D.cpp" "../src/math/Quaternion.cpp")
 test(math-vector3d "${SOURCE_FILES}")
+
+set(SOURCE_FILES "dynamics/WindProfile.cpp" "../src/dynamics/WindProfile.cpp")
+test(dynamics-wind-profile "${SOURCE_FILES}")
