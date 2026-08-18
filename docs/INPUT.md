@@ -50,11 +50,13 @@
   },
 
   "atmosphere": {
-    "base_pressure_pascal": 101325, // 高度 0 [m] における気圧[Pa]（正確にはジオポテンシャル高度 0 [m]）
-    "base_temperature_celsius": 15  // 高度 0 [m] における気温[°C]（正確にはジオポテンシャル高度 0 [m]）
+    "base_pressure_pascal": 101325, // ジオポテンシャル高度 0 [m] の気圧[Pa]。101325がU.S. Standard Atmosphere, 1976の標準値。
+    "base_temperature_celsius": 15  // ジオポテンシャル高度 0 [m] の気温[°C]。15がU.S. Standard Atmosphere, 1976の標準値。
   }
 }
 ```
+
+`atmosphere` の値を標準値から変更した場合も層境界は連続しますが、計算結果は U.S. Standard Atmosphere, 1976 の標準値から外れます。
 
 ## マップ設定
 

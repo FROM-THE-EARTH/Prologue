@@ -36,6 +36,7 @@ set(SOURCE_FILES
 
 	"src/dynamics/WindModel.cpp"
 	"src/dynamics/WindProfile.cpp"
+	"src/dynamics/StandardAtmosphere1976.cpp"
 
 	"src/env/Environment.cpp"
 	"src/env/GeoCoordinate.cpp"
