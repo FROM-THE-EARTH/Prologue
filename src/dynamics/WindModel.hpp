@@ -16,14 +16,15 @@ class WindModel {
 
     double m_directionInterval = 0.0;
 
-    double m_height             = 0.0;
-    double m_airDensity         = 0.0;
-    double m_gravity            = 0.0;
-    double m_pressure           = 0.0;
-    double m_temperature        = 0.0;
-    Vector3D m_wind;
-
 public:
+    struct AtmosphericConditions {
+        Vector3D wind;
+        double density     = 0.0;  // [kg/m^3]
+        double gravity     = 0.0;  // [m/s^2]
+        double pressure    = 0.0;  // [Pa]
+        double temperature = 0.0;  // [°C]
+    };
+
     // 風向風速ファイルから風モデルを構築
     explicit WindModel(double magneticDeclination);
 
@@ -32,37 +33,13 @@ public:
                        double groundWindDirection,
                        double magneticDeclination);  // original or only_powerlow
 
-    // 高度を更新
-    void update(double height);
-
-    Vector3D wind() const {
-        return m_wind;
-    }
-
-    // [kg/m^3]
-    double density() const {
-        return m_airDensity;
-    }
-
-    // [m/s^2]
-    double gravity() const {
-        return m_gravity;
-    }
-
-    // [Pa]
-    double pressure() const {
-        return m_pressure;
-    }
-
-    // [°C]
-    double temperature() const {
-        return m_temperature;
-    }
+    // 指定した幾何高度における風と大気状態を取得
+    [[nodiscard]] AtmosphericConditions sampleAt(double height) const;
 
 private:
-    Vector3D getWindFromData();
+    Vector3D getWindFromData(double height) const;
 
-    Vector3D getWindOriginalModel();
+    Vector3D getWindOriginalModel(double height) const;
 
-    Vector3D getWindOnlyPowerLow();
+    Vector3D getWindOnlyPowerLow(double height) const;
 };

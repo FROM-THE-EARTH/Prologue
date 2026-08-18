@@ -59,8 +59,11 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
 
         initializeRocket();
 
+        WindModel::AtmosphericConditions air;
+
         // loop until the rocket lands
         do {
+            air = m_windModel->sampleAt(THIS_BODY.pos.z);
             update();
 
             if (m_trajectoryMode == TrajectoryMode::Parachute) {
@@ -71,18 +74,18 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
                 break;
             }
 
-            updateAerodynamicParameters();
+            updateAerodynamicParameters(air);
 
             updateRocketProperties();
 
-            updateExternalForce();
+            updateExternalForce(air);
 
             updateRocketDelta();
 
             applyDelta();
 
             if (m_steps % AppSetting::Result::stepSaveInterval == 0) {
-                organizeResult();
+                organizeResult(air);
             }
 
             m_steps++;
@@ -91,7 +94,7 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
 
         // Save last if need
         if (m_steps > 0 && (m_steps - 1) % AppSetting::Result::stepSaveInterval != 0) {
-            organizeResult();
+            organizeResult(air);
         }
 
         m_resultLogger->setBodyFinalPosition(m_currentBodyIndex, THIS_BODY.pos);
@@ -126,8 +129,6 @@ void Solver::initializeRocket() {
 }
 
 void Solver::update() {
-    m_windModel->update(THIS_BODY.pos.z);
-
     if (!THIS_BODY_SPEC.transitions.empty()) {
         const auto& transition = THIS_BODY_SPEC.transitions[0];
         if (transition.time <= THIS_BODY.elapsedTime) {
@@ -232,8 +233,8 @@ bool Solver::updateDetachment() {
     return false;
 }
 
-void Solver::updateAerodynamicParameters() {
-    THIS_BODY.airSpeed_b = (THIS_BODY.velocity - m_windModel->wind()).rotated(THIS_BODY.quat.conjugated());
+void Solver::updateAerodynamicParameters(const WindModel::AtmosphericConditions& air) {
+    THIS_BODY.airSpeed_b = (THIS_BODY.velocity - air.wind).rotated(THIS_BODY.quat.conjugated());
 
 	double alpha =
 		abs(atan2(sqrt(THIS_BODY.airSpeed_b.y * THIS_BODY.airSpeed_b.y + THIS_BODY.airSpeed_b.z * THIS_BODY.airSpeed_b.z), (THIS_BODY.airSpeed_b.x)));
@@ -276,12 +277,12 @@ void Solver::updateRocketProperties() {
     }
 }
 
-void Solver::updateExternalForce() {
+void Solver::updateExternalForce(const WindModel::AtmosphericConditions& air) {
     THIS_BODY.force_b  = Vector3D(0, 0, 0);
     THIS_BODY.moment_b = Vector3D(0, 0, 0);
 
     // Thrust
-    THIS_BODY.force_b.x += THIS_BODY_SPEC.engine.thrustAt(THIS_BODY.elapsedTime, m_windModel->pressure());
+    THIS_BODY.force_b.x += THIS_BODY_SPEC.engine.thrustAt(THIS_BODY.elapsedTime, air.pressure);
 
     if (THIS_BODY.anyParachuteOpened) { // parachute opened
 		double CdS = 0.0;
@@ -290,18 +291,18 @@ void Solver::updateExternalForce() {
 				CdS += THIS_BODY_SPEC.parachutes[idx].CdS;
 			}
 		}
-		Vector3D drag = - 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length() * THIS_BODY.airSpeed_b * CdS;
+		Vector3D drag = - 0.5 * air.density * THIS_BODY.airSpeed_b.length() * THIS_BODY.airSpeed_b * CdS;
 
 		THIS_BODY.force_b = drag;
 		THIS_BODY.moment_b = Vector3D(0, 0, 0);  // no moment from parachute
 
 		// Gravity
 		THIS_BODY.force_b +=
-			Vector3D(0, 0, -m_windModel->gravity()).rotated(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
+			Vector3D(0, 0, -air.gravity).rotated(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
 
 	} else { // before parachute opened
         // Aero
-        const double preForceCalc = 0.5 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
+        const double preForceCalc = 0.5 * air.density * THIS_BODY.airSpeed_b.length()
                                     * THIS_BODY.airSpeed_b.length() * THIS_BODY_SPEC.bottomArea;
         const double drag = THIS_BODY.aeroCoef.Cd * preForceCalc;
         const double normal = THIS_BODY.Cnp * preForceCalc;
@@ -311,7 +312,7 @@ void Solver::updateExternalForce() {
         THIS_BODY.force_b.z -= normal;
 
         // Moment
-        const double preMomentCalc = 0.25 * m_windModel->density() * THIS_BODY.airSpeed_b.length()
+        const double preMomentCalc = 0.25 * air.density * THIS_BODY.airSpeed_b.length()
                                      * THIS_BODY_SPEC.length * THIS_BODY_SPEC.length * THIS_BODY_SPEC.bottomArea;
         THIS_BODY.moment_b.x = 0;
         THIS_BODY.moment_b.y = preMomentCalc * THIS_BODY.Cmqp * THIS_BODY.omega_b.y;
@@ -322,7 +323,7 @@ void Solver::updateExternalForce() {
 
         // Gravity
         THIS_BODY.force_b +=
-            Vector3D(0, 0, -m_windModel->gravity()).rotated(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
+            Vector3D(0, 0, -air.gravity).rotated(THIS_BODY.quat.conjugated()) * THIS_BODY.mass;
     }
 }
 
@@ -385,11 +386,11 @@ void Solver::applyDelta() {
     }
 }
 
-void Solver::organizeResult() {
+void Solver::organizeResult(const WindModel::AtmosphericConditions& air) {
     m_resultLogger->update(m_currentBodyIndex,
                            m_rocket,
                            THIS_BODY,
-                           *m_windModel.get(),
+                           air,
                            THIS_BODY_SPEC.engine.isCombusting(THIS_BODY.elapsedTime));
 }
 

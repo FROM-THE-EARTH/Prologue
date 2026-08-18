@@ -106,57 +106,59 @@ WindModel::WindModel(double magneticDeclination) : m_groundWindSpeed(0.0), m_gro
     m_windProfile.emplace(std::move(windData));
 }
 
-void WindModel::update(double height) {
-    m_height = height;
-
+WindModel::AtmosphericConditions WindModel::sampleAt(double height) const {
     const auto atmosphere = StandardAtmosphere1976::calculate(
         height, AppSetting::Atmosphere::basePressure, AppSetting::Atmosphere::baseTemperature);
-    m_gravity     = atmosphere.gravity;
-    m_temperature = atmosphere.temperature;
-    m_pressure    = atmosphere.pressure;
-    m_airDensity  = atmosphere.density;
+
+    Vector3D wind;
 
     switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
-        m_wind = getWindFromData();
+        wind = getWindFromData(height);
         break;
 
     case WindModelType::Original:
-        m_wind = getWindOriginalModel();
+        wind = getWindOriginalModel(height);
         break;
 
     case WindModelType::OnlyPowerLow:
-        m_wind = getWindOnlyPowerLow();
+        wind = getWindOnlyPowerLow(height);
         break;
     case WindModelType::NoWind:
-        m_wind = Vector3D(0, 0, 0);
+        wind = Vector3D(0, 0, 0);
         break;
     }
+
+    return {.wind        = wind,
+            .density     = atmosphere.density,
+            .gravity     = atmosphere.gravity,
+            .pressure    = atmosphere.pressure,
+            .temperature = atmosphere.temperature};
 }
 
-Vector3D WindModel::getWindFromData() {
-    return m_windProfile->windAt(m_height);
+Vector3D WindModel::getWindFromData(double height) const {
+    return m_windProfile->windAt(height);
 }
 
-Vector3D WindModel::getWindOriginalModel() {
-    if (m_height < 0) {
+Vector3D WindModel::getWindOriginalModel(double height) const {
+    if (height < 0) {
         return Vector3D();
     }
 
-    if (m_height < Atmospehre::Wind::SurfaceLayerLimit) {  // Surface layer
-        const double deltaDirection = m_height / Atmospehre::Wind::EkmanLayerLimit * m_directionInterval;
+    if (height < Atmospehre::Wind::SurfaceLayerLimit) {  // Surface layer
+        const double deltaDirection = height / Atmospehre::Wind::EkmanLayerLimit * m_directionInterval;
         const double rad            = (m_groundWindDirection + deltaDirection) * Constant::PI / 180;
         const Vector3D wind         = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
-        return applyPowerLow(wind, m_height);
-    } else if (m_height < Atmospehre::Wind::EkmanLayerLimit) {  // Ekman layer
-        const double deltaDirection = m_height / Atmospehre::Wind::EkmanLayerLimit * m_directionInterval;
+        return applyPowerLow(wind, height);
+    } else if (height < Atmospehre::Wind::EkmanLayerLimit) {  // Ekman layer
+        const double deltaDirection = height / Atmospehre::Wind::EkmanLayerLimit * m_directionInterval;
         const double rad            = (m_groundWindDirection + deltaDirection) * Constant::PI / 180;
 
-        const double borderWindSpeed = applyPowerLow(m_groundWindSpeed, m_height);
+        const double borderWindSpeed = applyPowerLow(m_groundWindSpeed, height);
 
         const double k =
-            (m_height - Atmospehre::Wind::SurfaceLayerLimit) / (Atmospehre::Wind::SurfaceLayerLimit * sqrt(2));
+            (height - Atmospehre::Wind::SurfaceLayerLimit) / (Atmospehre::Wind::SurfaceLayerLimit * sqrt(2));
         const double u = Atmospehre::Wind::GeostrophicWind * (1 - exp(-k) * cos(k));
         const double v = Atmospehre::Wind::GeostrophicWind * exp(-k) * sin(k);
 
@@ -169,13 +171,13 @@ Vector3D WindModel::getWindOriginalModel() {
     }
 }
 
-Vector3D WindModel::getWindOnlyPowerLow() {
-    if (m_height < 0) {
+Vector3D WindModel::getWindOnlyPowerLow(double height) const {
+    if (height < 0) {
         return Vector3D();
     } else {
         const double rad    = m_groundWindDirection * Constant::PI / 180;
         const Vector3D wind = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
-        return applyPowerLow(wind, m_height);
+        return applyPowerLow(wind, height);
     }
 }

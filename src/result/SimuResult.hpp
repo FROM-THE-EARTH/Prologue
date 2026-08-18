@@ -116,7 +116,11 @@ public:
 
     void setBodyFinalPosition(size_t bodyIndex, const Vector3D& pos);
 
-    void update(size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel, bool combusting);
+    void update(size_t bodyIndex,
+                const Rocket& rocket,
+                const Body& body,
+                const WindModel::AtmosphericConditions& air,
+                bool combusting);
 
     void organize();
 };

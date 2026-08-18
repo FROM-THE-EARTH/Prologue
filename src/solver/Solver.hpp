@@ -59,17 +59,17 @@ private:
 
     bool updateDetachment();
 
-    void updateAerodynamicParameters();
+    void updateAerodynamicParameters(const WindModel::AtmosphericConditions& air);
 
     void updateRocketProperties();
 
-    void updateExternalForce();
+    void updateExternalForce(const WindModel::AtmosphericConditions& air);
 
     void updateRocketDelta();
 
     void applyDelta();
 
-    void organizeResult();
+    void organizeResult(const WindModel::AtmosphericConditions& air);
 
     // Prepare the next rocket (multi rocket)
     void nextRocket();

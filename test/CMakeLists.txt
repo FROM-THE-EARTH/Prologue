@@ -17,5 +17,18 @@ test(math-vector3d "${SOURCE_FILES}")
 set(SOURCE_FILES "dynamics/WindProfile.cpp" "../src/dynamics/WindProfile.cpp")
 test(dynamics-wind-profile "${SOURCE_FILES}")
 
+set(SOURCE_FILES
+    "dynamics/WindModel.cpp"
+    "../src/app/AppSetting.cpp"
+    "../src/app/CommandLine.cpp"
+    "../src/dynamics/StandardAtmosphere1976.cpp"
+    "../src/dynamics/WindModel.cpp"
+    "../src/dynamics/WindProfile.cpp"
+)
+test(dynamics-wind-model "${SOURCE_FILES}")
+set_tests_properties(dynamics-wind-model PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/wind_model"
+)
+
 set(SOURCE_FILES "dynamics/StandardAtmosphere1976.cpp" "../src/dynamics/StandardAtmosphere1976.cpp")
 test(dynamics-standard-atmosphere-1976 "${SOURCE_FILES}")

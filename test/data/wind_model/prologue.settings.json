@@ -1,0 +1,29 @@
+{
+  "processing": {
+    "multi_thread": false,
+    "multi_thread_count": 1
+  },
+  "simulation": {
+    "dt": 0.001,
+    "detect_peak_threshold": 0.0,
+    "scatter": {
+      "wind_speed_min": 0.0,
+      "wind_speed_max": 0.0,
+      "wind_dir_interval": 30.0
+    }
+  },
+  "result": {
+    "precision": 8,
+    "step_save_interval": 1
+  },
+  "wind_model": {
+    "power_constant": 2.0,
+    "power_low_base_alt": 2.0,
+    "type": "only_powerlow",
+    "realdata_filename": "unused.csv"
+  },
+  "atmosphere": {
+    "base_pressure_pascal": 101325.0,
+    "base_temperature_celsius": 15.0
+  }
+}

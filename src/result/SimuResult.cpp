@@ -60,7 +60,11 @@ void SimuResultLogger::setBodyFinalPosition(size_t bodyIndex, const Vector3D& po
 }
 
 void SimuResultLogger::update(
-    size_t bodyIndex, const Rocket& rocket, const Body& body, const WindModel& windModel, bool combusting) {
+    size_t bodyIndex,
+    const Rocket& rocket,
+    const Body& body,
+    const WindModel::AtmosphericConditions& air,
+    bool combusting) {
     const auto& spec = m_rocketSpec.bodySpec(bodyIndex);
 
     {
@@ -76,11 +80,11 @@ void SimuResultLogger::update(
         step.parachuteOpened = body.parachuteOpenedList;
 
         // Air
-        step.air_density     = windModel.density();
-        step.air_gravity     = windModel.gravity();
-        step.air_pressure    = windModel.pressure();
-        step.air_temperature = windModel.temperature();
-        step.air_wind        = windModel.wind();
+        step.air_density     = air.density;
+        step.air_gravity     = air.gravity;
+        step.air_pressure    = air.pressure;
+        step.air_temperature = air.temperature;
+        step.air_wind        = air.wind;
 
         // Body
         step.rocket_mass        = body.mass;
