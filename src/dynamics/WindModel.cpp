@@ -119,7 +119,7 @@ WindModel::WindModel(double magneticDeclination) : m_groundWindSpeed(0.0), m_gro
         std::istringstream row(line);
         WindData data;
         char firstComma, secondComma;
-        if (!(row >> data.geopotentialHeight >> firstComma >> data.speed >> secondComma >> data.direction)
+        if (!(row >> data.geometricHeight >> firstComma >> data.speed >> secondComma >> data.direction)
             || firstComma != ',' || secondComma != ',') {
             throw std::runtime_error{"Invalid wind data at line " + std::to_string(lineNumber) + " in: "
                                      + windFilePath};
@@ -212,7 +212,7 @@ double WindModel::getAirDensity() {
 }
 
 Vector3D WindModel::getWindFromData() {
-    return m_windProfile->windAt(m_geopotentialHeight);
+    return m_windProfile->windAt(m_height);
 }
 
 Vector3D WindModel::getWindOriginalModel() {

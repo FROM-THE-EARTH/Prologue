@@ -1,4 +1,4 @@
-geopotential_height,wind_speed[m/s],"wind_direction[deg](North:0, East:90)"
+geometric_height[m],wind_speed[m/s],"wind_direction[deg](North:0, East:90)"
 363,4,138
 530,3,186
 770,8,232
