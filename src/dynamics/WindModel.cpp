@@ -4,6 +4,8 @@
 
 #include "WindModel.hpp"
 
+#include "StandardAtmosphere1976.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -15,40 +17,7 @@
 #include "math/Algorithm.hpp"
 #include "misc/Constant.hpp"
 
-// --------------------------------------------------------------
-// 大気モデルは国際標準大気参考にしている
-// JP Wikipedia: https://ja.wikipedia.org/wiki/%E5%9B%BD%E9%9A%9B%E6%A8%99%E6%BA%96%E5%A4%A7%E6%B0%97
-// EN Wikipedia: https://en.wikipedia.org/wiki/International_Standard_Atmosphere
-//
-// 実際に実装したモデル: https://pigeon-poppo.com/standard-atmosphere/
-// 上記サイトが参照しているNASAの論文: https://ntrs.nasa.gov/citations/19770009539
-// --------------------------------------------------------------
 namespace Atmospehre {
-    struct Layer {
-        double baseTemperature;  // [°C]
-        double lapseRate;        // [°C/m]
-        double basePressure;     // [Pa]
-        double baseDensity;      // [kg/m^3]
-    };
-
-    constexpr size_t LayerCount = 3;
-
-    // !! Geopotential altitude
-    // 0 ~ 11000 [m]    : Troposphere
-    // 11000 ~ 20000 [m]: Tropopause
-    // 20000 ~ 32000 [m]: Stratosphere
-    // 32000 ~ [m]      : Undefined and an error will occur if the altitude exceeds this
-    constexpr double LayerThresholds[LayerCount + 1] = {0, 11000, 20000, 32000};
-
-    // 各層におけるパラメータ
-    const Layer Layers[LayerCount] = {
-        {.baseTemperature = AppSetting::Atmosphere::baseTemperature,
-         .lapseRate       = -6.5e-3,
-         .basePressure    = AppSetting::Atmosphere::basePressure,
-         .baseDensity     = 1.2985},
-        {.baseTemperature = -56.5, .lapseRate = 0.0e-3, .basePressure = 22632.064, .baseDensity = 0.3639},
-        {.baseTemperature = -76.5, .lapseRate = 1.0e-3, .basePressure = 5474.889, .baseDensity = 0.0880}};
-
     namespace Wind {
         constexpr double GeostrophicWind = 15;  // 地衡風 [m/s]
 
@@ -140,11 +109,12 @@ WindModel::WindModel(double magneticDeclination) : m_groundWindSpeed(0.0), m_gro
 void WindModel::update(double height) {
     m_height = height;
 
-    m_geopotentialHeight = getGeopotentialHeight();
-    m_gravity            = getGravity();
-    m_temperature        = getTemperature();
-    m_pressure           = getPressure();
-    m_airDensity         = getAirDensity();
+    const auto atmosphere = StandardAtmosphere1976::calculate(
+        height, AppSetting::Atmosphere::basePressure, AppSetting::Atmosphere::baseTemperature);
+    m_gravity     = atmosphere.gravity;
+    m_temperature = atmosphere.temperature;
+    m_pressure    = atmosphere.pressure;
+    m_airDensity  = atmosphere.density;
 
     switch (AppSetting::WindModel::type) {
     case WindModelType::Real:
@@ -162,53 +132,6 @@ void WindModel::update(double height) {
         m_wind = Vector3D(0, 0, 0);
         break;
     }
-}
-
-// Geopotential Height:
-// https://ja.wikipedia.org/wiki/%E3%82%B8%E3%82%AA%E3%83%9D%E3%83%86%E3%83%B3%E3%82%B7%E3%83%A3%E3%83%AB
-// Formula from: https://pigeon-poppo.com/standard-atmosphere/#i-2
-double WindModel::getGeopotentialHeight() {
-    return Constant::EarthRadius * m_height / (Constant::EarthRadius + m_height);
-}
-
-// Formula from: https://ja.wikipedia.org/wiki/%E5%9C%B0%E7%90%83%E3%81%AE%E9%87%8D%E5%8A%9B#%E9%AB%98%E5%BA%A6
-double WindModel::getGravity() {
-    const double k = (Constant::EarthRadius / (Constant::EarthRadius + m_height));
-    return Constant::G * k * k;
-}
-
-// Formula from: https://pigeon-poppo.com/standard-atmosphere/#i-3
-double WindModel::getTemperature() {
-    for (size_t i = 0; i < Atmospehre::LayerCount; i++) {
-        if (m_geopotentialHeight < Atmospehre::LayerThresholds[i + 1]) {
-            const auto& layer = Atmospehre::Layers[i];
-            return layer.baseTemperature + layer.lapseRate * m_geopotentialHeight;
-        }
-    }
-
-    throw std::runtime_error{"Current height is " + std::to_string(m_height) + " m. "
-                             + "Wind model is not defined above 32000 m."};
-}
-
-// Formula from: https://keisan.casio.jp/exec/system/1203469826
-// はじめに記載した参考文献はおそらく間違っている
-// https://pigeon-poppo.com/standard-atmosphere/#i-4
-double WindModel::getPressure() {
-    for (size_t i = 0; i < Atmospehre::LayerCount; i++) {
-        if (m_geopotentialHeight <= Atmospehre::LayerThresholds[i + 1]) {
-            const auto k = Atmospehre::Layers[i].lapseRate * m_height;
-            return Atmospehre::Layers[i].basePressure
-                   * pow(1 + k / (m_temperature - Constant::AbsoluteZero - k), 5.257);
-        }
-    }
-
-    throw std::runtime_error{"Current height is " + std::to_string(m_height) + " m. "
-                             + "Wind model is not defined above 32000 m."};
-}
-
-// Formula from: https://pigeon-poppo.com/standard-atmosphere/#i-5
-double WindModel::getAirDensity() {
-    return m_pressure / ((m_temperature - Constant::AbsoluteZero) * Constant::GasConstant);
 }
 
 Vector3D WindModel::getWindFromData() {

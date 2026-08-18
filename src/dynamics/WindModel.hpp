@@ -17,7 +17,6 @@ class WindModel {
     double m_directionInterval = 0.0;
 
     double m_height             = 0.0;
-    double m_geopotentialHeight = 0.0;
     double m_airDensity         = 0.0;
     double m_gravity            = 0.0;
     double m_pressure           = 0.0;
@@ -61,16 +60,6 @@ public:
     }
 
 private:
-    double getGeopotentialHeight();
-
-    double getGravity();
-
-    double getTemperature();
-
-    double getPressure();
-
-    double getAirDensity();
-
     Vector3D getWindFromData();
 
     Vector3D getWindOriginalModel();
