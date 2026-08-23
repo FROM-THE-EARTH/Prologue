@@ -8,16 +8,17 @@
 #include <vector>
 
 #include "SimulatorBase.hpp"
+#include "core/SimulationResult.hpp"
 
 class ScatterSimulator : public SimulatorBase {
     // 型名が長いので別名を付けている
-    using AsyncSolver = std::future<std::shared_ptr<SimuResultLogger>>;
+    using AsyncSolver = std::future<SimulationResult>;
 
 private:
     double m_windSpeed     = 0.0;
     double m_windDirection = 0.0;
 
-    std::vector<SimuResultSummary> m_result;
+    std::vector<SimulationResult> m_result;
 
 public:
     // 継承コンストラクタ
@@ -27,10 +28,8 @@ public:
 
     void saveResult() override;
 
-    void plotToGnuplot() override;
-
 private:
-    std::shared_ptr<SimuResultLogger> solve(double windSpeed, double windDir);
+    SimulationResult solve(double windSpeed, double windDir);
 
     bool singleThreadSimulation();
 

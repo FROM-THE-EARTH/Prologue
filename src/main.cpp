@@ -6,19 +6,26 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
-#include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "app/FetchVersion.hpp"
+#include "app/InputDiagnosticPrinter.hpp"
 #include "app/Option.hpp"
+#include "config/ApplicationSettings.hpp"
 #include "misc/Platform.hpp"
+#include "io/ApplicationSettingsReader.hpp"
 #include "simulator/SimulatorFactory.hpp"
 
 const auto VERSION = "1.11.1";
 
-void ShowSettingInfo();
+void ShowSettingInfo(const ApplicationSettings& settings);
 
 int main(int argc, char* argv[]) {
+    auto settingsReadResult = ApplicationSettingsReader::Read("prologue.settings.json");
+    InputDiagnosticPrinter::Print(settingsReadResult.diagnostics);
+    const auto applicationSettings = std::move(settingsReadResult.value);
+
     std::cout << "Prologue v" << VERSION << std::endl;
 
     const auto latest_version = FetchVersion::GetLatestVersionString();
@@ -34,11 +41,11 @@ int main(int argc, char* argv[]) {
 
     const auto option = CommandLineOption::ParseArgs(argc, argv);
 
-    ShowSettingInfo();
+    ShowSettingInfo(applicationSettings);
 
     // SimulatorBaseインスタンスの生成
     // SimulatorBase抽象クラスのポインタを受け取っているが、実際の中身はDetailSimulator型またはScatterSimulator型
-    const auto simulator = SimulatorFactory::Create(option);
+    const auto simulator = SimulatorFactory::Create(option, applicationSettings);
 
     // インスタンスの生成に失敗したかどうか（simulator == nullptrと同値）
     if (!simulator) {
@@ -56,12 +63,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Gnuplotで結果をプロット
-    if (option.plotResult && !option.dryRun) {
-        CommandLine::PrintInfo(PrintInfoType::Information, "Plotting result...");
-        simulator->plotToGnuplot();
-    }
-
     // 結果フォルダを開く
     if (option.openResultFolder) {
         const auto path = std::filesystem::current_path() / "result" / simulator->getOutputDirectory();
@@ -77,10 +78,10 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void ShowSettingInfo() {
+void ShowSettingInfo(const ApplicationSettings& settings) {
     // Wind model
-    const std::string windFile = "Wind data file: " + AppSetting::WindModel::realdataFilename;
-    switch (AppSetting::WindModel::type) {
+    const std::string windFile = "Wind data file: " + settings.measuredWindFilename;
+    switch (settings.solver.wind.type) {
     case WindModelType::Real:
         CommandLine::PrintInfo(PrintInfoType::Information, "Wind model: Real", windFile, "Run detail mode simulation");
         break;

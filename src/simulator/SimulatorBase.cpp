@@ -7,23 +7,25 @@
 #include <chrono>
 #include <filesystem>
 #include <stdexcept>
+#include <utility>
 
-#include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
-#include "env/Environment.hpp"
 #include "env/Map.hpp"
-#include "rocket/RocketSpec.hpp"
+#include "io/MeasuredWindProfileReader.hpp"
 
-SimulatorBase::SimulatorBase(const std::string specName,
-                             const boost::property_tree::ptree& specJson,
-                             const SimulationSetting& setting) :
-    m_specName(specName),
-    m_setting(setting),
-    m_rocketType(RocketSpecification::IsMultipleRocket(specJson) ? RocketType::Multi : RocketType::Single),
-    m_rocketSpec(RocketSpecification(specJson)),
-    m_environment(Environment(specJson)),
-    m_mapData(getMapData()),
-    m_outputDirName(getOutputDirectoryName()) {}
+SimulatorBase::SimulatorBase(std::string specificationName,
+                             SimulationInput input,
+                             SimulationMode simulationMode,
+                             ApplicationSettings applicationSettings) :
+    m_specName(std::move(specificationName)),
+    m_applicationSettings(std::move(applicationSettings)),
+    m_simulationMode(simulationMode),
+    m_input(std::move(input)),
+    m_mapData(getMapData()) {
+    m_input.solver = getSolverSettings();
+    m_input.run.magneticDeclination = m_mapData.magneticDeclination;
+    m_outputDirName = getOutputDirectoryName();
+}
 
 bool SimulatorBase::run(bool output) {
     createResultDirectory();
@@ -70,14 +72,14 @@ void SimulatorBase::createResultDirectory() {
     }
 }
 
-std::string SimulatorBase::getOutputDirectoryName() {
+std::string SimulatorBase::getOutputDirectoryName() const {
     std::string dir = m_specName;
 
     dir += "[";
 
-    const std::filesystem::path realWindFile = AppSetting::WindModel::realdataFilename;
+    const std::filesystem::path realWindFile = m_applicationSettings.measuredWindFilename;
 
-    switch (AppSetting::WindModel::type) {
+    switch (m_input.solver.wind.type) {
     case WindModelType::Real:
         dir += "(" + realWindFile.stem().string() + ")";
         break;
@@ -92,8 +94,8 @@ std::string SimulatorBase::getOutputDirectoryName() {
         break;
     }
 
-    if (AppSetting::WindModel::type != WindModelType::Real) {
-        switch (m_setting.simulationMode) {
+    if (m_input.solver.wind.type != WindModelType::Real) {
+        switch (m_simulationMode) {
         case SimulationMode::Scatter:
             dir += "_scatter";
             break;
@@ -103,7 +105,7 @@ std::string SimulatorBase::getOutputDirectoryName() {
         }
     }
 
-    switch (m_setting.trajectoryMode) {
+    switch (m_input.run.trajectoryMode) {
     case TrajectoryMode::Parachute:
         dir += "_para";
         break;
@@ -114,24 +116,33 @@ std::string SimulatorBase::getOutputDirectoryName() {
 
     dir += "]";
 
-    if (m_setting.simulationMode == SimulationMode::Detail && AppSetting::WindModel::type != WindModelType::Real
-        && AppSetting::WindModel::type != WindModelType::NoWind) {
+    if (m_simulationMode == SimulationMode::Detail && m_input.solver.wind.type != WindModelType::Real
+        && m_input.solver.wind.type != WindModelType::NoWind) {
         std::ostringstream out;
         out.precision(2);
-        out << std::fixed << m_setting.windSpeed << "ms, " << m_setting.windDirection << "deg";
+        out << std::fixed << m_input.run.windSpeed << "ms, " << m_input.run.windDirection.degrees << "deg";
         dir += "[" + out.str() + "]";
     }
 
     return dir;
 }
 
-MapData SimulatorBase::getMapData() {
+MapData SimulatorBase::getMapData() const {
     // Get / Set place
-    std::string place = m_environment.place;
+    std::string place = m_input.environment.place;
     std::transform(place.begin(), place.end(), place.begin(), [](int c) { return static_cast<char>(::tolower(c)); });
     if (const auto map = Map::GetMap(place); map.has_value()) {
         return map.value();
     } else {
         throw std::runtime_error{"This map is invalid."};
     }
+}
+
+SolverSettings SimulatorBase::getSolverSettings() const {
+    SolverSettings settings = m_applicationSettings.solver;
+    if (settings.wind.type == WindModelType::Real) {
+        settings.wind.measuredProfile = MeasuredWindProfileReader::Read(
+            std::filesystem::path("input/wind") / m_applicationSettings.measuredWindFilename);
+    }
+    return settings;
 }

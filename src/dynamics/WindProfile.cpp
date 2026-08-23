@@ -12,7 +12,18 @@
 #include <string>
 #include <utility>
 
-WindProfile::WindProfile(std::vector<WindData> data) : m_data(std::move(data)) {
+double ResolveTrueNorthDirection(const WindDirection& direction, double magneticDeclination) {
+    if (!std::isfinite(direction.degrees) || !std::isfinite(magneticDeclination)) {
+        throw std::invalid_argument{"Wind direction and magnetic declination must be finite."};
+    }
+
+    return direction.reference == DirectionReference::MagneticNorth
+               ? direction.degrees + magneticDeclination
+               : direction.degrees;
+}
+
+WindProfile::WindProfile(std::vector<WindData> data, DirectionReference directionReference) :
+    m_data(std::move(data)), m_directionReference(directionReference) {
     if (m_data.empty()) {
         throw std::invalid_argument{"Wind profile must contain at least one data point."};
     }
@@ -38,9 +49,12 @@ WindProfile::WindProfile(std::vector<WindData> data) : m_data(std::move(data)) {
     }
 }
 
-Vector3D WindProfile::windAt(double geometricHeight) const {
+Vector3D WindProfile::windAt(double geometricHeight, double magneticDeclination) const {
     if (!std::isfinite(geometricHeight)) {
         throw std::invalid_argument{"Geometric height must be finite."};
+    }
+    if (!std::isfinite(magneticDeclination)) {
+        throw std::invalid_argument{"Magnetic declination must be finite."};
     }
 
     // The wind is zero at ground level. Between the ground and the lowest
@@ -63,19 +77,21 @@ Vector3D WindProfile::windAt(double geometricHeight) const {
                                 + std::to_string(m_data.back().geometricHeight) + " m."};
     }
 
-    const Vector3D upperWind = toWindVector(*upper);
+    const Vector3D upperWind = toWindVector(*upper, magneticDeclination);
     if (upper == m_data.begin()) {
         return upperWind * (geometricHeight / upper->geometricHeight);
     }
 
     const auto lower         = std::prev(upper);
-    const Vector3D lowerWind = toWindVector(*lower);
+    const Vector3D lowerWind = toWindVector(*lower, magneticDeclination);
     const double interpolationRatio =
         (geometricHeight - lower->geometricHeight) / (upper->geometricHeight - lower->geometricHeight);
     return lowerWind + (upperWind - lowerWind) * interpolationRatio;
 }
 
-Vector3D WindProfile::toWindVector(const WindData& data) {
-    const double rad = data.direction * std::numbers::pi / 180.0;
+Vector3D WindProfile::toWindVector(const WindData& data, double magneticDeclination) const {
+    const double direction = ResolveTrueNorthDirection(
+        WindDirection{.degrees = data.direction, .reference = m_directionReference}, magneticDeclination);
+    const double rad = direction * std::numbers::pi / 180.0;
     return -Vector3D(std::sin(rad), std::cos(rad), 0.0) * data.speed;
 }

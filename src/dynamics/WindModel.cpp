@@ -6,15 +6,9 @@
 
 #include "StandardAtmosphere1976.hpp"
 
-#include <fstream>
-#include <sstream>
+#include <cmath>
 #include <stdexcept>
-#include <utility>
-#include <vector>
 
-#include "app/AppSetting.hpp"
-#include "app/CommandLine.hpp"
-#include "math/Algorithm.hpp"
 #include "misc/Constant.hpp"
 
 namespace Atmospehre {
@@ -43,76 +37,46 @@ double normalizeAngle(double angle) {
     } else if (angle < -360) {
         return angle - 360 * static_cast<int>(std::floor(angle / 360));
     } else {
-        CommandLine::PrintInfo(PrintInfoType::Warning, "Unhandled angle " + std::to_string(angle));
         return angle;
     }
 }
 
-double applyPowerLow(double windSpeed, double height) {
-    return windSpeed
-           * pow(height / AppSetting::WindModel::powerLowBaseAltitude, 1.0 / AppSetting::WindModel::powerConstant);
+double applyPowerLow(double windSpeed, double height, const WindModelSettings& settings) {
+    return windSpeed * pow(height / settings.powerLowBaseAltitude, 1.0 / settings.powerConstant);
 }
 
-Vector3D applyPowerLow(const Vector3D& wind, double height) {
-    return wind * pow(height / AppSetting::WindModel::powerLowBaseAltitude, 1.0 / AppSetting::WindModel::powerConstant);
+Vector3D applyPowerLow(const Vector3D& wind, double height, const WindModelSettings& settings) {
+    return wind * pow(height / settings.powerLowBaseAltitude, 1.0 / settings.powerConstant);
 }
 
-WindModel::WindModel(double groundWindSpeed, double groundWindDirection, double magneticDeclination) :
+WindModel::WindModel(const WindModelSettings& settings,
+                     const AtmosphereSettings& atmosphereSettings,
+                     double groundWindSpeed,
+                     const WindDirection& groundWindDirection,
+                     double magneticDeclination) :
+    m_settings(settings),
+    m_atmosphereSettings(atmosphereSettings),
     m_groundWindSpeed(groundWindSpeed),
-    m_groundWindDirection(normalizeAngle(groundWindDirection + magneticDeclination)) {
+    m_groundWindDirection(normalizeAngle(ResolveTrueNorthDirection(groundWindDirection, magneticDeclination))),
+    m_magneticDeclination(magneticDeclination) {
+    ValidateAtmosphereSettings(m_atmosphereSettings);
+    ValidateWindModelSettings(m_settings);
+    if (!std::isfinite(m_groundWindSpeed) || m_groundWindSpeed < 0.0) {
+        throw std::invalid_argument{"Ground wind speed must be finite and non-negative."};
+    }
     m_directionInterval = 270 - m_groundWindDirection;
     if (m_directionInterval <= -45.0) {
         m_directionInterval = 270 - m_groundWindDirection + 360;
     }
 }
 
-WindModel::WindModel(double magneticDeclination) : m_groundWindSpeed(0.0), m_groundWindDirection(0.0) {
-    const std::string windFilePath = "input/wind/" + AppSetting::WindModel::realdataFilename;
-    std::ifstream windfile(windFilePath);
-    if (!windfile.is_open()) {
-        throw std::runtime_error{"Failed to open wind data file: " + windFilePath};
-    }
-
-    std::string header;
-    std::getline(windfile, header);
-
-    std::vector<WindData> windData;
-    std::string line;
-    size_t lineNumber = 1;
-    while (std::getline(windfile, line)) {
-        lineNumber++;
-        if (line.empty()) {
-            continue;
-        }
-
-        std::istringstream row(line);
-        WindData data;
-        char firstComma, secondComma;
-        if (!(row >> data.geometricHeight >> firstComma >> data.speed >> secondComma >> data.direction)
-            || firstComma != ',' || secondComma != ',') {
-            throw std::runtime_error{"Invalid wind data at line " + std::to_string(lineNumber) + " in: "
-                                     + windFilePath};
-        }
-        row >> std::ws;
-        if (!row.eof()) {
-            throw std::runtime_error{"Unexpected value at line " + std::to_string(lineNumber) + " in: "
-                                     + windFilePath};
-        }
-
-        data.direction += magneticDeclination;
-        windData.push_back(data);
-    }
-
-    m_windProfile.emplace(std::move(windData));
-}
-
 WindModel::AtmosphericConditions WindModel::sampleAt(double height) const {
     const auto atmosphere = StandardAtmosphere1976::calculate(
-        height, AppSetting::Atmosphere::basePressure, AppSetting::Atmosphere::baseTemperature);
+        height, m_atmosphereSettings.basePressure, m_atmosphereSettings.baseTemperature);
 
     Vector3D wind;
 
-    switch (AppSetting::WindModel::type) {
+    switch (m_settings.type) {
     case WindModelType::Real:
         wind = getWindFromData(height);
         break;
@@ -137,7 +101,7 @@ WindModel::AtmosphericConditions WindModel::sampleAt(double height) const {
 }
 
 Vector3D WindModel::getWindFromData(double height) const {
-    return m_windProfile->windAt(height);
+    return m_settings.measuredProfile->windAt(height, m_magneticDeclination);
 }
 
 Vector3D WindModel::getWindOriginalModel(double height) const {
@@ -150,12 +114,12 @@ Vector3D WindModel::getWindOriginalModel(double height) const {
         const double rad            = (m_groundWindDirection + deltaDirection) * Constant::PI / 180;
         const Vector3D wind         = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
-        return applyPowerLow(wind, height);
+        return applyPowerLow(wind, height, m_settings);
     } else if (height < Atmospehre::Wind::EkmanLayerLimit) {  // Ekman layer
         const double deltaDirection = height / Atmospehre::Wind::EkmanLayerLimit * m_directionInterval;
         const double rad            = (m_groundWindDirection + deltaDirection) * Constant::PI / 180;
 
-        const double borderWindSpeed = applyPowerLow(m_groundWindSpeed, height);
+        const double borderWindSpeed = applyPowerLow(m_groundWindSpeed, height, m_settings);
 
         const double k =
             (height - Atmospehre::Wind::SurfaceLayerLimit) / (Atmospehre::Wind::SurfaceLayerLimit * sqrt(2));
@@ -178,6 +142,6 @@ Vector3D WindModel::getWindOnlyPowerLow(double height) const {
         const double rad    = m_groundWindDirection * Constant::PI / 180;
         const Vector3D wind = -Vector3D(sin(rad), cos(rad), 0) * m_groundWindSpeed;
 
-        return applyPowerLow(wind, height);
+        return applyPowerLow(wind, height, m_settings);
     }
 }

@@ -1,0 +1,27 @@
+{
+  "rocket1": {
+    "ref_len": 2.01,
+    "diam": 0.091,
+    "mass_i": 8.243,
+    "mass_f": 7.867,
+    "CGlen_i": 1.074,
+    "CGlen_f": 1.051,
+    "Iyz_i": 1.971,
+    "Iyz_f": 1.863,
+    "Cmq": -3.0,
+    "parachutes": [
+      {
+        "op_height": 10,
+        "CdS": 7.0
+      }
+    ],
+    "motor_file": "Sample_K240.txt",
+    "aero_coef_file": "sample.csv"
+  },
+  "environment": {
+    "place": "nosiro_sea",
+    "rail_len": 5.0,
+    "rail_azi": -60.0,
+    "rail_elev": 70
+  }
+}

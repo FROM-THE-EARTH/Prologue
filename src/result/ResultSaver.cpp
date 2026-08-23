@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include <map>
 
 #include <boost/progress.hpp>
 
@@ -14,10 +15,9 @@
 #include <kml/base/file.h>
 #include <kml/engine.h>
 
-#include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
 #include "misc/Platform.hpp"
-#include "solver/Solver.hpp"
+#include "result/GeographicResult.hpp"
 
 #define WITH_COMMA(value) value << ','
 
@@ -109,20 +109,24 @@ namespace ResultSaver {
                                                     };
 
     namespace Internal {
-        std::ofstream OpenResultCSV(const std::string& path) {
+        std::ofstream OpenResultCSV(const std::string& path, int precision) {
             std::ofstream file(path);
-            file << std::fixed << std::setprecision(AppSetting::Result::precision);
+            file << std::fixed << std::setprecision(precision);
             return file;
         }
 
-        void WriteBodyResult(std::ofstream& file, const std::vector<SimuResultStep>& stepResult) {
+        void WriteBodyResult(std::ofstream& file,
+                             const std::vector<SimulationStep>& stepResult,
+                             const std::vector<GeographicPosition>& geographicPositions) {
             for (const auto& head : headerDetail) {
                 file << WITH_COMMA(head);
             }
             file << "\n";
 
             boost::progress_display progress(static_cast<uint32_t>(stepResult.size()));
-            for (const auto& step : stepResult) {
+            for (size_t stepIndex = 0; stepIndex < stepResult.size(); stepIndex++) {
+                const auto& step = stepResult[stepIndex];
+                const auto& geographicPosition = geographicPositions[stepIndex];
                 // general
                 file << WITH_COMMA(step.gen_timeFromLaunch) << WITH_COMMA(step.gen_elapsedTime);
 
@@ -147,7 +151,9 @@ namespace ResultSaver {
                      << WITH_COMMA(step.Cp) << WITH_COMMA(step.Cd) << WITH_COMMA(step.Cna);
 
                 // position
-                file << WITH_COMMA(step.latitude) << WITH_COMMA(step.longitude) << WITH_COMMA(step.downrange);
+                file << WITH_COMMA(geographicPosition.latitude)
+                     << WITH_COMMA(geographicPosition.longitude)
+                     << WITH_COMMA(step.downrange);
 
                 // calculated
                 file << WITH_COMMA(step.Fst) << WITH_COMMA(step.dynamicPressure);
@@ -173,8 +179,11 @@ namespace ResultSaver {
             file << "\n";
         }
 
-        void WriteSummary(std::ofstream& file, const SimuResultSummary& result, size_t bodyCount) {
-            file << WITH_COMMA(result.windSpeed) << WITH_COMMA(result.windDirection)
+        void WriteSummary(std::ofstream& file,
+                          const SimulationResult& result,
+                          const GeographicResult& geographic,
+                          size_t bodyCount) {
+            file << WITH_COMMA(result.windSpeed) << WITH_COMMA(result.windDirection.degrees)
                  << WITH_COMMA(result.launchClearTime) << WITH_COMMA(result.launchClearVelocity.length())
                  << WITH_COMMA(result.maxAltitude) << WITH_COMMA(result.detectPeakTime) << WITH_COMMA(result.airspeedAtPeak)
                  << WITH_COMMA(result.maxDynamicPressureDuringRising) << WITH_COMMA(result.maxDynamicPressureTime) << WITH_COMMA(result.maxDynamicPressureAltitude)
@@ -184,9 +193,9 @@ namespace ResultSaver {
                  << WITH_COMMA(result.firstParachuteOpenAltitude) << WITH_COMMA(result.firstParachuteOpenAirspeed);
 
             for (size_t i = 0; i < bodyCount; i++) {
-                if (i < result.bodyFinalPositions.size()) {
-                    file << WITH_COMMA(result.bodyFinalPositions[i].latitude)
-                         << WITH_COMMA(result.bodyFinalPositions[i].longitude);
+                if (i < geographic.bodyFinalPositions.size()) {
+                    file << WITH_COMMA(geographic.bodyFinalPositions[i].latitude)
+                         << WITH_COMMA(geographic.bodyFinalPositions[i].longitude);
                 } else {
                     file << WITH_COMMA(0.0) << WITH_COMMA(0.0);
                 }
@@ -195,20 +204,22 @@ namespace ResultSaver {
             file << "\n";
         }
 
-		void WriteScatterKml(const std::string& dir, const std::vector<SimuResultSummary>& results) {
+		void WriteScatterKml(const std::string& dir,
+                             const std::vector<SimulationResult>& results,
+                             const std::vector<GeographicResult>& geographicResults) {
 			if (results.empty()) {
 				return;
 			}
 
-			std::map<double, std::list<SimuResultSummary>> windSpeedMap;
+			std::map<double, std::vector<size_t>> windSpeedMap;
 			size_t bodyCount = 0;
-			for (const auto& result : results) {
-				windSpeedMap[result.windSpeed].push_back(result);
-				bodyCount = std::max(bodyCount, result.bodyFinalPositions.size());
+			for (size_t resultIndex = 0; resultIndex < results.size(); resultIndex++) {
+				windSpeedMap[results[resultIndex].windSpeed].push_back(resultIndex);
+				bodyCount = std::max(bodyCount, geographicResults[resultIndex].bodyFinalPositions.size());
 			}
-			for (auto& [windSpeed, resultList] : windSpeedMap) {
-				resultList.sort([](const SimuResultSummary& a, const SimuResultSummary& b) {
-					return a.windDirection < b.windDirection;
+			for (auto& [windSpeed, resultIndexes] : windSpeedMap) {
+				std::sort(resultIndexes.begin(), resultIndexes.end(), [&results](size_t a, size_t b) {
+					return results[a].windDirection.degrees < results[b].windDirection.degrees;
 				});
 			}
 
@@ -230,14 +241,16 @@ namespace ResultSaver {
 				style->set_polystyle(polyStyle);
 				doc->add_styleselector(style);
 
-				for (const auto& [windSpeed, resultList] : windSpeedMap) {
-					std::vector<BodyFinalPosition> positions;
-					for (const auto& result : resultList) {
-						if (bodyIndex >= result.bodyFinalPositions.size()) {
+				for (const auto& [windSpeed, resultIndexes] : windSpeedMap) {
+					std::vector<GeographicPosition> positions;
+					for (const size_t resultIndex : resultIndexes) {
+						const auto& result = results[resultIndex];
+						const auto& geographic = geographicResults[resultIndex];
+						if (bodyIndex >= geographic.bodyFinalPositions.size()) {
 							continue;
 						}
 
-						const auto& finalPos = result.bodyFinalPositions[bodyIndex];
+						const auto& finalPos = geographic.bodyFinalPositions[bodyIndex];
 						positions.push_back(finalPos);
 
 						CoordinatesPtr pointCoordinates = factory->CreateCoordinates();
@@ -247,15 +260,15 @@ namespace ResultSaver {
 
 						PlacemarkPtr pointPlacemark = factory->CreatePlacemark();
 						pointPlacemark->set_name("Wind Speed " + std::to_string(windSpeed)
-							+ " m/s, Wind Direction " + std::to_string(result.windDirection) + " deg");
+							+ " m/s, Wind Direction " + std::to_string(result.windDirection.degrees) + " deg");
 						pointPlacemark->set_geometry(point);
 						doc->add_feature(pointPlacemark);
 					}
 
-					std::vector<BodyFinalPosition> distinctPositions;
+					std::vector<GeographicPosition> distinctPositions;
 					for (const auto& position : positions) {
 						const auto found = std::find_if(distinctPositions.begin(), distinctPositions.end(),
-							[&position](const BodyFinalPosition& other) {
+							[&position](const GeographicPosition& other) {
 								return position.latitude == other.latitude && position.longitude == other.longitude;
 							});
 						if (found == distinctPositions.end()) {
@@ -295,45 +308,67 @@ namespace ResultSaver {
 			}
 		}
 
-        void WriteSummaryScatter(const std::string& dir, const std::vector<SimuResultSummary>& results) {
-            std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv");
+        void WriteSummaryScatter(const std::string& dir,
+                                 const std::vector<SimulationResult>& results,
+                                 const std::vector<GeographicResult>& geographicResults,
+                                 int precision) {
+            std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv", precision);
 
             size_t bodyCount = 0;
-            for (const auto& result : results) {
-                bodyCount = bodyCount < result.bodyFinalPositions.size() ? result.bodyFinalPositions.size() : bodyCount;
+            for (const auto& geographic : geographicResults) {
+                bodyCount = bodyCount < geographic.bodyFinalPositions.size()
+                                ? geographic.bodyFinalPositions.size()
+                                : bodyCount;
             }
 
             WriteSummaryHeader(file, bodyCount);
 
-            for (const auto& result : results) {
-                WriteSummary(file, result, bodyCount);
+            for (size_t i = 0; i < results.size(); i++) {
+                WriteSummary(file, results[i], geographicResults[i], bodyCount);
             }
 
             file.close();
 
 			// write kml
-			Internal::WriteScatterKml(dir, results);
+			Internal::WriteScatterKml(dir, results, geographicResults);
         }
 
-        void WriteSummaryDetail(const std::string& dir, const SimuResultSummary& result) {
-            std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv");
+        void WriteSummaryDetail(const std::string& dir,
+                                const SimulationResult& result,
+                                const GeographicResult& geographic,
+                                int precision) {
+            std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv", precision);
 
-            WriteSummaryHeader(file, result.bodyFinalPositions.size());
+            WriteSummaryHeader(file, geographic.bodyFinalPositions.size());
 
-            WriteSummary(file, result, result.bodyFinalPositions.size());
+            WriteSummary(file, result, geographic, geographic.bodyFinalPositions.size());
 
             file.close();
         }
     }
 
-    void SaveScatter(const std::string& dir, const std::vector<SimuResultSummary>& result) {
+    void SaveScatter(const std::string& dir,
+                     const std::vector<SimulationResult>& result,
+                     const MapData& map,
+                     int precision) {
+        std::vector<GeographicResult> geographicResults;
+        geographicResults.reserve(result.size());
+        for (const auto& simulationResult : result) {
+            geographicResults.emplace_back(GeographicResultAdapter::Convert(simulationResult, map));
+        }
+
         // Save summary
-        Internal::WriteSummaryScatter(dir, result);
+        Internal::WriteSummaryScatter(dir, result, geographicResults, precision);
     }
 
-    void SaveDetail(const std::string& dir, const SimuResultSummary& result) {
+    void SaveDetail(const std::string& dir,
+                    const SimulationResult& result,
+                    const MapData& map,
+                    int precision) {
+        const GeographicResult geographic = GeographicResultAdapter::Convert(result, map);
+
         // Save summary
-        Internal::WriteSummaryDetail(dir, result);
+        Internal::WriteSummaryDetail(dir, result, geographic, precision);
 
         // Save detail
         // write time-series data of all bodies
@@ -342,8 +377,9 @@ namespace ResultSaver {
             for (size_t i = 0; i < bodyCount; i++) {
                 const std::string fileName = "detail_body" + std::to_string(i + 1);
                 const std::string path     = dir + fileName + ".csv";
-                std::ofstream file         = Internal::OpenResultCSV(path);
-                Internal::WriteBodyResult(file, result.bodyResults[i].steps);
+                std::ofstream file         = Internal::OpenResultCSV(path, precision);
+                Internal::WriteBodyResult(
+                    file, result.bodyResults[i].steps, geographic.bodyStepPositions[i]);
                 file.close();
             }
         }

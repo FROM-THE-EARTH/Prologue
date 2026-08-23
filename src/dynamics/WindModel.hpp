@@ -4,15 +4,15 @@
 
 #pragma once
 
-#include <optional>
-#include <string>
-
+#include "core/SimulationSettings.hpp"
 #include "dynamics/WindProfile.hpp"
 
 class WindModel {
-    std::optional<WindProfile> m_windProfile;
+    const WindModelSettings m_settings;
+    const AtmosphereSettings m_atmosphereSettings;
 
     const double m_groundWindSpeed, m_groundWindDirection;
+    const double m_magneticDeclination;
 
     double m_directionInterval = 0.0;
 
@@ -25,13 +25,11 @@ public:
         double temperature = 0.0;  // [°C]
     };
 
-    // 風向風速ファイルから風モデルを構築
-    explicit WindModel(double magneticDeclination);
-
-    // オリジナル、またはべき乗則での風モデル構築
-    explicit WindModel(double groundWindSpeed,
-                       double groundWindDirection,
-                       double magneticDeclination);  // original or only_powerlow
+    explicit WindModel(const WindModelSettings& settings,
+                       const AtmosphereSettings& atmosphereSettings,
+                       double groundWindSpeed,
+                       const WindDirection& groundWindDirection,
+                       double magneticDeclination);
 
     // 指定した幾何高度における風と大気状態を取得
     [[nodiscard]] AtmosphericConditions sampleAt(double height) const;

@@ -8,7 +8,9 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "app/CommandLine.hpp"
+#include <optional>
+#include <stdexcept>
+#include <string>
 
 namespace JsonUtils {
     bool Exist(const boost::property_tree::ptree& pt, const std::string& key);
@@ -59,8 +61,7 @@ namespace JsonUtils {
     template <typename T>
     T GetValueExc(const boost::property_tree::ptree& pt, const std::string& key) {
         if (!JsonUtils::HasValue<T>(pt, key)) {
-            CommandLine::PrintInfo(PrintInfoType::Error, "The key of " + key + " has no value.");
-            throw 0;
+            throw std::runtime_error{"The key of " + key + " has no value."};
         }
 
         return JsonUtils::GetValue<T>(pt, key);

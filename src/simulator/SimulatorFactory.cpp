@@ -4,21 +4,21 @@
 
 #include "SimulatorFactory.hpp"
 
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <filesystem>
 #include <stdexcept>
+#include <utility>
 
-#include "app/AppSetting.hpp"
 #include "app/CommandLine.hpp"
+#include "app/InputDiagnosticPrinter.hpp"
 #include "app/Option.hpp"
+#include "io/SimulationInputReader.hpp"
 #include "simulator/DetailSimulator.hpp"
 #include "simulator/ScatterSimulator.hpp"
 
 namespace SimulatorFactory {
     const std::string specDirectoryPath = "input/spec/";
 
-    namespace _internal {
+    namespace {
         std::string setSpecFile(const CommandLineOption::Option& option) {
             if (option.specifySpecFile) {
                 if (!std::filesystem::exists(specDirectoryPath + option.specFilePath)) {
@@ -96,61 +96,58 @@ namespace SimulatorFactory {
             return time;
         }
 
-        SimulatorBase::SimulationSetting SetupSimulator(const boost::property_tree::ptree& specJson) {
-            SimulatorBase::SimulationSetting setting;
+        SimulationMode SetupSimulationInput(SimulationInput& input,
+                                            const ApplicationSettings& applicationSettings) {
+            SimulationMode simulationMode = SimulationMode::Detail;
 
-            if (AppSetting::WindModel::type != WindModelType::Real
-                && AppSetting::WindModel::type != WindModelType::NoWind) {
-                setting.simulationMode = _internal::setSimulationMode();
+            if (applicationSettings.solver.wind.type != WindModelType::Real
+                && applicationSettings.solver.wind.type != WindModelType::NoWind) {
+                simulationMode = setSimulationMode();
             }
 
-            setting.trajectoryMode = _internal::setTrajectoryMode();
+            input.run.trajectoryMode = setTrajectoryMode();
+            input.run.windDirection.reference = DirectionReference::MagneticNorth;
 
             // Set wind condition if need
-            if (setting.simulationMode == SimulationMode::Detail && AppSetting::WindModel::type != WindModelType::Real
-                && AppSetting::WindModel::type != WindModelType::NoWind) {
-                std::tie(setting.windSpeed, setting.windDirection) = setWindCondition();
+            if (simulationMode == SimulationMode::Detail
+                && applicationSettings.solver.wind.type != WindModelType::Real
+                && applicationSettings.solver.wind.type != WindModelType::NoWind) {
+                std::tie(input.run.windSpeed, input.run.windDirection.degrees) = setWindCondition();
             }
 
             // Setup multiple rocket
-            if (RocketSpecification::IsMultipleRocket(specJson)) {
+            if (input.rocket.isMultiple()) {
                 CommandLine::PrintInfo(PrintInfoType::Information, "This is Multiple Rocket");
-                setting.detachType = setDetachType();
-                if (setting.detachType == DetachType::Time) {
-                    setting.detachTime = setDetachTime();
+                input.run.detachType = setDetachType();
+                if (input.run.detachType == DetachType::Time) {
+                    input.run.detachTime = setDetachTime();
                 }
             }
 
-            return setting;
+            return simulationMode;
         }
     }
 
-    std::unique_ptr<SimulatorBase> Create(const CommandLineOption::Option& option) {
+    std::unique_ptr<SimulatorBase> Create(const CommandLineOption::Option& option,
+                                          const ApplicationSettings& applicationSettings) {
         try {
             // Specification json file
-            const auto specFilePath = _internal::setSpecFile(option);
-            boost::property_tree::ptree specJson;
-            boost::property_tree::read_json(specFilePath, specJson);
+            const auto specFilePath = setSpecFile(option);
+            const SimulationInputReader::Document inputDocument(specFilePath);
 
-            // Specification name
-            std::string specName = specFilePath;
-            specName.erase(0, specDirectoryPath.size());
-            specName.erase(specName.size() - 5, 5);
-
-            // Setup simulator
-            const auto simulationSetting = _internal::SetupSimulator(specJson);
+            auto inputReadResult = inputDocument.toSimulationInput();
+            InputDiagnosticPrinter::Print(inputReadResult.diagnostics);
+            auto input = std::move(inputReadResult.value);
+            const SimulationMode simulationMode = SetupSimulationInput(input, applicationSettings);
 
             // Create simulator instance
-            if (AppSetting::WindModel::type == WindModelType::Real
-                || AppSetting::WindModel::type == WindModelType::NoWind) {
-                return std::make_unique<DetailSimulator>(specName, specJson, simulationSetting);
-            } else {
-                switch (simulationSetting.simulationMode) {
-                case SimulationMode::Detail:
-                    return std::make_unique<DetailSimulator>(specName, specJson, simulationSetting);
-                case SimulationMode::Scatter:
-                    return std::make_unique<ScatterSimulator>(specName, specJson, simulationSetting);
-                }
+            switch (simulationMode) {
+            case SimulationMode::Detail:
+                return std::make_unique<DetailSimulator>(
+                    inputDocument.specificationName(), std::move(input), simulationMode, applicationSettings);
+            case SimulationMode::Scatter:
+                return std::make_unique<ScatterSimulator>(
+                    inputDocument.specificationName(), std::move(input), simulationMode, applicationSettings);
             }
 
             throw std::runtime_error{"SimulatorFactory::Create(): Detected unhandled return path."};

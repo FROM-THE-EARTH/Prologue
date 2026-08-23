@@ -4,51 +4,30 @@
 
 #include "Solver.hpp"
 
-#include "app/AppSetting.hpp"
-#include "app/CommandLine.hpp"
-#include "env/Map.hpp"
-
 #define THIS_BODY m_rocket.bodies[m_currentBodyIndex]
 #define THIS_BODY_SPEC m_rocketSpec.bodySpec(m_currentBodyIndex)
 
-Solver::Solver(MapData mapData,
-               RocketType rocketType,
-               TrajectoryMode mode,
-               DetachType detachType,
-               double detachTime,
-               const Environment& env,
-               const RocketSpecification& spec) :
-    m_dt(AppSetting::Simulation::dt),
-    m_rocketSpec(spec),
-    m_environment(env),
-    m_mapData(mapData),
-    m_rocketType(rocketType),
-    m_trajectoryMode(mode),
-    m_detachType(detachType),
-    m_detachTime(detachTime) {
+Solver::Solver(const SimulationInput& input, SimulationObserver& observer) :
+    m_dt(input.solver.timeStep),
+    m_resultStepSaveInterval(input.solver.resultStepSaveInterval),
+    m_environment(input.environment),
+    m_solverSettings(input.solver),
+    m_runSettings(input.run),
+    m_isMultiple(input.rocket.isMultiple()),
+    m_rocketSpec(input.rocket),
+    m_observer(observer) {
+    ValidateSimulationInput(input);
     m_rocket.bodies.resize(m_rocketSpec.bodyCount());
 }
 
-std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDirection) {
-    // Initialize wind model
-    switch (AppSetting::WindModel::type) {
-    case WindModelType::Real:
-        m_windModel = std::make_unique<WindModel>(m_mapData.magneticDeclination);
-        break;
-
-    default:
-        m_windModel = std::make_unique<WindModel>(windSpeed, windDirection, m_mapData.magneticDeclination);
-        break;
-    }
-
-    if (m_windModel == nullptr) {
-        CommandLine::PrintInfo(PrintInfoType::Error, "Cannot create wind model");
-        return nullptr;
-    }
-
-    // Initialize result
-    m_resultLogger = std::make_shared<SimuResultLogger>(m_rocketSpec, m_mapData, windSpeed, windDirection);
-    m_resultLogger->pushBody();
+void Solver::solve() {
+    m_windModel = std::make_unique<WindModel>(
+        m_solverSettings.wind,
+        m_solverSettings.atmosphere,
+        m_runSettings.windSpeed,
+        m_runSettings.windDirection,
+        m_runSettings.magneticDeclination);
+    m_observer.pushBody();
 
     // Loop until all rockets are solved
     // Single rocket: solve once
@@ -66,11 +45,11 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
             air = m_windModel->sampleAt(THIS_BODY.pos.z);
             update();
 
-            if (m_trajectoryMode == TrajectoryMode::Parachute) {
+            if (m_runSettings.trajectoryMode == TrajectoryMode::Parachute) {
                 updateParachute();
             }
 
-            if (m_rocketType == RocketType::Multi && updateDetachment()) {
+            if (m_isMultiple && updateDetachment()) {
                 break;
             }
 
@@ -84,7 +63,7 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
 
             applyDelta();
 
-            if (m_steps % AppSetting::Result::stepSaveInterval == 0) {
+            if (m_steps % m_resultStepSaveInterval == 0) {
                 organizeResult(air);
             }
 
@@ -93,17 +72,16 @@ std::shared_ptr<SimuResultLogger> Solver::solve(double windSpeed, double windDir
 			(!m_rocket.launchClear && THIS_BODY.elapsedTime < THIS_BODY_SPEC.engine.combustionTime()));
 
         // Save last if need
-        if (m_steps > 0 && (m_steps - 1) % AppSetting::Result::stepSaveInterval != 0) {
+        if (m_steps > 0 && (m_steps - 1) % m_resultStepSaveInterval != 0) {
             organizeResult(air);
         }
 
-        m_resultLogger->setBodyFinalPosition(m_currentBodyIndex, THIS_BODY.pos);
+        m_observer.setBodyFinalPosition(m_currentBodyIndex, THIS_BODY.pos);
 
         solvedBodyCount++;
 
     } while (solvedBodyCount < 2 * m_detachCount + 1);
 
-    return m_resultLogger;
 }
 
 void Solver::initializeRocket() {
@@ -121,8 +99,11 @@ void Solver::initializeRocket() {
     m_bodyDelta.pos        = Vector3D(0, 0, 0);
     m_bodyDelta.velocity   = Vector3D(0, 0, 0);
     m_bodyDelta.omega_b    = Vector3D(0, 0, 0);
-    m_bodyDelta.quat =
-        Quaternion(m_environment.railElevation, -(m_environment.railAzimuth + m_mapData.magneticDeclination) + 90);
+    const double railAzimuth = ResolveTrueNorthDirection(
+        WindDirection{.degrees = m_environment.railAzimuth,
+                      .reference = DirectionReference::MagneticNorth},
+        m_runSettings.magneticDeclination);
+    m_bodyDelta.quat = Quaternion(m_environment.railElevation, -railAzimuth + 90);
 	m_bodyDelta.parachuteOpenedList.resize(THIS_BODY_SPEC.parachutes.size(), false);
 
     THIS_BODY = m_bodyDelta;
@@ -177,12 +158,12 @@ void Solver::updateParachute() {
 bool Solver::updateDetachment() {
     bool detachCondition = false;
 
-    switch (m_detachType) {
+    switch (m_runSettings.detachType) {
     case DetachType::BurningFinished:
         detachCondition = THIS_BODY_SPEC.engine.didCombustion(THIS_BODY.elapsedTime);
         break;
     case DetachType::Time:
-        detachCondition = THIS_BODY.elapsedTime >= m_detachTime;
+        detachCondition = THIS_BODY.elapsedTime >= m_runSettings.detachTime;
         break;
     case DetachType::SyncPara:
         detachCondition = THIS_BODY.anyParachuteOpened == true;
@@ -342,7 +323,7 @@ void Solver::updateRocketDelta() {
     } else {  // flight
         if (!m_rocket.launchClear) {
             m_rocket.launchClear = true;
-            m_resultLogger->setLaunchClear(THIS_BODY);
+            m_observer.setLaunchClear(THIS_BODY);
         }
 
         m_bodyDelta.pos      = THIS_BODY.velocity;
@@ -382,19 +363,19 @@ void Solver::applyDelta() {
     THIS_BODY.elapsedTime += m_dt;
     THIS_BODY.timeFromLaunch += m_dt;
     if (THIS_BODY.anyParachuteOpened) {
-        m_resultLogger->setFirstParachuteOpen(THIS_BODY);
+        m_observer.setFirstParachuteOpen(THIS_BODY);
     }
 }
 
 void Solver::organizeResult(const WindModel::AtmosphericConditions& air) {
-    m_resultLogger->update(m_currentBodyIndex,
-                           m_rocket,
-                           THIS_BODY,
-                           air,
-                           THIS_BODY_SPEC.engine.isCombusting(THIS_BODY.elapsedTime));
+    m_observer.update(m_currentBodyIndex,
+                      m_rocket,
+                      THIS_BODY,
+                      air,
+                      THIS_BODY_SPEC.engine.isCombusting(THIS_BODY.elapsedTime));
 }
 
 void Solver::nextRocket() {
     m_currentBodyIndex++;
-    m_resultLogger->pushBody();
+    m_observer.pushBody();
 }

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <boost/property_tree/ptree.hpp>
-#include <string>
 #include <vector>
 
 #include "AeroCoefficient.hpp"
@@ -17,35 +15,35 @@
 #define PARACHUTE_OPENING_TYPE_TIME_FROM_DETECT_PEAK 0x04
 
 struct Parachute {
-    unsigned char openingType; // PARACHUTE_OPENING_TYPE_*
-    double openingTime;
-    double delayTime;
-    double openingHeight;
+    unsigned char openingType = 0; // PARACHUTE_OPENING_TYPE_*
+    double openingTime        = 0;
+    double delayTime          = 0;
+    double openingHeight      = 0;
 
     double CdS = 0;
 };
 
 struct Transition {
-    double time;
-    double mass;
-    double Cd;
+    double time = 0;
+    double mass = 0;
+    double Cd   = 0;
 };
 
 struct BodySpecification {
-    double length;      // [m]
-    double diameter;    // [m]
-    double bottomArea;  // [m^2]
+    double length     = 0;  // [m]
+    double diameter   = 0;  // [m]
+    double bottomArea = 0;  // [m^2]
 
-    double CGLengthInitial;  // [m]
-    double CGLengthFinal;    // [m]
+    double CGLengthInitial = 0;  // [m]
+    double CGLengthFinal   = 0;  // [m]
 
-    double massInitial;  // [kg]
-    double massFinal;    // [kg]
+    double massInitial = 0;  // [kg]
+    double massFinal   = 0;  // [kg]
 
-    double rollingMomentInertiaInitial;  // [kg*m^2]
-    double rollingMomentInertiaFinal;    // [kg*m^2]
+    double rollingMomentInertiaInitial = 0;  // [kg*m^2]
+    double rollingMomentInertiaFinal   = 0;  // [kg*m^2]
 
-    double Cmq;
+    double Cmq = 0;
 
     std::vector<Parachute> parachutes;
 
@@ -55,20 +53,31 @@ struct BodySpecification {
     std::vector<Transition> transitions;
 };
 
+struct SeparationSpecification {
+    size_t sourceBodyIndex = 0;
+    std::vector<size_t> productBodyIndices;
+};
+
 class RocketSpecification {
 private:
     std::vector<BodySpecification> m_bodySpecs;
-    bool m_existInfCd = false;
-
+    std::vector<SeparationSpecification> m_separations;
 public:
     RocketSpecification() = delete;
 
-    explicit RocketSpecification(const boost::property_tree::ptree& specJson);
-
-    static bool IsMultipleRocket(const boost::property_tree::ptree& specJson);
+    explicit RocketSpecification(std::vector<BodySpecification> bodySpecs,
+                                 std::vector<SeparationSpecification> separations = {});
 
     size_t bodyCount() const {
         return m_bodySpecs.size();
+    }
+
+    bool isMultiple() const {
+        return !m_separations.empty();
+    }
+
+    const std::vector<SeparationSpecification>& separations() const {
+        return m_separations;
     }
 
     const BodySpecification& bodySpec(size_t bodyIndex) const {
@@ -78,9 +87,4 @@ public:
     BodySpecification& bodySpec(size_t bodyIndex) {
         return m_bodySpecs[bodyIndex];
     }
-
-private:
-    void setBodySpecification(const boost::property_tree::ptree& pt, size_t index);
-
-    void setInfParachuteCd();
 };

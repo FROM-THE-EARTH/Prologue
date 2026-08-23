@@ -23,53 +23,65 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../application)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ../application)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ../application)
 
-include_directories(
-	SYSTEM "deps/include/"
-	"src/"
-)
-
-set(SOURCE_FILES
-	"src/app/AppSetting.cpp"
-	"src/app/CommandLine.cpp"
-	"src/app/FetchVersion.cpp"
-	"src/app/Option.cpp"
-
+set(PROLOGUE_CORE_SOURCE_FILES
+	"src/core/Simulation.cpp"
+	"src/core/SimulationInput.cpp"
+	"src/core/SimulationSettings.cpp"
+	"src/dynamics/StandardAtmosphere1976.cpp"
 	"src/dynamics/WindModel.cpp"
 	"src/dynamics/WindProfile.cpp"
-	"src/dynamics/StandardAtmosphere1976.cpp"
-
 	"src/env/Environment.cpp"
-	"src/env/GeoCoordinate.cpp"
-	"src/env/Map.cpp"
-
-	"src/gnuplot/plotter/IPlotter.cpp"
-	"src/gnuplot/plotter/Plotter2D.cpp"
-	"src/gnuplot/plotter/Plotter3D.cpp"
-
-	"src/math/Algorithm.cpp"
+	"src/math/Interpolation.cpp"
 	"src/math/Quaternion.cpp"
 	"src/math/Vector3D.cpp"
-
-	"src/result/ResultSaver.cpp"
-	"src/result/SimuResult.cpp"
-
 	"src/rocket/AeroCoefficient.cpp"
 	"src/rocket/Engine.cpp"
 	"src/rocket/RocketSpec.cpp"
+	"src/solver/Solver.cpp"
+)
+
+add_library(prologue-core STATIC ${PROLOGUE_CORE_SOURCE_FILES})
+target_include_directories(prologue-core PUBLIC "src/")
+target_compile_features(prologue-core PUBLIC cxx_std_20)
+
+set(PROLOGUE_IO_SOURCE_FILES
+	"src/io/ApplicationSettingsReader.cpp"
+	"src/io/SimulationInputReader.cpp"
+	"src/io/MeasuredWindProfileReader.cpp"
+	"src/utils/JsonUtils.cpp"
+)
+
+add_library(prologue-io STATIC ${PROLOGUE_IO_SOURCE_FILES})
+target_include_directories(prologue-io PUBLIC "src/")
+target_include_directories(prologue-io SYSTEM PRIVATE "deps/include/")
+target_link_libraries(prologue-io PUBLIC prologue-core)
+target_compile_features(prologue-io PUBLIC cxx_std_20)
+
+set(SOURCE_FILES
+	"src/app/CommandLine.cpp"
+	"src/app/FetchVersion.cpp"
+	"src/app/InputDiagnosticPrinter.cpp"
+	"src/app/Option.cpp"
+
+	"src/env/GeoCoordinate.cpp"
+	"src/env/Map.cpp"
+
+	"src/math/Algorithm.cpp"
+
+	"src/result/ResultSaver.cpp"
+	"src/result/GeographicResult.cpp"
 
 	"src/simulator/DetailSimulator.cpp"
 	"src/simulator/ScatterSimulator.cpp"
 	"src/simulator/SimulatorBase.cpp"
 	"src/simulator/SimulatorFactory.cpp"
 
-	"src/solver/Solver.cpp"
-
-	"src/utils/JsonUtils.cpp"
-
 	"src/main.cpp"
 )
 
 add_executable(Prologue ${SOURCE_FILES})
+target_include_directories(Prologue PRIVATE "src/")
+target_include_directories(Prologue SYSTEM PRIVATE "deps/include/")
 
 file(GLOB KMLBASE_SOURCES "deps/include/kml/base/*.cc")
 list(REMOVE_ITEM KMLBASE_SOURCES
@@ -106,6 +118,6 @@ add_library(kmldom STATIC ${KMLDOM_SOURCES})
 target_include_directories(kmldom PUBLIC "deps/include/")
 target_link_libraries(kmldom PRIVATE kmlbase)
 
-target_link_libraries(Prologue PRIVATE kmldom kmlbase)
+target_link_libraries(Prologue PRIVATE prologue-core prologue-io kmldom kmlbase)
 
 add_subdirectory("test")

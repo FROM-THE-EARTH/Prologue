@@ -9,48 +9,31 @@
 
 #pragma once
 
-#include <boost/property_tree/ptree.hpp>
 #include <string>
 
-#include "solver/Solver.hpp"
-
-struct Environment;
-struct MapData;
-class RocketSpecification;
+#include "config/ApplicationSettings.hpp"
+#include "core/SimulationInput.hpp"
+#include "env/Map.hpp"
 
 enum class SimulationMode : int { Scatter = 1, Detail };
 
 class SimulatorBase {
-public:
-    // Settings from command line
-    struct SimulationSetting {
-        SimulationMode simulationMode;
-        TrajectoryMode trajectoryMode;
-        DetachType detachType;
-        double detachTime    = 0.0;
-        double windSpeed     = 0.0;
-        double windDirection = 0.0;  // Direction is clockwise from the north
-    };
-
 protected:
     const std::string m_specName;
-    const SimulationSetting m_setting;
-    const RocketType m_rocketType;
-    const RocketSpecification m_rocketSpec;
-    const Environment m_environment;
+    const ApplicationSettings m_applicationSettings;
+    const SimulationMode m_simulationMode;
+    SimulationInput m_input;
     const MapData m_mapData;
-    const std::string m_outputDirName;
+    std::string m_outputDirName;
 
 public:
-    explicit SimulatorBase(const std::string specName,
-                           const boost::property_tree::ptree& specJson,
-                           const SimulationSetting& setting);
+    explicit SimulatorBase(std::string specificationName,
+                           SimulationInput input,
+                           SimulationMode simulationMode,
+                           ApplicationSettings applicationSettings);
 
     // 抽象クラスのデストラクタはvirtualで定義し直さなければいけない
     virtual ~SimulatorBase() {}
-
-    // Gnuplotへ結果をプロット
-    virtual void plotToGnuplot() = 0;
 
     // シミュレーション実行
     bool run(bool output);
@@ -67,7 +50,9 @@ protected:
 private:
     void createResultDirectory();
 
-    std::string getOutputDirectoryName();
+    std::string getOutputDirectoryName() const;
 
-    MapData getMapData();
+    MapData getMapData() const;
+
+    SolverSettings getSolverSettings() const;
 };

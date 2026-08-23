@@ -5,10 +5,11 @@
 #pragma once
 
 #include "SimulatorBase.hpp"
+#include "core/SimulationResult.hpp"
 
 class DetailSimulator : public SimulatorBase {
 private:
-    SimuResultSummary m_result;
+    SimulationResult m_result;
 
 public:
     // 継承コンストラクタ
@@ -18,5 +19,4 @@ public:
 
     void saveResult() override;
 
-    void plotToGnuplot() override;
 };

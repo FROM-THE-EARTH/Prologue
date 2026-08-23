@@ -7,10 +7,12 @@
 
 #include <memory>
 
+#include "config/ApplicationSettings.hpp"
 #include "simulator/SimulatorBase.hpp"
 #include "app/Option.hpp"
 
 namespace SimulatorFactory {
     // DetailSimulatorまたはScatterSimulatorの生成
-    std::unique_ptr<SimulatorBase> Create(const CommandLineOption::Option& option);
+    std::unique_ptr<SimulatorBase> Create(const CommandLineOption::Option& option,
+                                          const ApplicationSettings& applicationSettings);
 }

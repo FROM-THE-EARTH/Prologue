@@ -4,10 +4,7 @@
 
 #pragma once
 
-#include <string>
 #include <vector>
-
-#include <algorithm> 
 
 #include "misc/Constant.hpp"
 
@@ -25,7 +22,9 @@ class Engine {
     bool m_exist = false;
 
 public:
-    bool loadThrustData(const std::string& filename);
+    Engine() = default;
+
+    explicit Engine(std::vector<ThrustData> thrustData);
 
     void setThrustMeasuredPressure(double pressure) {
         m_thrustMeasuredPressure = pressure;
