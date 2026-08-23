@@ -15,32 +15,19 @@ struct MapData {
     MapType type;
     GeoCoordinate coordinate;
     double magneticDeclination;
-    std::string imageFileName;
-    double gnuplot_dx, gnuplot_dy;
-    double gnuplot_origin_x, gnuplot_origin_y;
 
     MapData() = default;
 
     explicit MapData(const std::string& keyForJson,
                      MapType mapType,
                      double _magneticDeclination,
-                     double launchPointLatitude,
-                     double launchPointLongitude,
-					 int zone,
-                     std::string imageFileNameForGnuplot,
-                     double dxForGnuplot,
-                     double dyForGnuplot,
-                     double originXForGnuplot,
-                     double originYForGnuplot) :
+                      double launchPointLatitude,
+                      double launchPointLongitude,
+					 int zone) :
         key(keyForJson),
         type(mapType),
         coordinate(GeoCoordinate(launchPointLatitude, launchPointLongitude, zone)),
-        magneticDeclination(_magneticDeclination),
-        imageFileName(imageFileNameForGnuplot),
-        gnuplot_dx(dxForGnuplot),
-        gnuplot_dy(dyForGnuplot),
-        gnuplot_origin_x(originXForGnuplot),
-        gnuplot_origin_y(originYForGnuplot) {}
+        magneticDeclination(_magneticDeclination) {}
 };
 
 namespace Map {

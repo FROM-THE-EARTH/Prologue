@@ -11,10 +11,7 @@ namespace CommandLineOption {
         // Whether to save the result
         bool saveResult = true;
 
-        // Whether to plot the result
-        bool plotResult = true;
-
-        // false: Neither save nor plot
+        // Whether to skip writing simulation results
         bool dryRun = false;
 
         // Whether to open result folder automatically

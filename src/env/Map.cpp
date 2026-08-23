@@ -36,48 +36,28 @@ namespace Map {
                               Internal::GetValue<double>("nosiro_land.magnetic_declination"),
                               Internal::GetValue<double>("nosiro_land.latitude"),
                               Internal::GetValue<double>("nosiro_land.longitude"),
-							  Internal::GetValueWithDefault<int>("nosiro_land.zone", -1),
-                              "nosiro_land.png",
-                              1.0,
-                              1.0,
-                              -730,
-                              -1140);
+							  Internal::GetValueWithDefault<int>("nosiro_land.zone", -1));
 
     const MapData NoshiroSea("nosiro_sea",
                              MapType::NOSIRO_SEA,
                              Internal::GetValue<double>("nosiro_sea.magnetic_declination"),
                              Internal::GetValue<double>("nosiro_sea.latitude"),
                              Internal::GetValue<double>("nosiro_sea.longitude"),
-							 Internal::GetValueWithDefault<int>("nosiro_sea.zone", -1),
-                             "nosiro_sea.png",
-                             7.0,
-                             7.0,
-                             -8700,
-                             -3650);
+							 Internal::GetValueWithDefault<int>("nosiro_sea.zone", -1));
 
     const MapData IzuLand("izu_land",
                           MapType::IZU_LAND,
                           Internal::GetValue<double>("izu_land.magnetic_declination"),
                           Internal::GetValue<double>("izu_land.latitude"),
                           Internal::GetValue<double>("izu_land.longitude"),
-						  Internal::GetValueWithDefault<int>("izu_land.zone", -1),
-                          "izu_land.png",
-                          1.00,
-                          1.00,
-                          -750,
-                          -820);
+						  Internal::GetValueWithDefault<int>("izu_land.zone", -1));
 
     const MapData IzuSea("izu_sea",
                          MapType::IZU_SEA,
                          Internal::GetValue<double>("izu_sea.magnetic_declination"),
                          Internal::GetValue<double>("izu_sea.latitude"),
                          Internal::GetValue<double>("izu_sea.longitude"),
-						 Internal::GetValueWithDefault<int>("izu_sea.zone", -1),
-                         "izu_sea.png",
-                         5.77,
-                         5.77,
-                         -2380,
-                         -5640);
+						 Internal::GetValueWithDefault<int>("izu_sea.zone", -1));
 
     std::optional<MapData> GetMap(const std::string& key) {
         if (key == "nosiro_land") {

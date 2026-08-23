@@ -19,8 +19,6 @@ namespace CommandLineOption {
                 const auto opt = arg.substr(2);
                 if (opt == "no-save") {
                     option.saveResult = false;
-                } else if (opt == "no-plot") {
-                    option.plotResult = false;
                 } else if (opt == "dry-run") {
                     option.dryRun = true;
                 } else if (opt == "open-result") {
