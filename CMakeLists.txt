@@ -66,8 +66,6 @@ set(SOURCE_FILES
 	"src/env/GeoCoordinate.cpp"
 	"src/env/Map.cpp"
 
-	"src/math/Algorithm.cpp"
-
 	"src/result/ResultSaver.cpp"
 	"src/result/GeographicResult.cpp"
 

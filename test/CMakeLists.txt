@@ -7,8 +7,8 @@ macro(test name files)
     add_test(NAME ${name} COMMAND ${name} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endmacro()
 
-set(SOURCE_FILES "math/Algorithm.cpp" "../src/app/CommandLine.cpp" "../src/math/Algorithm.cpp")
-test(math-algorithm "${SOURCE_FILES}")
+set(SOURCE_FILES "math/Interpolation.cpp")
+test(math-interpolation "${SOURCE_FILES}")
 
 set(SOURCE_FILES "math/Quaternion.cpp")
 test(math-quaternion "${SOURCE_FILES}")
