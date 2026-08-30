@@ -13,8 +13,8 @@ TEST_CASE("Application settings are converted to typed values", "[io][settings]"
     const auto& settings = readResult.value;
 
     REQUIRE(readResult.diagnostics.empty());
-    REQUIRE_FALSE(settings.processing.multiThread);
-    REQUIRE(settings.processing.threadCount == 1);
+    REQUIRE_FALSE(settings.execution.multiThread);
+    REQUIRE(settings.execution.threadCount == 1);
     REQUIRE(settings.solver.timeStep == 0.001);
     REQUIRE(settings.scatter.windSpeedMin == 0.0);
     REQUIRE(settings.scatter.windSpeedMax == 0.0);

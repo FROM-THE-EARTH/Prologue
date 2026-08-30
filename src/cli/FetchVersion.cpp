@@ -2,7 +2,7 @@
 // FetchVersion.hppの実装
 // ------------------------------------------------
 
-#include "FetchVersion.hpp"
+#include "cli/FetchVersion.hpp"
 
 #include <iostream>
 #include <memory>
@@ -10,7 +10,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "app/CommandLine.hpp"
+#include "cli/CommandLine.hpp"
 #include "misc/Platform.hpp"
 
 

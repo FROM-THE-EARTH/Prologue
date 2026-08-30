@@ -21,7 +21,14 @@ TEST_CASE("Typed simulation input owns resolved numerical data", "[core][input]"
     bodies.emplace_back(std::move(body));
 
     const SimulationInput input{
-        .environment = Environment("test", 5.0, 0.0, 80.0),
+        .environment = {
+            .launchSite = {.name = "test",
+                           .latitude = 35.0,
+                           .longitude = 139.0,
+                           .coordinateZone = 9,
+                           .magneticDeclination = 0.0},
+            .launchRail = {.length = 5.0, .azimuth = 0.0, .elevation = 80.0},
+        },
         .rocket      = RocketSpecification(std::move(bodies)),
     };
 

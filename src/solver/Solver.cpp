@@ -26,7 +26,7 @@ void Solver::solve() {
         m_solverSettings.atmosphere,
         m_runSettings.windSpeed,
         m_runSettings.windDirection,
-        m_runSettings.magneticDeclination);
+        m_environment.launchSite.magneticDeclination);
     m_observer.pushBody();
 
     // Loop until all rockets are solved
@@ -100,10 +100,10 @@ void Solver::initializeRocket() {
     m_bodyDelta.velocity   = Vector3D(0, 0, 0);
     m_bodyDelta.omega_b    = Vector3D(0, 0, 0);
     const double railAzimuth = ResolveTrueNorthDirection(
-        WindDirection{.degrees = m_environment.railAzimuth,
+        WindDirection{.degrees = m_environment.launchRail.azimuth,
                       .reference = DirectionReference::MagneticNorth},
-        m_runSettings.magneticDeclination);
-    m_bodyDelta.quat = Quaternion(m_environment.railElevation, -railAzimuth + 90);
+        m_environment.launchSite.magneticDeclination);
+    m_bodyDelta.quat = Quaternion(m_environment.launchRail.elevation, -railAzimuth + 90);
 	m_bodyDelta.parachuteOpenedList.resize(THIS_BODY_SPEC.parachutes.size(), false);
 
     THIS_BODY = m_bodyDelta;
@@ -309,7 +309,8 @@ void Solver::updateExternalForce(const WindModel::AtmosphericConditions& air) {
 }
 
 void Solver::updateRocketDelta() {
-    if (!m_rocket.launchClear && THIS_BODY.pos.length() <= m_environment.railLength) {  // launch
+    if (!m_rocket.launchClear
+        && THIS_BODY.pos.length() <= m_environment.launchRail.length) {  // launch
 		THIS_BODY.force_b.y = 0;
 		THIS_BODY.force_b.z = 0;
 		m_bodyDelta.pos     = THIS_BODY.velocity;

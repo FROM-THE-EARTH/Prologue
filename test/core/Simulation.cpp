@@ -36,7 +36,14 @@ namespace {
         std::vector<BodySpecification> bodies;
         bodies.emplace_back(MakeBody(true));
         return {
-            .environment = Environment("test", 0.5, 0.0, 90.0),
+            .environment = {
+                .launchSite = {.name = "test",
+                               .latitude = 35.0,
+                               .longitude = 139.0,
+                               .coordinateZone = 9,
+                               .magneticDeclination = 0.0},
+                .launchRail = {.length = 0.5, .azimuth = 0.0, .elevation = 90.0},
+            },
             .rocket = RocketSpecification(std::move(bodies)),
             .solver = {.timeStep = 0.01,
                        .resultStepSaveInterval = 1,
@@ -55,7 +62,14 @@ namespace {
             {.sourceBodyIndex = 0, .productBodyIndices = {1, 2}},
         };
         return {
-            .environment = Environment("test", 0.5, 0.0, 90.0),
+            .environment = {
+                .launchSite = {.name = "test",
+                               .latitude = 35.0,
+                               .longitude = 139.0,
+                               .coordinateZone = 9,
+                               .magneticDeclination = 0.0},
+                .launchRail = {.length = 0.5, .azimuth = 0.0, .elevation = 90.0},
+            },
             .rocket = RocketSpecification(std::move(bodies), std::move(separations)),
             .solver = {.timeStep = 0.01,
                        .resultStepSaveInterval = 1,
@@ -118,6 +132,10 @@ TEST_CASE("Core rejects invalid solver settings before integration", "[core][val
     auto invalidDirection = MakeSingleInput();
     invalidDirection.run.windDirection.degrees = std::numeric_limits<double>::quiet_NaN();
     REQUIRE_THROWS_AS(Simulation::Run(invalidDirection), std::invalid_argument);
+
+    auto invalidLaunchSite = MakeSingleInput();
+    invalidLaunchSite.environment.launchSite.coordinateZone = 0;
+    REQUIRE_THROWS_AS(Simulation::Run(invalidLaunchSite), std::invalid_argument);
 }
 
 TEST_CASE("Core rejects unsupported separation topology instead of indexing implicitly", "[core][validation]") {

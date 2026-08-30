@@ -1,5 +1,7 @@
 {
-  "rocket1": {
+  "format_version": 2,
+  "bodies": [
+  {
     "ref_len": 2.01,
     "diam": 0.091,
     "mass_i": 8.243,
@@ -15,11 +17,17 @@
         "CdS": 7.0
       }
     ],
-    "motor_file": "Sample_K240.txt",
-    "aero_coef_file": "sample.csv"
-  },
+    "motor_file": "../../../application/input/thrust/Sample_K240.txt",
+    "aero_coef_file": "../../../application/input/aero_coef/sample.csv"
+  }
+  ],
+  "separations": [],
   "environment": {
     "place": "nosiro_sea",
+    "latitude": 40.242865,
+    "longitude": 140.01045,
+    "zone": 10,
+    "magnetic_declination": 8.94,
     "rail_len": 5.0,
     "rail_azi": -60.0,
     "rail_elev": 70

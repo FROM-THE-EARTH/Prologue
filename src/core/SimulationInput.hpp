@@ -19,7 +19,6 @@ struct SimulationRunSettings {
     double detachTime = 0.0;
     double windSpeed = 0.0;
     WindDirection windDirection;
-    double magneticDeclination = 0.0;
 };
 
 struct SimulationInput {

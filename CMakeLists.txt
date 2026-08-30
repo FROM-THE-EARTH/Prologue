@@ -30,7 +30,6 @@ set(PROLOGUE_CORE_SOURCE_FILES
 	"src/dynamics/StandardAtmosphere1976.cpp"
 	"src/dynamics/WindModel.cpp"
 	"src/dynamics/WindProfile.cpp"
-	"src/env/Environment.cpp"
 	"src/math/Interpolation.cpp"
 	"src/math/Quaternion.cpp"
 	"src/math/Vector3D.cpp"
@@ -44,35 +43,53 @@ add_library(prologue-core STATIC ${PROLOGUE_CORE_SOURCE_FILES})
 target_include_directories(prologue-core PUBLIC "src/")
 target_compile_features(prologue-core PUBLIC cxx_std_20)
 
+add_library(prologue-project STATIC
+	"src/project/SimulationInputBuilder.cpp"
+)
+target_include_directories(prologue-project PUBLIC "src/")
+target_link_libraries(prologue-project PUBLIC prologue-core)
+target_compile_features(prologue-project PUBLIC cxx_std_20)
+
+add_library(prologue-runner STATIC
+	"src/runner/SimulationRunner.cpp"
+)
+target_include_directories(prologue-runner PUBLIC "src/")
+target_link_libraries(prologue-runner PUBLIC prologue-core)
+target_compile_features(prologue-runner PUBLIC cxx_std_20)
+
+add_library(prologue-geography STATIC
+	"src/geography/GeoCoordinate.cpp"
+	"src/geography/GeographicResult.cpp"
+)
+target_include_directories(prologue-geography PUBLIC "src/")
+target_include_directories(prologue-geography SYSTEM PUBLIC "deps/include/")
+target_link_libraries(prologue-geography PUBLIC prologue-core)
+target_compile_features(prologue-geography PUBLIC cxx_std_20)
+
 set(PROLOGUE_IO_SOURCE_FILES
 	"src/io/ApplicationSettingsReader.cpp"
-	"src/io/SimulationInputReader.cpp"
+	"src/io/FileProjectResourceProvider.cpp"
 	"src/io/MeasuredWindProfileReader.cpp"
+	"src/io/ProjectJsonSerializer.cpp"
 	"src/utils/JsonUtils.cpp"
 )
 
 add_library(prologue-io STATIC ${PROLOGUE_IO_SOURCE_FILES})
 target_include_directories(prologue-io PUBLIC "src/")
 target_include_directories(prologue-io SYSTEM PRIVATE "deps/include/")
-target_link_libraries(prologue-io PUBLIC prologue-core)
+target_link_libraries(prologue-io PUBLIC prologue-core prologue-project)
 target_compile_features(prologue-io PUBLIC cxx_std_20)
 
 set(SOURCE_FILES
-	"src/app/CommandLine.cpp"
-	"src/app/FetchVersion.cpp"
-	"src/app/InputDiagnosticPrinter.cpp"
-	"src/app/Option.cpp"
-
-	"src/env/GeoCoordinate.cpp"
-	"src/env/Map.cpp"
+	"src/cli/CommandLine.cpp"
+	"src/cli/FetchVersion.cpp"
+	"src/cli/InputDiagnosticPrinter.cpp"
+	"src/cli/Option.cpp"
+	"src/cli/ProgressObserver.cpp"
+	"src/cli/ResultDirectory.cpp"
+	"src/cli/SimulationRequest.cpp"
 
 	"src/result/ResultSaver.cpp"
-	"src/result/GeographicResult.cpp"
-
-	"src/simulator/DetailSimulator.cpp"
-	"src/simulator/ScatterSimulator.cpp"
-	"src/simulator/SimulatorBase.cpp"
-	"src/simulator/SimulatorFactory.cpp"
 
 	"src/main.cpp"
 )
@@ -116,6 +133,6 @@ add_library(kmldom STATIC ${KMLDOM_SOURCES})
 target_include_directories(kmldom PUBLIC "deps/include/")
 target_link_libraries(kmldom PRIVATE kmlbase)
 
-target_link_libraries(Prologue PRIVATE prologue-core prologue-io kmldom kmlbase)
+target_link_libraries(Prologue PRIVATE prologue-core prologue-runner prologue-geography prologue-io kmldom kmlbase)
 
 add_subdirectory("test")

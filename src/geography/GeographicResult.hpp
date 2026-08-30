@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "core/SimulationResult.hpp"
-#include "env/Map.hpp"
+#include "geography/GeoCoordinate.hpp"
 
 struct GeographicPosition {
     double latitude = 0.0;
@@ -16,5 +16,6 @@ struct GeographicResult {
 };
 
 namespace GeographicResultAdapter {
-    [[nodiscard]] GeographicResult Convert(const SimulationResult& result, const MapData& map);
+    [[nodiscard]] GeographicResult Convert(const SimulationResult& result,
+                                           const GeoCoordinate& coordinate);
 }

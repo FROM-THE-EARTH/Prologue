@@ -1,4 +1,4 @@
-#include "InputDiagnosticPrinter.hpp"
+#include "cli/InputDiagnosticPrinter.hpp"
 
 #include <iostream>
 

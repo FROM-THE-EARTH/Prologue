@@ -2,11 +2,11 @@
 // Option.hppの実装
 // ------------------------------------------------
 
-#include "Option.hpp"
+#include "cli/Option.hpp"
 
 #include <string>
 
-#include "app/CommandLine.hpp"
+#include "cli/CommandLine.hpp"
 
 namespace CommandLineOption {
     Option ParseArgs(int argc, char* argv[]) {

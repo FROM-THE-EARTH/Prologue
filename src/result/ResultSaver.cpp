@@ -15,9 +15,7 @@
 #include <kml/base/file.h>
 #include <kml/engine.h>
 
-#include "app/CommandLine.hpp"
-#include "misc/Platform.hpp"
-#include "result/GeographicResult.hpp"
+#include "geography/GeographicResult.hpp"
 
 #define WITH_COMMA(value) value << ','
 
@@ -349,12 +347,15 @@ namespace ResultSaver {
 
     void SaveScatter(const std::string& dir,
                      const std::vector<SimulationResult>& result,
-                     const MapData& map,
+                     const Environment& environment,
                      int precision) {
+        const auto& site = environment.launchSite;
+        const GeoCoordinate coordinate(site.latitude, site.longitude, site.coordinateZone);
         std::vector<GeographicResult> geographicResults;
         geographicResults.reserve(result.size());
         for (const auto& simulationResult : result) {
-            geographicResults.emplace_back(GeographicResultAdapter::Convert(simulationResult, map));
+            geographicResults.emplace_back(
+                GeographicResultAdapter::Convert(simulationResult, coordinate));
         }
 
         // Save summary
@@ -363,9 +364,12 @@ namespace ResultSaver {
 
     void SaveDetail(const std::string& dir,
                     const SimulationResult& result,
-                    const MapData& map,
+                    const Environment& environment,
                     int precision) {
-        const GeographicResult geographic = GeographicResultAdapter::Convert(result, map);
+        const auto& site = environment.launchSite;
+        const GeoCoordinate coordinate(site.latitude, site.longitude, site.coordinateZone);
+        const GeographicResult geographic =
+            GeographicResultAdapter::Convert(result, coordinate);
 
         // Save summary
         Internal::WriteSummaryDetail(dir, result, geographic, precision);

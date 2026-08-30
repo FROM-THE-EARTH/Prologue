@@ -4,14 +4,11 @@
 
 #pragma once
 
-#include <string>
 #include <optional>
+#include <utility>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/srs/transformation.hpp>
-
-#include "misc/Constant.hpp"
-#include "app/CommandLine.hpp"
 
 class GeoCoordinate {
 private:
@@ -26,7 +23,7 @@ private:
 	std::optional<boost::geometry::srs::projection<>> m_prj;
 
 public:
-    explicit GeoCoordinate(double latitude, double longitude, int zone = -1);
+    explicit GeoCoordinate(double latitude, double longitude, int zone);
 
     double latitude() const;
 

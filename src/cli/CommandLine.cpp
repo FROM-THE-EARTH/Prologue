@@ -2,7 +2,7 @@
 // CommandLine.hppの実装
 // ------------------------------------------------
 
-#include "CommandLine.hpp"
+#include "cli/CommandLine.hpp"
 
 namespace CommandLine {
     namespace Internal {

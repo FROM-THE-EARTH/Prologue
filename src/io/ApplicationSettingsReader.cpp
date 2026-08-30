@@ -67,8 +67,8 @@ namespace ApplicationSettingsReader {
             return 8;
         }
 
-        size_t ReadStepSaveInterval(const boost::property_tree::ptree& json,
-                                    std::vector<InputIO::Diagnostic>& diagnostics) {
+        unsigned int ReadStepSaveInterval(const boost::property_tree::ptree& json,
+                                          std::vector<InputIO::Diagnostic>& diagnostics) {
             const int interval = JsonUtils::GetValueExc<int>(json, "result.step_save_interval");
             if (interval >= 1) return static_cast<unsigned int>(interval);
             diagnostics.push_back(
@@ -85,8 +85,8 @@ namespace ApplicationSettingsReader {
         ApplicationSettings settings;
         std::vector<InputIO::Diagnostic> diagnostics;
 
-        settings.processing.multiThread = JsonUtils::GetValueExc<bool>(json, "processing.multi_thread");
-        settings.processing.threadCount = ReadThreadCount(json, diagnostics);
+        settings.execution.multiThread = JsonUtils::GetValueExc<bool>(json, "processing.multi_thread");
+        settings.execution.threadCount = ReadThreadCount(json, diagnostics);
         settings.solver.timeStep = JsonUtils::GetValueExc<double>(json, "simulation.dt");
         settings.scatter.windSpeedMin = JsonUtils::GetValueExc<double>(json, "simulation.scatter.wind_speed_min");
         settings.scatter.windSpeedMax = JsonUtils::GetValueExc<double>(json, "simulation.scatter.wind_speed_max");

@@ -38,12 +38,19 @@ test(core-simulation-input "${SOURCE_FILES}")
 set(SOURCE_FILES "core/Simulation.cpp")
 test(core-simulation "${SOURCE_FILES}")
 
+set(SOURCE_FILES "runner/SimulationRunner.cpp")
+test(runner-simulation "${SOURCE_FILES}")
+target_link_libraries(runner-simulation PRIVATE prologue-runner)
+
+set(SOURCE_FILES "cli/ResultDirectory.cpp" "../src/cli/ResultDirectory.cpp")
+test(cli-result-directory "${SOURCE_FILES}")
+
 set(SOURCE_FILES
-    "io/SimulationInputReader.cpp"
+	"io/ProjectJsonSerializer.cpp"
 )
-test(io-simulation-input-reader "${SOURCE_FILES}")
-target_link_libraries(io-simulation-input-reader PRIVATE prologue-io)
-set_tests_properties(io-simulation-input-reader PROPERTIES
+test(io-project-json-serializer "${SOURCE_FILES}")
+target_link_libraries(io-project-json-serializer PRIVATE prologue-io)
+set_tests_properties(io-project-json-serializer PROPERTIES
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/application"
 )
 

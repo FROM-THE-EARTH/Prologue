@@ -2,13 +2,15 @@
 // 緯度経度に関するクラス
 // ------------------------------------------------
 
-#include "env/GeoCoordinate.hpp"
+#include "geography/GeoCoordinate.hpp"
 
-GeoCoordinate::GeoCoordinate(double latitude, double longitude, int zone)
-{
-		// 平面直角座標系（平成十四年国土交通省告示第九号）
-		static const std::array<std::pair<double, double>, 19> ORIGINS = {
-			{
+#include <array>
+#include <stdexcept>
+#include <string>
+
+namespace {
+    // 平面直角座標系（平成十四年国土交通省告示第九号）
+    constexpr std::array<std::pair<double, double>, 19> Origins = {{
 			{129.5,                   33.0},  // I系    : 長崎県、鹿児島県（一部）
 			{131.0,                   33.0},  // II系   : 福岡県、佐賀県、熊本県、大分県、宮崎県、鹿児島県（一部）
 			{132.1666666666667,       36.0},  // III系  : 山口県、島根県、広島県
@@ -28,33 +30,15 @@ GeoCoordinate::GeoCoordinate(double latitude, double longitude, int zone)
 			{131.0,                   26.0},  // XVII系 : 沖縄県（東部）
 			{136.0,                   20.0},  // XVIII系: 東京都（南西部）
 			{154.0,                   26.0}   // XIX系  : 東京都（南東部）
-		}};
+	}};
+}
 
-		double lat = 0.0, lon = 0.0;
-		if (zone >= 1 && zone <= 19) {
-			lat = ORIGINS[zone - 1].second;
-			lon = ORIGINS[zone - 1].first;
-		} else {
-			// find nearest zone
-			int new_zone = -1;
-			double dist_min = std::numeric_limits<double>::max();
-			for (int i = 0; i < static_cast<int>(ORIGINS.size()); ++i) {
-				double dlon = ORIGINS[i].first - longitude;
-				double dlat = ORIGINS[i].second - latitude;
-				double dist = dlon * dlon + dlat * dlat;
-				if (dist < dist_min) {
-					dist_min = dist;
-					new_zone = i + 1;
-					lat = ORIGINS[i].second;
-					lon = ORIGINS[i].first;
-				}
-			}
-			CommandLine::PrintInfo(
-				PrintInfoType::Information,
-				"Specified zone " +  std::to_string(zone) + " is invalid.",
-				"Using nearest zone " + std::to_string(new_zone) + " instead."
-			);
-		}
+GeoCoordinate::GeoCoordinate(double latitude, double longitude, int zone) {
+        if (zone < 1 || zone > static_cast<int>(Origins.size())) {
+            throw std::invalid_argument{"Coordinate zone must be in [1, 19]."};
+        }
+        double lat = Origins[zone - 1].second;
+        double lon = Origins[zone - 1].first;
 
 		// Parameter reference: https://epsg.io/
 		std::string proj4   = "+proj=tmerc +lat_0=" + std::to_string(lat) + " +lon_0=" + std::to_string(lon) + " +k=0.9999 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs";
