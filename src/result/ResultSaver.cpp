@@ -8,8 +8,7 @@
 #include <fstream>
 #include <iomanip>
 #include <map>
-
-#include <boost/progress.hpp>
+#include <stdexcept>
 
 #include <kml/dom.h>
 #include <kml/base/file.h>
@@ -109,19 +108,27 @@ namespace ResultSaver {
     namespace Internal {
         std::ofstream OpenResultCSV(const std::string& path, int precision) {
             std::ofstream file(path);
+            if (!file.is_open()) {
+                throw std::runtime_error{"Failed to open result CSV for writing: " + path};
+            }
+            file.exceptions(std::ios::failbit | std::ios::badbit);
             file << std::fixed << std::setprecision(precision);
             return file;
         }
 
         void WriteBodyResult(std::ofstream& file,
                              const std::vector<SimulationStep>& stepResult,
-                             const std::vector<GeographicPosition>& geographicPositions) {
+                             const std::vector<GeographicPosition>& geographicPositions,
+                             size_t bodyIndex,
+                             ResultSaveObserver* observer) {
             for (const auto& head : headerDetail) {
                 file << WITH_COMMA(head);
             }
             file << "\n";
 
-            boost::progress_display progress(static_cast<uint32_t>(stepResult.size()));
+            if (observer != nullptr) {
+                observer->onBodyStarted(bodyIndex, stepResult.size());
+            }
             for (size_t stepIndex = 0; stepIndex < stepResult.size(); stepIndex++) {
                 const auto& step = stepResult[stepIndex];
                 const auto& geographicPosition = geographicPositions[stepIndex];
@@ -158,7 +165,9 @@ namespace ResultSaver {
 
                 file << "\n";
 
-                ++progress;
+                if (observer != nullptr) {
+                    observer->onBodyProgress(bodyIndex, stepIndex + 1, stepResult.size());
+                }
             }
         }
 
@@ -302,7 +311,9 @@ namespace ResultSaver {
 				KmlPtr kml = factory->CreateKml();
 				kml->set_feature(doc);
 				const std::string kmlPath = dir + "scatter_body" + std::to_string(bodyIndex + 1) + ".kml";
-				kmlbase::File::WriteStringToFile(kmldom::SerializePretty(kml), kmlPath);
+				if (!kmlbase::File::WriteStringToFile(kmldom::SerializePretty(kml), kmlPath)) {
+                    throw std::runtime_error{"Failed to write result KML: " + kmlPath};
+                }
 			}
 		}
 
@@ -348,7 +359,8 @@ namespace ResultSaver {
     void SaveScatter(const std::string& dir,
                      const std::vector<SimulationResult>& result,
                      const Environment& environment,
-                     int precision) {
+                     int precision,
+                     ResultSaveObserver*) {
         const auto& site = environment.launchSite;
         const GeoCoordinate coordinate(site.latitude, site.longitude, site.coordinateZone);
         std::vector<GeographicResult> geographicResults;
@@ -365,7 +377,8 @@ namespace ResultSaver {
     void SaveDetail(const std::string& dir,
                     const SimulationResult& result,
                     const Environment& environment,
-                    int precision) {
+                    int precision,
+                    ResultSaveObserver* observer) {
         const auto& site = environment.launchSite;
         const GeoCoordinate coordinate(site.latitude, site.longitude, site.coordinateZone);
         const GeographicResult geographic =
@@ -383,7 +396,7 @@ namespace ResultSaver {
                 const std::string path     = dir + fileName + ".csv";
                 std::ofstream file         = Internal::OpenResultCSV(path, precision);
                 Internal::WriteBodyResult(
-                    file, result.bodyResults[i].steps, geographic.bodyStepPositions[i]);
+                    file, result.bodyResults[i].steps, geographic.bodyStepPositions[i], i, observer);
                 file.close();
             }
         }

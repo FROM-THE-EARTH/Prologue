@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "core/SimulationSettings.hpp"
+#include "dynamics/AtmosphereSettings.hpp"
+#include "dynamics/WindModelSettings.hpp"
 #include "dynamics/WindProfile.hpp"
 
 class WindModel {

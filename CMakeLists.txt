@@ -5,7 +5,6 @@ if (APPLE)
 endif()
 
 enable_language(CXX)
-enable_testing()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,6 +18,13 @@ endif()
 
 project(Prologue)
 
+include(CTest)
+option(PROLOGUE_BUILD_CLI "Build the command-line interface" ON)
+option(PROLOGUE_BUILD_FILE_IO "Build file, geographic and result adapters" ${PROLOGUE_BUILD_CLI})
+if(PROLOGUE_BUILD_CLI AND NOT PROLOGUE_BUILD_FILE_IO)
+	message(FATAL_ERROR "The CLI requires PROLOGUE_BUILD_FILE_IO=ON")
+endif()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../application)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ../application)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ../application)
@@ -26,9 +32,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ../application)
 set(PROLOGUE_CORE_SOURCE_FILES
 	"src/core/Simulation.cpp"
 	"src/core/SimulationInput.cpp"
-	"src/core/SimulationSettings.cpp"
+	"src/dynamics/AtmosphereSettings.cpp"
 	"src/dynamics/StandardAtmosphere1976.cpp"
 	"src/dynamics/WindModel.cpp"
+	"src/dynamics/WindModelSettings.cpp"
 	"src/dynamics/WindProfile.cpp"
 	"src/math/Interpolation.cpp"
 	"src/math/Quaternion.cpp"
@@ -37,6 +44,7 @@ set(PROLOGUE_CORE_SOURCE_FILES
 	"src/rocket/Engine.cpp"
 	"src/rocket/RocketSpec.cpp"
 	"src/solver/Solver.cpp"
+	"src/solver/SolverSettings.cpp"
 )
 
 add_library(prologue-core STATIC ${PROLOGUE_CORE_SOURCE_FILES})
@@ -57,6 +65,7 @@ target_include_directories(prologue-runner PUBLIC "src/")
 target_link_libraries(prologue-runner PUBLIC prologue-core)
 target_compile_features(prologue-runner PUBLIC cxx_std_20)
 
+if(PROLOGUE_BUILD_FILE_IO)
 add_library(prologue-geography STATIC
 	"src/geography/GeoCoordinate.cpp"
 	"src/geography/GeographicResult.cpp"
@@ -79,24 +88,6 @@ target_include_directories(prologue-io PUBLIC "src/")
 target_include_directories(prologue-io SYSTEM PRIVATE "deps/include/")
 target_link_libraries(prologue-io PUBLIC prologue-core prologue-project)
 target_compile_features(prologue-io PUBLIC cxx_std_20)
-
-set(SOURCE_FILES
-	"src/cli/CommandLine.cpp"
-	"src/cli/FetchVersion.cpp"
-	"src/cli/InputDiagnosticPrinter.cpp"
-	"src/cli/Option.cpp"
-	"src/cli/ProgressObserver.cpp"
-	"src/cli/ResultDirectory.cpp"
-	"src/cli/SimulationRequest.cpp"
-
-	"src/result/ResultSaver.cpp"
-
-	"src/main.cpp"
-)
-
-add_executable(Prologue ${SOURCE_FILES})
-target_include_directories(Prologue PRIVATE "src/")
-target_include_directories(Prologue SYSTEM PRIVATE "deps/include/")
 
 file(GLOB KMLBASE_SOURCES "deps/include/kml/base/*.cc")
 list(REMOVE_ITEM KMLBASE_SOURCES
@@ -133,6 +124,30 @@ add_library(kmldom STATIC ${KMLDOM_SOURCES})
 target_include_directories(kmldom PUBLIC "deps/include/")
 target_link_libraries(kmldom PRIVATE kmlbase)
 
-target_link_libraries(Prologue PRIVATE prologue-core prologue-runner prologue-geography prologue-io kmldom kmlbase)
+add_library(prologue-result STATIC "src/result/ResultSaver.cpp")
+target_include_directories(prologue-result PUBLIC "src/")
+target_include_directories(prologue-result SYSTEM PRIVATE "deps/include/")
+target_link_libraries(prologue-result PUBLIC prologue-geography PRIVATE kmldom kmlbase)
+target_compile_features(prologue-result PUBLIC cxx_std_20)
+endif()
 
-add_subdirectory("test")
+if(PROLOGUE_BUILD_CLI)
+add_executable(Prologue
+	"src/cli/CommandLine.cpp"
+	"src/cli/FetchVersion.cpp"
+	"src/cli/InputDiagnosticPrinter.cpp"
+	"src/cli/Option.cpp"
+	"src/cli/ProgressObserver.cpp"
+	"src/cli/ResultDirectory.cpp"
+	"src/cli/ResultSaveProgressObserver.cpp"
+	"src/cli/SimulationRequest.cpp"
+	"src/main.cpp"
+)
+target_include_directories(Prologue PRIVATE "src/")
+target_include_directories(Prologue SYSTEM PRIVATE "deps/include/")
+target_link_libraries(Prologue PRIVATE prologue-runner prologue-io prologue-result)
+endif()
+
+if(BUILD_TESTING)
+	add_subdirectory("test")
+endif()

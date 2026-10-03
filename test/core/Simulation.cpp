@@ -149,3 +149,21 @@ TEST_CASE("Core rejects unsupported separation topology instead of indexing impl
 
     REQUIRE_THROWS_AS(Simulation::Run(input), std::invalid_argument);
 }
+
+TEST_CASE("Landing-point reduction handles a body detached before recording", "[core][regression]") {
+    auto input = MakeLegacyMultiInput();
+    input.run.detachTime = 0.0;
+    const auto detail = Simulation::Run(input);
+    REQUIRE(detail.bodyResults.size() == 3);
+    REQUIRE(detail.bodyResults[0].steps.empty());
+
+    const auto landing = Simulation::LandingPointsOnly(detail);
+    REQUIRE(landing.bodyResults.size() == 2);
+    REQUIRE(landing.bodyFinalPositions == detail.bodyFinalPositions);
+    for (const auto& body : landing.bodyResults) {
+        REQUIRE(body.steps.size() == 1);
+        REQUIRE(body.steps.front().rocket_pos.z == 0.0);
+    }
+
+    REQUIRE(Simulation::LandingPointsOnly({}).bodyResults.empty());
+}

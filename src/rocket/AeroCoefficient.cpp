@@ -5,6 +5,7 @@
 #include "AeroCoefficient.hpp"
 
 #include <algorithm>
+#include <stdexcept>
 #include <utility>
 
 #include "math/Interpolation.hpp"
@@ -19,9 +20,16 @@ size_t getLowerIndex(const std::vector<AeroCoefficientData>& spec, double airspe
 }
 
 AeroCoefficientStorage::AeroCoefficientStorage(std::vector<AeroCoefficientData> aeroCoefSpec, bool isTimeSeries) :
-    m_aeroCoefSpec(std::move(aeroCoefSpec)), m_isTimeSeries(isTimeSeries) {}
+    m_aeroCoefSpec(std::move(aeroCoefSpec)), m_isTimeSeries(isTimeSeries) {
+    if (m_aeroCoefSpec.empty()) {
+        throw std::invalid_argument{"Aerodynamic coefficient data must contain at least one row."};
+    }
+}
 
 AeroCoefficient AeroCoefficientStorage::valuesIn(double airspeed, double attackAngle, bool combustionEnded) const {
+    if (m_aeroCoefSpec.empty()) {
+        throw std::invalid_argument{"Aerodynamic coefficients have not been initialized."};
+    }
     AeroCoefficientData spec;
 
     // No csv file or csv has only one row

@@ -12,6 +12,7 @@
 #include "env/Environment.hpp"
 #include "rocket/Rocket.hpp"
 #include "rocket/RocketSpec.hpp"
+#include "solver/SolverSettings.hpp"
 
 class Solver {
     // Setting

@@ -18,6 +18,7 @@
 #include "cli/Option.hpp"
 #include "cli/ProgressObserver.hpp"
 #include "cli/ResultDirectory.hpp"
+#include "cli/ResultSaveProgressObserver.hpp"
 #include "cli/SimulationRequest.hpp"
 #include "config/ApplicationSettings.hpp"
 #include "io/ApplicationSettingsReader.hpp"
@@ -51,7 +52,7 @@ int main(int argc, char* argv[]) {
         const auto option = CommandLineOption::ParseArgs(argc, argv);
         ShowSettingInfo(applicationSettings);
 
-
+		// Construct the simulation input
         const auto prepared = cli::PrepareSimulation(option, applicationSettings);
         const auto outputDirectoryName = cli::ResultDirectory::BuildName(
             prepared.specificationName,
@@ -59,6 +60,7 @@ int main(int argc, char* argv[]) {
             prepared.input,
             applicationSettings.measuredWindFilename);
 
+		// Run the simulation
         using RunOutput = std::variant<SimulationResult, std::vector<SimulationResult>>;
         const auto start = std::chrono::system_clock::now();
         RunOutput output;
@@ -76,6 +78,7 @@ int main(int argc, char* argv[]) {
         CommandLine::PrintInfo(PrintInfoType::Information,
                                "Finish processing: " + std::to_string(elapsed / 1000000.0) + "[s]");
 
+		// Post-processing (save results and open result folder if specified)
         const bool saveResult = option.saveResult && !option.dryRun;
         std::optional<std::filesystem::path> outputDirectory;
         if (saveResult || option.openResultFolder) {
@@ -86,10 +89,12 @@ int main(int argc, char* argv[]) {
             CommandLine::PrintInfo(PrintInfoType::Information, "Saving result...");
             const std::string directoryPrefix = outputDirectory->string() + "/";
             if (prepared.mode == SimulationMode::Detail) {
+                cli::ResultSaveProgressObserver progress;
                 ResultSaver::SaveDetail(directoryPrefix,
                                         std::get<SimulationResult>(output),
                                         prepared.input.environment,
-                                        applicationSettings.result.precision);
+                                        applicationSettings.result.precision,
+                                        &progress);
             } else {
                 ResultSaver::SaveScatter(directoryPrefix,
                                          std::get<std::vector<SimulationResult>>(output),

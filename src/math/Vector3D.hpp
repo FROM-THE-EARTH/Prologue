@@ -6,7 +6,8 @@
 #pragma once
 
 #include <cmath>
-#include <iostream>
+#include <istream>
+#include <ostream>
 
 struct Quaternion;
 

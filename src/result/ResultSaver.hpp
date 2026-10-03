@@ -9,15 +9,18 @@
 
 #include "core/SimulationResult.hpp"
 #include "env/Environment.hpp"
+#include "result/ResultSaveObserver.hpp"
 
 namespace ResultSaver {
     void SaveScatter(const std::string& dir,
                      const std::vector<SimulationResult>& result,
                      const Environment& environment,
-                     int precision);
+                     int precision,
+                     ResultSaveObserver* observer = nullptr);
 
     void SaveDetail(const std::string& dir,
                     const SimulationResult& result,
                     const Environment& environment,
-                    int precision);
+                    int precision,
+                    ResultSaveObserver* observer = nullptr);
 }

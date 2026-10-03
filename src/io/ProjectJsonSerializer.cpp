@@ -360,6 +360,7 @@ namespace ProjectJsonSerializer {
             throw std::runtime_error{"Failed to open project file for writing: " + file.string()};
         }
         output << serialized.str();
+        output.close();
         if (!output) {
             throw std::runtime_error{"Failed to write project file: " + file.string()};
         }

@@ -138,12 +138,15 @@ namespace Simulation {
 
     SimulationResult LandingPointsOnly(SimulationResult result) {
         for (auto& body : result.bodyResults) {
-            const SimulationStep lastBody = body.steps[body.steps.size() - 1];
+            if (body.steps.empty()) continue;
+            const SimulationStep lastBody = body.steps.back();
             body.steps = std::vector<SimulationStep>(1, lastBody);
         }
 
-        for (int i = static_cast<int>(result.bodyResults.size() - 1); i >= 0; i--) {
-            if (result.bodyResults[i].steps[0].rocket_pos.z > 0.0) {
+        for (size_t index = result.bodyResults.size(); index > 0; --index) {
+            const size_t i = index - 1;
+            if (result.bodyResults[i].steps.empty()
+                || result.bodyResults[i].steps[0].rocket_pos.z > 0.0) {
                 result.bodyResults.erase(result.bodyResults.begin() + i);
             }
         }

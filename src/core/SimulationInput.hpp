@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "core/SimulationSettings.hpp"
 #include "dynamics/WindProfile.hpp"
 #include "env/Environment.hpp"
 #include "rocket/RocketSpec.hpp"
+#include "solver/SolverSettings.hpp"
 
 enum class TrajectoryMode : int { Trajectory = 1, Parachute };
 

@@ -5,6 +5,7 @@
 #include "Engine.hpp"
 
 #include <algorithm>
+#include <stdexcept>
 #include <utility>
 
 #include "math/Interpolation.hpp"
@@ -18,7 +19,11 @@ size_t getLowerIndex(const std::vector<ThrustData>& thrust, double time) {
 }
 
 Engine::Engine(std::vector<ThrustData> thrustData) :
-    m_thrustData(std::move(thrustData)), m_exist(!m_thrustData.empty()) {}
+    m_thrustData(std::move(thrustData)), m_exist(!m_thrustData.empty()) {
+    if (m_thrustData.size() == 1) {
+        throw std::invalid_argument{"Thrust data must contain at least two points."};
+    }
+}
 
 double Engine::thrustAt(double time, double pressure) const {
     if (!m_exist || time < 0.0 || time > m_thrustData[m_thrustData.size() - 1].time) {

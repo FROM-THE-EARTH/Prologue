@@ -3,8 +3,8 @@
 #include <cstddef>
 #include <string>
 
-#include "core/SimulationSettings.hpp"
 #include "runner/SimulationRunSettings.hpp"
+#include "solver/SolverSettings.hpp"
 
 struct ResultSettings {
     int precision = 8;

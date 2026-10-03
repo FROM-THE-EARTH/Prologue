@@ -38,13 +38,18 @@ test(core-simulation-input "${SOURCE_FILES}")
 set(SOURCE_FILES "core/Simulation.cpp")
 test(core-simulation "${SOURCE_FILES}")
 
+test(rocket-data-validation "rocket/DataValidation.cpp")
+
 set(SOURCE_FILES "runner/SimulationRunner.cpp")
 test(runner-simulation "${SOURCE_FILES}")
 target_link_libraries(runner-simulation PRIVATE prologue-runner)
 
+if(PROLOGUE_BUILD_CLI)
 set(SOURCE_FILES "cli/ResultDirectory.cpp" "../src/cli/ResultDirectory.cpp")
 test(cli-result-directory "${SOURCE_FILES}")
+endif()
 
+if(PROLOGUE_BUILD_FILE_IO)
 set(SOURCE_FILES
 	"io/ProjectJsonSerializer.cpp"
 )
@@ -59,3 +64,11 @@ set(SOURCE_FILES
 )
 test(io-application-settings-reader "${SOURCE_FILES}")
 target_link_libraries(io-application-settings-reader PRIVATE prologue-io)
+
+test(result-saver "result/ResultSaver.cpp")
+target_link_libraries(result-saver PRIVATE prologue-result)
+endif()
+
+add_test(NAME architecture-core-boundary
+    COMMAND ${CMAKE_COMMAND} -DPROLOGUE_SOURCE_DIR=${CMAKE_SOURCE_DIR}
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/architecture/CheckCoreBoundary.cmake)
