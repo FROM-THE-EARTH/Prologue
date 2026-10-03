@@ -20,9 +20,14 @@ project(Prologue)
 
 include(CTest)
 option(PROLOGUE_BUILD_CLI "Build the command-line interface" ON)
-option(PROLOGUE_BUILD_FILE_IO "Build file, geographic and result adapters" ${PROLOGUE_BUILD_CLI})
-if(PROLOGUE_BUILD_CLI AND NOT PROLOGUE_BUILD_FILE_IO)
-	message(FATAL_ERROR "The CLI requires PROLOGUE_BUILD_FILE_IO=ON")
+option(PROLOGUE_BUILD_GUI "Build the native Qt desktop demo" OFF)
+set(PROLOGUE_FILE_IO_DEFAULT OFF)
+if(PROLOGUE_BUILD_CLI OR PROLOGUE_BUILD_GUI)
+	set(PROLOGUE_FILE_IO_DEFAULT ON)
+endif()
+option(PROLOGUE_BUILD_FILE_IO "Build file, geographic and result adapters" ${PROLOGUE_FILE_IO_DEFAULT})
+if((PROLOGUE_BUILD_CLI OR PROLOGUE_BUILD_GUI) AND NOT PROLOGUE_BUILD_FILE_IO)
+	message(FATAL_ERROR "The CLI and GUI require PROLOGUE_BUILD_FILE_IO=ON")
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../application)
@@ -77,6 +82,7 @@ target_compile_features(prologue-geography PUBLIC cxx_std_20)
 
 set(PROLOGUE_IO_SOURCE_FILES
 	"src/io/ApplicationSettingsReader.cpp"
+	"src/io/ApplicationSettingsWriter.cpp"
 	"src/io/FileProjectResourceProvider.cpp"
 	"src/io/MeasuredWindProfileReader.cpp"
 	"src/io/ProjectJsonSerializer.cpp"
@@ -146,6 +152,10 @@ add_executable(Prologue
 target_include_directories(Prologue PRIVATE "src/")
 target_include_directories(Prologue SYSTEM PRIVATE "deps/include/")
 target_link_libraries(Prologue PRIVATE prologue-runner prologue-io prologue-result)
+endif()
+
+if(PROLOGUE_BUILD_GUI)
+	add_subdirectory("src/gui")
 endif()
 
 if(BUILD_TESTING)

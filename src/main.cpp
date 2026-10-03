@@ -87,16 +87,15 @@ int main(int argc, char* argv[]) {
 
         if (saveResult) {
             CommandLine::PrintInfo(PrintInfoType::Information, "Saving result...");
-            const std::string directoryPrefix = outputDirectory->string() + "/";
             if (prepared.mode == SimulationMode::Detail) {
                 cli::ResultSaveProgressObserver progress;
-                ResultSaver::SaveDetail(directoryPrefix,
+                ResultSaver::SaveDetail(*outputDirectory,
                                         std::get<SimulationResult>(output),
                                         prepared.input.environment,
                                         applicationSettings.result.precision,
                                         &progress);
             } else {
-                ResultSaver::SaveScatter(directoryPrefix,
+                ResultSaver::SaveScatter(*outputDirectory,
                                          std::get<std::vector<SimulationResult>>(output),
                                          prepared.input.environment,
                                          applicationSettings.result.precision);

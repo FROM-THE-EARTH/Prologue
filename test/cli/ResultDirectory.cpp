@@ -52,4 +52,12 @@ TEST_CASE("CLI result directory naming remains outside the simulation runner", "
                 "spec", SimulationMode::Detail,
                 MakeInput(WindModelType::Real, TrajectoryMode::Trajectory), "sample.csv")
             == "spec[(sample)_traj]");
+
+    const auto windFile = std::u8string(u8"\u6e2c\u5b9a \u98a8.csv");
+    const auto expected = std::u8string(u8"spec[(\u6e2c\u5b9a \u98a8)_traj]");
+    REQUIRE(cli::ResultDirectory::BuildName(
+                "spec", SimulationMode::Detail,
+                MakeInput(WindModelType::Real, TrajectoryMode::Trajectory),
+                std::string(windFile.begin(), windFile.end()))
+            == std::string(expected.begin(), expected.end()));
 }

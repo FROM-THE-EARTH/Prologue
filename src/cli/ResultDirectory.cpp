@@ -16,9 +16,12 @@ namespace cli::ResultDirectory {
                           const std::string& measuredWindFilename) {
         std::string name = specificationName + "[";
         switch (input.solver.wind.type) {
-        case WindModelType::Real:
-            name += "(" + std::filesystem::path(measuredWindFilename).stem().string() + ")";
+        case WindModelType::Real: {
+            const std::filesystem::path windFile(std::u8string(measuredWindFilename.begin(), measuredWindFilename.end()));
+            const auto stem = windFile.stem().generic_u8string();
+            name += "(" + std::string(stem.begin(), stem.end()) + ")";
             break;
+        }
         case WindModelType::Original:
             name += "original";
             break;
@@ -47,7 +50,8 @@ namespace cli::ResultDirectory {
     }
 
     std::filesystem::path Create(const std::string& directoryName) {
-        const std::filesystem::path directory = std::filesystem::path("result") / directoryName;
+        const std::filesystem::path directory = std::filesystem::path("result")
+            / std::filesystem::path(std::u8string(directoryName.begin(), directoryName.end()));
         std::error_code error;
         std::filesystem::create_directories(directory, error);
         if (error) {

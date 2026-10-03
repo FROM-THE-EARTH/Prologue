@@ -127,13 +127,16 @@ namespace cli {
 
         input.solver = applicationSettings.solver;
         if (input.solver.wind.type == WindModelType::Real) {
+            const auto& filename = applicationSettings.measuredWindFilename;
+            const std::filesystem::path windFile(std::u8string(filename.begin(), filename.end()));
             input.solver.wind.measuredProfile = MeasuredWindProfileReader::Read(
-                std::filesystem::path("input/wind") / applicationSettings.measuredWindFilename);
+                std::filesystem::path("input/wind") / windFile);
         }
 
         const SimulationMode mode = ConfigureRun(input, applicationSettings);
+        const auto name = specificationFile.stem().generic_u8string();
         return {
-            .specificationName = specificationFile.stem().string(),
+            .specificationName = std::string(name.begin(), name.end()),
             .mode = mode,
             .input = std::move(input),
         };

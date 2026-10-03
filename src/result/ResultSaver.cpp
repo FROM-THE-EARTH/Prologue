@@ -11,7 +11,6 @@
 #include <stdexcept>
 
 #include <kml/dom.h>
-#include <kml/base/file.h>
 #include <kml/engine.h>
 
 #include "geography/GeographicResult.hpp"
@@ -106,10 +105,15 @@ namespace ResultSaver {
                                                     };
 
     namespace Internal {
-        std::ofstream OpenResultCSV(const std::string& path, int precision) {
+        std::string DisplayPath(const std::filesystem::path& path) {
+            const auto utf8 = path.u8string();
+            return {reinterpret_cast<const char*>(utf8.data()), utf8.size()};
+        }
+
+        std::ofstream OpenResultCSV(const std::filesystem::path& path, int precision) {
             std::ofstream file(path);
             if (!file.is_open()) {
-                throw std::runtime_error{"Failed to open result CSV for writing: " + path};
+                throw std::runtime_error{"Failed to open result CSV for writing: " + DisplayPath(path)};
             }
             file.exceptions(std::ios::failbit | std::ios::badbit);
             file << std::fixed << std::setprecision(precision);
@@ -211,7 +215,7 @@ namespace ResultSaver {
             file << "\n";
         }
 
-		void WriteScatterKml(const std::string& dir,
+		void WriteScatterKml(const std::filesystem::path& dir,
                              const std::vector<SimulationResult>& results,
                              const std::vector<GeographicResult>& geographicResults) {
 			if (results.empty()) {
@@ -310,18 +314,22 @@ namespace ResultSaver {
 
 				KmlPtr kml = factory->CreateKml();
 				kml->set_feature(doc);
-				const std::string kmlPath = dir + "scatter_body" + std::to_string(bodyIndex + 1) + ".kml";
-				if (!kmlbase::File::WriteStringToFile(kmldom::SerializePretty(kml), kmlPath)) {
-                    throw std::runtime_error{"Failed to write result KML: " + kmlPath};
+				const auto kmlPath = dir / ("scatter_body" + std::to_string(bodyIndex + 1) + ".kml");
+                std::ofstream file(kmlPath, std::ios::out | std::ios::binary);
+                if (!file.is_open()) {
+                    throw std::runtime_error{"Failed to open result KML for writing: " + Internal::DisplayPath(kmlPath)};
                 }
+                file.exceptions(std::ios::failbit | std::ios::badbit);
+                file << kmldom::SerializePretty(kml);
+                file.close();
 			}
 		}
 
-        void WriteSummaryScatter(const std::string& dir,
+        void WriteSummaryScatter(const std::filesystem::path& dir,
                                  const std::vector<SimulationResult>& results,
                                  const std::vector<GeographicResult>& geographicResults,
                                  int precision) {
-            std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv", precision);
+            std::ofstream file = Internal::OpenResultCSV(dir / "summary.csv", precision);
 
             size_t bodyCount = 0;
             for (const auto& geographic : geographicResults) {
@@ -342,11 +350,11 @@ namespace ResultSaver {
 			Internal::WriteScatterKml(dir, results, geographicResults);
         }
 
-        void WriteSummaryDetail(const std::string& dir,
+        void WriteSummaryDetail(const std::filesystem::path& dir,
                                 const SimulationResult& result,
                                 const GeographicResult& geographic,
                                 int precision) {
-            std::ofstream file = Internal::OpenResultCSV(dir + "summary.csv", precision);
+            std::ofstream file = Internal::OpenResultCSV(dir / "summary.csv", precision);
 
             WriteSummaryHeader(file, geographic.bodyFinalPositions.size());
 
@@ -356,7 +364,7 @@ namespace ResultSaver {
         }
     }
 
-    void SaveScatter(const std::string& dir,
+    void SaveScatter(const std::filesystem::path& dir,
                      const std::vector<SimulationResult>& result,
                      const Environment& environment,
                      int precision,
@@ -374,7 +382,7 @@ namespace ResultSaver {
         Internal::WriteSummaryScatter(dir, result, geographicResults, precision);
     }
 
-    void SaveDetail(const std::string& dir,
+    void SaveDetail(const std::filesystem::path& dir,
                     const SimulationResult& result,
                     const Environment& environment,
                     int precision,
@@ -393,7 +401,7 @@ namespace ResultSaver {
             const auto bodyCount = result.bodyResults.size();
             for (size_t i = 0; i < bodyCount; i++) {
                 const std::string fileName = "detail_body" + std::to_string(i + 1);
-                const std::string path     = dir + fileName + ".csv";
+                const auto path = dir / (fileName + ".csv");
                 std::ofstream file         = Internal::OpenResultCSV(path, precision);
                 Internal::WriteBodyResult(
                     file, result.bodyResults[i].steps, geographic.bodyStepPositions[i], i, observer);

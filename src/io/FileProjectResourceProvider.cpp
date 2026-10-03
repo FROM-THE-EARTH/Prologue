@@ -21,6 +21,11 @@ namespace ProjectIO {
                                       const std::filesystem::path& referencedPath) {
             return referencedPath.is_absolute() ? referencedPath : projectDirectory / referencedPath;
         }
+
+        std::string PathText(const std::filesystem::path& path) {
+            const auto utf8 = path.generic_u8string();
+            return {utf8.begin(), utf8.end()};
+        }
     }
 
     FileProjectResourceProvider::FileProjectResourceProvider(std::filesystem::path projectDirectory) :
@@ -79,7 +84,11 @@ namespace ProjectIO {
         const std::filesystem::path& projectRelativePath) const {
         const auto file = Resolve(m_projectDirectory, projectRelativePath);
         try {
-            io::CSVReader<7> csv(file.string());
+            std::ifstream stream(file, std::ios::binary);
+            if (!stream.is_open()) {
+                throw std::runtime_error{"Failed to open aerodynamic coefficient file."};
+            }
+            io::CSVReader<7> csv(PathText(file), stream);
             csv.read_header(io::ignore_extra_column,
                             "air_speed[m/s]",
                             "Cp_from_nose[m]",

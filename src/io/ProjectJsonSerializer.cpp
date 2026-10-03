@@ -306,7 +306,7 @@ namespace ProjectJsonSerializer {
         return result;
     }
 
-    void Save(const std::filesystem::path& file, const project::Document& document) {
+    std::string Serialize(const project::Document& document) {
         if (document.formatVersion != project::CurrentFormatVersion) {
             throw std::runtime_error{"Only the current project format can be saved."};
         }
@@ -355,11 +355,16 @@ namespace ProjectJsonSerializer {
         if (!document.separations.empty()) serialized << "  ";
         serialized << "]\n}\n";
 
+        return serialized.str();
+    }
+
+    void Save(const std::filesystem::path& file, const project::Document& document) {
+        const std::string serialized = Serialize(document);
         std::ofstream output(file, std::ios::binary);
         if (!output.is_open()) {
             throw std::runtime_error{"Failed to open project file for writing: " + file.string()};
         }
-        output << serialized.str();
+        output << serialized;
         output.close();
         if (!output) {
             throw std::runtime_error{"Failed to write project file: " + file.string()};

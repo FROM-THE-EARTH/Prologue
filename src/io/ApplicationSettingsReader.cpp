@@ -2,6 +2,7 @@
 
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <fstream>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -80,7 +81,11 @@ namespace ApplicationSettingsReader {
 
     InputIO::ReadResult<ApplicationSettings> Read(const std::filesystem::path& settingsFile) {
         boost::property_tree::ptree json;
-        boost::property_tree::read_json(settingsFile.string(), json);
+        std::ifstream input(settingsFile, std::ios::binary);
+        if (!input.is_open()) {
+            throw std::runtime_error{"Failed to open settings file: " + settingsFile.string()};
+        }
+        boost::property_tree::read_json(input, json);
 
         ApplicationSettings settings;
         std::vector<InputIO::Diagnostic> diagnostics;

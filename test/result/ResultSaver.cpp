@@ -35,8 +35,17 @@ namespace {
     };
 
     std::string ReadAll(const std::filesystem::path& path) {
-        std::ifstream file(path);
+        std::ifstream file(path, std::ios::binary);
         return {std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
+    }
+
+    std::string NativeNewlines(std::string text) {
+#ifdef _WIN32
+        for (size_t position = 0; (position = text.find('\n', position)) != std::string::npos; position += 2) {
+            text.replace(position, 1, "\r\n");
+        }
+#endif
+        return text;
     }
 }
 
@@ -66,16 +75,16 @@ TEST_CASE("Result export is silent and observer callbacks preserve CSV output", 
     }
 
     REQUIRE(consoleOutput.str().empty());
-    const std::string expectedHeader =
+    const std::string expectedHeader = NativeNewlines(
         "time_from_launch[s],elapsed_time[s],launch_clear?,combusting?,para_opened?,air_density[kg/m3],"
         "gravity[m/s2],pressure[Pa],temperature[C],wind_x[m/s],wind_y[m/s],wind_z[m/s],mass[kg],"
         "Cg_from_nose[m],inertia moment pitch & yaw[kg*m2],inertia moment roll[kg*m2],attack angle[rad],"
         "altitude[m],velocity[m/s],airspeed[m/s],accel[m/s2],longitudinal accel[m/s2],normal_force[N],"
-        "Cnp,Cny,Cmqp,Cmqy,Cp_from_nose[m],Cd,Cna,latitude,longitude,downrange[m],Fst[%],dynamic_pressure[Pa],\n";
-    const std::string expectedRow =
+        "Cnp,Cny,Cmqp,Cmqy,Cp_from_nose[m],Cd,Cna,latitude,longitude,downrange[m],Fst[%],dynamic_pressure[Pa],\n");
+    const std::string expectedRow = NativeNewlines(
         "1.250,0.500,0,0,\"\",0.000,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000,"
         "0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,33.000,129.500,"
-        "0.000,0.000,0.000,\n";
+        "0.000,0.000,0.000,\n");
     const auto detailContents = ReadAll(outputDirectory / "detail_body1.csv");
     REQUIRE(detailContents == expectedHeader + expectedRow);
 
@@ -87,6 +96,33 @@ TEST_CASE("Result export is silent and observer callbacks preserve CSV output", 
 
     REQUIRE_THROWS_WITH(ResultSaver::SaveDetail(prefix + "missing/", result, environment, 3),
                         Catch::Contains("Failed to open result CSV"));
+
+    const auto asciiDirectory = outputDirectory / "ascii";
+    const auto japaneseDirectory = outputDirectory / std::filesystem::path(std::u8string(u8"日本語 結果"));
+    std::filesystem::create_directories(asciiDirectory);
+    std::filesystem::create_directories(japaneseDirectory);
+
+    ResultSaver::SaveDetail(asciiDirectory, result, environment, 3);
+    ResultSaver::SaveDetail(japaneseDirectory, result, environment, 3);
+    REQUIRE(ReadAll(asciiDirectory / "summary.csv") == ReadAll(japaneseDirectory / "summary.csv"));
+    REQUIRE(ReadAll(asciiDirectory / "detail_body1.csv") == ReadAll(japaneseDirectory / "detail_body1.csv"));
+
+    std::vector<SimulationResult> scatterResults(3);
+    scatterResults[0].windSpeed = 1.0;
+    scatterResults[0].windDirection.degrees = 0.0;
+    scatterResults[0].bodyFinalPositions.emplace_back(0.0, 0.0, 0.0);
+    scatterResults[1].windSpeed = 1.0;
+    scatterResults[1].windDirection.degrees = 90.0;
+    scatterResults[1].bodyFinalPositions.emplace_back(100.0, 0.0, 0.0);
+    scatterResults[2].windSpeed = 1.0;
+    scatterResults[2].windDirection.degrees = 180.0;
+    scatterResults[2].bodyFinalPositions.emplace_back(0.0, 100.0, 0.0);
+    ResultSaver::SaveScatter(asciiDirectory, scatterResults, environment, 3);
+    ResultSaver::SaveScatter(japaneseDirectory, scatterResults, environment, 3);
+    REQUIRE(ReadAll(asciiDirectory / "summary.csv") == ReadAll(japaneseDirectory / "summary.csv"));
+    REQUIRE(std::filesystem::exists(asciiDirectory / "scatter_body1.kml"));
+    REQUIRE(std::filesystem::exists(japaneseDirectory / "scatter_body1.kml"));
+    REQUIRE(ReadAll(asciiDirectory / "scatter_body1.kml") == ReadAll(japaneseDirectory / "scatter_body1.kml"));
 
     std::filesystem::remove_all(outputDirectory);
 }

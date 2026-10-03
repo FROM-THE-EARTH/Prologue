@@ -11,6 +11,7 @@
 #include "runner/SimulationRunSettings.hpp"
 
 namespace cli::ResultDirectory {
+    // Names and JSON filenames use UTF-8; filesystem paths retain native encoding.
     std::string BuildName(const std::string& specificationName,
                           SimulationMode mode,
                           const SimulationInput& input,
